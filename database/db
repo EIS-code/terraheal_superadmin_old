@@ -1,0 +1,305 @@
+CREATE TABLE `bookings` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`booking_type` ENUM('1','2') NOT NULL COMMENT '1: In Massage Center, 2: Home / Hotel Visit.',
+	`special_notes` VARCHAR(255) NOT NULL,
+	`total_persons` INT(11) NOT NULL,
+	`user_id` BIGINT(20) UNSIGNED NOT NULL,
+	`shop_id` BIGINT(20) UNSIGNED NOT NULL,
+	`remember_token` VARCHAR(100) NULL DEFAULT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `bookings_user_id_foreign` (`user_id`),
+	INDEX `bookings_shop_id_foreign` (`shop_id`),
+	CONSTRAINT `bookings_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `terra_heal`.`shops` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE,
+	CONSTRAINT `bookings_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `terra_heal`.`users` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `booking_info` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`preference` ENUM('m','f') NOT NULL COMMENT 'm: Male, f: Female',
+	`location` VARCHAR(255) NOT NULL,
+	`massage_date` DATE NOT NULL,
+	`massage_time` DATETIME NOT NULL,
+	`massage_duration` INT(11) NOT NULL,
+	`notes_of_injuries` VARCHAR(255) NOT NULL,
+	`is_cancelled` ENUM('0','1') NOT NULL COMMENT '0: Nope, 1: Yes',
+	`cancelled_reason` VARCHAR(255) NOT NULL,
+	`imc_type` ENUM('1','2') NOT NULL COMMENT '1: ASAP, 2: Scheduled',
+	`therapist_id` BIGINT(20) UNSIGNED NOT NULL,
+	`massage_price_id` BIGINT(20) UNSIGNED NOT NULL,
+	`shop_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `booking_info_therapist_id_foreign` (`therapist_id`),
+	INDEX `booking_info_massage_price_id_foreign` (`massage_price_id`),
+	INDEX `booking_info_shop_id_foreign` (`shop_id`),
+	CONSTRAINT `booking_info_massage_price_id_foreign` FOREIGN KEY (`massage_price_id`) REFERENCES `terra_heal`.`massage_pricing` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE,
+	CONSTRAINT `booking_info_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `terra_heal`.`shops` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE,
+	CONSTRAINT `booking_info_therapist_id_foreign` FOREIGN KEY (`therapist_id`) REFERENCES `terra_heal`.`bookings` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `booking_payments` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`final_amounts` DOUBLE(8,2) NOT NULL,
+	`paid_amounts` DOUBLE(8,2) NOT NULL,
+	`remaining_amounts` DOUBLE(8,2) NOT NULL,
+	`paid_percentage` INT(11) NOT NULL,
+	`is_success` ENUM('0','1') NOT NULL COMMENT '0: Nope, 1: Yes',
+	`api_responce` VARCHAR(255) NOT NULL,
+	`currency_id` BIGINT(20) UNSIGNED NOT NULL,
+	`booking_id` BIGINT(20) UNSIGNED NOT NULL,
+	`shop_payment_detail_id` BIGINT(20) UNSIGNED NOT NULL,
+	`shop_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `booking_payments_currency_id_foreign` (`currency_id`),
+	INDEX `booking_payments_booking_id_foreign` (`booking_id`),
+	INDEX `booking_payments_shop_payment_detail_id_foreign` (`shop_payment_detail_id`),
+	INDEX `booking_payments_shop_id_foreign` (`shop_id`),
+	CONSTRAINT `booking_payments_booking_id_foreign` FOREIGN KEY (`booking_id`) REFERENCES `terra_heal`.`bookings` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE,
+	CONSTRAINT `booking_payments_currency_id_foreign` FOREIGN KEY (`currency_id`) REFERENCES `terra_heal`.`currency` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE,
+	CONSTRAINT `booking_payments_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `terra_heal`.`shops` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE,
+	CONSTRAINT `booking_payments_shop_payment_detail_id_foreign` FOREIGN KEY (`shop_payment_detail_id`) REFERENCES `terra_heal`.`shop_payment_details` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `city` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL,
+	`country_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `city_country_id_foreign` (`country_id`),
+	CONSTRAINT `city_country_id_foreign` FOREIGN KEY (`country_id`) REFERENCES `terra_heal`.`country` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `country` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL,
+	`short_name` VARCHAR(255) NOT NULL,
+	`iso3` VARCHAR(255) NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `currency` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`code` VARCHAR(255) NOT NULL,
+	`exchange_rate` DOUBLE(8,2) NOT NULL,
+	`country_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `currency_code_unique` (`code`),
+	INDEX `currency_country_id_foreign` (`country_id`),
+	CONSTRAINT `currency_country_id_foreign` FOREIGN KEY (`country_id`) REFERENCES `terra_heal`.`country` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `freelancer_therapists` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL,
+	`dob` VARCHAR(255) NOT NULL,
+	`gender` ENUM('m','f') NOT NULL COMMENT 'm: Male, f: Female',
+	`email` VARCHAR(255) NOT NULL,
+	`tel_number` VARCHAR(50) NOT NULL,
+	`hobbies` VARCHAR(255) NOT NULL,
+	`spoken_languages` VARCHAR(255) NOT NULL,
+	`short_description` VARCHAR(255) NOT NULL,
+	`is_deleted` ENUM('0','1') NOT NULL COMMENT '0: Nope, 1: Yes',
+	`shop_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `freelancer_therapists_email_unique` (`email`),
+	INDEX `freelancer_therapists_shop_id_foreign` (`shop_id`),
+	CONSTRAINT `freelancer_therapists_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `terra_heal`.`shops` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `freelancer_therapist_documents` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`title` VARCHAR(255) NOT NULL,
+	`path` VARCHAR(255) NOT NULL,
+	`freelancer_therapist_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `freelancer_therapist_documents_freelancer_therapist_id_foreign` (`freelancer_therapist_id`),
+	CONSTRAINT `freelancer_therapist_documents_freelancer_therapist_id_foreign` FOREIGN KEY (`freelancer_therapist_id`) REFERENCES `terra_heal`.`freelancer_therapists` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `freelancer_therapist_massage_history` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`start_time` TIME NOT NULL,
+	`end_time` TIME NOT NULL,
+	`remaining_time` TIME NOT NULL,
+	`pause_from` TIME NOT NULL,
+	`pause_to` TIME NOT NULL,
+	`booking_id` BIGINT(20) UNSIGNED NOT NULL,
+	`therapist_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `freelancer_therapist_massage_history_booking_id_foreign` (`booking_id`),
+	INDEX `freelancer_therapist_massage_history_therapist_id_foreign` (`therapist_id`),
+	CONSTRAINT `freelancer_therapist_massage_history_booking_id_foreign` FOREIGN KEY (`booking_id`) REFERENCES `terra_heal`.`bookings` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE,
+	CONSTRAINT `freelancer_therapist_massage_history_therapist_id_foreign` FOREIGN KEY (`therapist_id`) REFERENCES `terra_heal`.`freelancer_therapists` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `massages` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL,
+	`image` VARCHAR(255) NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `massage_pricing` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`massage_id` BIGINT(20) UNSIGNED NOT NULL,
+	`massage_timing_id` BIGINT(20) UNSIGNED NOT NULL,
+	`price` DOUBLE(8,2) NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `massage_pricing_massage_timing_id_unique` (`massage_timing_id`),
+	INDEX `massage_pricing_massage_id_foreign` (`massage_id`),
+	CONSTRAINT `massage_pricing_massage_id_foreign` FOREIGN KEY (`massage_id`) REFERENCES `terra_heal`.`massages` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE,
+	CONSTRAINT `massage_pricing_massage_timing_id_foreign` FOREIGN KEY (`massage_timing_id`) REFERENCES `terra_heal`.`massage_timings` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `massage_timings` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`time` VARCHAR(255) NOT NULL,
+	`massage_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `massage_timings_massage_id_foreign` (`massage_id`),
+	CONSTRAINT `massage_timings_massage_id_foreign` FOREIGN KEY (`massage_id`) REFERENCES `terra_heal`.`massages` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `reviews` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`rating` ENUM('1','2','3','4','5') NOT NULL COMMENT '1: Very Bad, 2: Bad, 3: Medium, 4: Good One, 5: Too Happy',
+	`user_id` BIGINT(20) UNSIGNED NOT NULL,
+	`shop_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `reviews_user_id_foreign` (`user_id`),
+	INDEX `reviews_shop_id_foreign` (`shop_id`),
+	CONSTRAINT `reviews_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `terra_heal`.`shops` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE,
+	CONSTRAINT `reviews_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `terra_heal`.`users` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `shops` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL,
+	`address` VARCHAR(255) NOT NULL,
+	`longitude` DECIMAL(11,8) NOT NULL,
+	`latitude` DECIMAL(11,8) NOT NULL,
+	`city` INT(11) NOT NULL,
+	`country` INT(11) NOT NULL,
+	`owner_name` VARCHAR(255) NOT NULL,
+	`tel_number` VARCHAR(50) NOT NULL,
+	`owner_mobile_number` VARCHAR(255) NOT NULL,
+	`owner_email` VARCHAR(255) NOT NULL,
+	`email` VARCHAR(255) NOT NULL,
+	`currency_id` TINYINT(4) NOT NULL,
+	`time_zone` VARCHAR(255) NOT NULL,
+	`user_name` VARCHAR(255) NOT NULL,
+	`password` VARCHAR(255) NOT NULL,
+	`remember_token` VARCHAR(100) NULL DEFAULT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `shops_owner_email_unique` (`owner_email`),
+	UNIQUE INDEX `shops_email_unique` (`email`)
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `shop_payment_details` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`iban` VARCHAR(255) NOT NULL,
+	`paypal_secret` VARCHAR(255) NOT NULL,
+	`paypal_client_id` VARCHAR(255) NOT NULL,
+	`google_pay_number` VARCHAR(255) NOT NULL,
+	`apple_pay_number` VARCHAR(255) NOT NULL,
+	`shop_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `shop_payment_details_shop_id_foreign` (`shop_id`),
+	CONSTRAINT `shop_payment_details_shop_id_foreign` FOREIGN KEY (`shop_id`) REFERENCES `terra_heal`.`shops` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `users` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL,
+	`dob` VARCHAR(255) NOT NULL,
+	`country` INT(11) NOT NULL,
+	`email` VARCHAR(255) NOT NULL,
+	`tel_number` VARCHAR(50) NOT NULL,
+	`nif` VARCHAR(255) NOT NULL,
+	`address` VARCHAR(255) NOT NULL,
+	`photo` VARCHAR(255) NOT NULL,
+	`oauth_uid` VARCHAR(255) NOT NULL,
+	`oauth_provider` TINYINT(4) NULL DEFAULT NULL COMMENT '1: google, 2: facebook, 3: twitter, 4: linkedin',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `users_email_unique` (`email`)
+)
+ENGINE=InnoDB
+;
+
+CREATE TABLE `user_massage_history` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`start_time` TIME NOT NULL,
+	`end_time` TIME NOT NULL,
+	`booking_id` BIGINT(20) UNSIGNED NOT NULL,
+	`therapist_id` BIGINT(20) UNSIGNED NOT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `user_massage_history_booking_id_foreign` (`booking_id`),
+	INDEX `user_massage_history_therapist_id_foreign` (`therapist_id`),
+	CONSTRAINT `user_massage_history_booking_id_foreign` FOREIGN KEY (`booking_id`) REFERENCES `terra_heal`.`bookings` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE,
+	CONSTRAINT `user_massage_history_therapist_id_foreign` FOREIGN KEY (`therapist_id`) REFERENCES `terra_heal`.`freelancer_therapists` (`id`) ON UPDATE RESTRICT ON DELETE CASCADE
+)
+ENGINE=InnoDB
+;
