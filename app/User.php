@@ -28,6 +28,8 @@ class User extends Authenticatable
         'photo',
         'oauth_uid',
         'oauth_provider',
+        'country_id',
+        'shop_id'
     ];
 
     /**
@@ -69,8 +71,9 @@ class User extends Authenticatable
         }
 
         return Validator::make($data, [
-            'name'  => ['required', 'string', 'max:255'],
-            'email' => array_merge(['required', 'string', 'email', 'max:255'], $emailValidator),
+            'name'    => ['required', 'string', 'max:255'],
+            'email'   => array_merge(['required', 'string', 'email', 'max:255'], $emailValidator),
+            'shop_id' => ['required', 'integer']
         ]);
     }
 }

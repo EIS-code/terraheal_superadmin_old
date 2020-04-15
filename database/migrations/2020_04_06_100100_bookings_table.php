@@ -16,13 +16,13 @@ class BookingsTable extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->enum('booking_type', [1, 2])->comment('1: In Massage Center, 2: Home / Hotel Visit.');
-            $table->string('special_notes');
+            $table->string('special_notes')->nullable();
             $table->integer('total_persons');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->bigInteger('shop_id')->unsigned();
-            $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
-            $table->rememberToken();
+            // $table->bigInteger('shop_id')->unsigned();
+            // $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
+            // $table->rememberToken();
             $table->timestamps();
         });
     }

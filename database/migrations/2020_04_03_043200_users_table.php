@@ -29,6 +29,8 @@ class UsersTable extends Migration
             $table->string('password')->nullable();
             $table->bigInteger('country_id')->unsigned()->nullable();
             $table->foreign('country_id')->references('id')->on('country')->onDelete('cascade');
+            $table->bigInteger('shop_id')->unsigned();
+            $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
             $table->timestamps();
         });
     }

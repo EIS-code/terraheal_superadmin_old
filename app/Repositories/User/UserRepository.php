@@ -19,6 +19,7 @@ class UserRepository extends BaseRepository
 
     public function create(array $data)
     {
+        $user = [];
         DB::beginTransaction();
 
         try {
@@ -30,7 +31,7 @@ class UserRepository extends BaseRepository
                 ]);
             }
 
-            $user                  = new User;
+            $user                  = $this->user;
             $user->name            = $data['name'];
             $user->dob             = (!empty($data['dob']) ? $data['dob'] : NULL);
             $user->email           = $data['email'];
@@ -43,6 +44,7 @@ class UserRepository extends BaseRepository
             $user->oauth_provider  = (!empty($data['oauth_provider']) && in_array($data['oauth_provider'], User::$oauthProviders) ? $data['oauth_provider'] : NULL);
             $user->password        = (!empty($data['password']) ? Hash::make($data['password']) : NULL);
             $user->country_id      = (!empty($data['country_id']) ? $data['country_id'] : NULL);
+            $user->shop_id        = $data['shop_id'];
 
             $user->fill($data);
             $user->save();
@@ -67,30 +69,49 @@ class UserRepository extends BaseRepository
 
     public function getWhere($column, $value)
     {
-        return User::where($column, $value)->get();
+        return $this->user->where($column, $value)->get();
     }
 
-    public function getWhereFirst($column, $value)
+    public function getWhereFirst($column, $value, $isApi = false)
     {
-        return User::where($column, $value)->first();
+        $userData = $this->user->where($column, $value)->first();
+
+        if ($isApi === true) {
+            return response()->json([
+                'code' => 200,
+                'msg'  => 'User found successfully !',
+                'data' => $userData
+            ]);
+        }
+
+        return $userData;
     }
 
     public function update(int $id, array $data)
     {
+        $update   = false;
         $findUser = $this->get($id);
 
         if (!empty($findUser) && !$findUser->isEmpty()) {
-            $validator = $this->user->validator($data, $id, true);
-            if ($validator->fails()) {
-                return response()->json([
-                    'code' => 401,
-                    'msg'  => $validator->errors()->first()
-                ]);
+            DB::beginTransaction();
+
+            try {
+                $validator = $this->user->validator($data, $id, true);
+                if ($validator->fails()) {
+                    return response()->json([
+                        'code' => 401,
+                        'msg'  => $validator->errors()->first()
+                    ]);
+                }
+
+                $update = $this->user->where('id', $id)->update($data);
+            } catch(Exception $e) {
+                DB::rollBack();
+                // throw $e;
             }
 
-            $update = $this->user->where('id', $id)->update($data);
-
             if ($update) {
+                DB::commit();
                 return response()->json([
                     'code' => 200,
                     'msg'  => 'User updated successfully !'
@@ -109,13 +130,13 @@ class UserRepository extends BaseRepository
         ]);
     }
 
-    public function delete($id)
+    public function delete(int $id)
     {}
 
     public function deleteWhere($column, $value)
     {}
 
-    public function get($id)
+    public function get(int $id)
     {
         $user = $this->user->find($id);
 

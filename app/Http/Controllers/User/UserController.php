@@ -6,12 +6,14 @@ use App\Http\Controllers\BaseController;
 
 class UserController extends BaseController
 {
-    protected $user;
+    protected $user, $booking, $review;
 
     public function __construct()
     {
         parent::__construct();
-        $this->user = $this->userRepo;
+        $this->user    = $this->userRepo;
+        $this->booking = $this->bookingRepo;
+        $this->review  = $this->reviewRepo;
     }
 
     public function signupFacebook()
@@ -46,5 +48,44 @@ class UserController extends BaseController
         $getRequest = $this->httpRequest->all();
 
         return $this->user->update($id, $getRequest);
+    }
+
+    public function getDetails($id)
+    {
+        return $this->user->getWhereFirst('id', $id, true);
+    }
+
+    public function bookingCreate()
+    {
+        $getRequest = $this->httpRequest->all();
+
+        return $this->booking->create($getRequest);
+    }
+
+    public function bookingUpdate($bookingInfoId)
+    {
+        $getRequest = $this->httpRequest->all();
+
+        return $this->booking->update($bookingInfoId, $getRequest);
+    }
+
+    public function getPastBooking($userId)
+    {
+        return $this->booking->getWherePastFuture($userId, true, true);
+    }
+
+    public function getFutureBooking($userId)
+    {
+        return $this->booking->getWherePastFuture($userId, false, true);
+    }
+
+    public function reviewCreate($userId, $rating)
+    {
+        return $this->review->create($userId, $rating);
+    }
+
+    public function reviewDelete($reviewId)
+    {
+        return $this->review->delete($reviewId, true);
     }
 }
