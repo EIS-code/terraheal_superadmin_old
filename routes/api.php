@@ -49,6 +49,10 @@ Route::group(['middleware' => ['web']], function () {
             Route::get('/create/{userId}/{rating}', 'UserController@reviewCreate')->name('userReview');
             Route::get('/delete/{reviewId}', 'UserController@reviewDelete')->name('userReviewDelete');
         });
+
+        Route::group(['prefix' => 'payment', 'namespace' => 'Payment'], function () {
+            Route::post('/{bookingId}', 'PaymentController@pay')->name('userPay');
+        });
     });
 
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {

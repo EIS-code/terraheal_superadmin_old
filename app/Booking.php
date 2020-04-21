@@ -11,6 +11,7 @@ class Booking extends Model
         'booking_type',
         'special_notes',
         'total_persons',
+        'copy_with_id',
         'user_id'
     ];
 
@@ -33,6 +34,7 @@ class Booking extends Model
         $validator = Validator::make($data, array_merge([
             'booking_type'  => ['required', 'in:1,2'],
             'special_notes' => ['max:255'],
+            'copy_with_id'  => ['max:255'],
             'user_id'       => ['required', 'integer']
         ], $validatorExtended));
 

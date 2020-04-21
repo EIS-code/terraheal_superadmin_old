@@ -46,7 +46,7 @@ class UserRepository extends BaseRepository
             $user->country_id      = (!empty($data['country_id']) ? $data['country_id'] : NULL);
             $user->shop_id        = $data['shop_id'];
 
-            $user->fill($data);
+            // $user->fill($data);
             $user->save();
         } catch(Exception $e) {
             DB::rollBack();

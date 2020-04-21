@@ -39,7 +39,7 @@ class BookingRepository extends BaseRepository
             $booking->total_persons = $data['total_persons'];
             $booking->user_id       = $data['user_id'];
 
-            $booking->fill($data);
+            // $booking->fill($data);
             $booking->save();
 
             $bookingInfo  = $this->bookingInfo;
@@ -62,6 +62,7 @@ class BookingRepository extends BaseRepository
                     'massage_time'          => $infos['massage_time'],
                     'notes_of_injuries'     => $infos['notes_of_injuries'],
                     'imc_type'              => $infos['imc_type'],
+                    // 'copy_with_id'          => $infos['copy_with_id'],
                     'massage_timing_id'     => $infos['massage_timing_id'],
                     'therapist_id'          => $infos['therapist_id'],
                     'massage_price_id'      => $infos['massage_price_id'],
@@ -213,6 +214,53 @@ class BookingRepository extends BaseRepository
         }
 
         return NULL;
+    }
+
+    public function updateBooking(int $id, array $data)
+    {
+        $update      = false;
+        $findBooking = $this->getWhereFirst('id', $id);
+
+        if (!empty($findBooking)) {
+            DB::beginTransaction();
+
+            try {
+                foreach ($this->booking->getFillable() as $fillable) {
+                    $data[$fillable] = (!empty($data[$fillable]) ? $data[$fillable] : $findBooking->{$fillable});
+                }
+
+                $validator = $this->booking->validator($data, true);
+                if ($validator->fails()) {
+                    return response()->json([
+                        'code' => 401,
+                        'msg'  => $validator->errors()->first()
+                    ]);
+                }
+
+                $update = $this->booking->where('id', $id)->update($data);
+            } catch(Exception $e) {
+                DB::rollBack();
+                // throw $e;
+            }
+
+            if ($update) {
+                DB::commit();
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'Booking updated successfully !'
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Something went wrong.'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'code' => 401,
+            'msg'  => 'Booking not found.'
+        ]);
     }
 
     public function errors()

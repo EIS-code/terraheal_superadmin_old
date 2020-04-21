@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CityTable extends Migration
+class CurrenciesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,14 @@ class CityTable extends Migration
      */
     public function up()
     {
-        Schema::create('cities', function (Blueprint $table) {
+        Schema::defaultStringLength(191);
+
+        Schema::create('currencies', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('code')->unique();
+            $table->float('exchange_rate');
             $table->bigInteger('country_id')->unsigned();
-            $table->foreign('country_id')->references('id')->on('country')->onDelete('cascade');
+            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,6 +32,6 @@ class CityTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cities');
+        Schema::dropIfExists('currencies');
     }
 }

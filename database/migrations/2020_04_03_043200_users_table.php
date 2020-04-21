@@ -28,7 +28,7 @@ class UsersTable extends Migration
             $table->tinyInteger('oauth_provider')->nullable()->comment('1: google, 2: facebook, 3: twitter, 4: linkedin');
             $table->string('password')->nullable();
             $table->bigInteger('country_id')->unsigned()->nullable();
-            $table->foreign('country_id')->references('id')->on('country')->onDelete('cascade');
+            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
             $table->bigInteger('shop_id')->unsigned();
             $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
             $table->timestamps();
