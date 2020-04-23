@@ -35,6 +35,20 @@ class PaymentController extends BaseController
                     $saveCopyWithId = $this->booking->updateBooking($bookingId, ['copy_with_id' => $getRequest['copy_with_id']]);
 
                     if ($saveCopyWithId->status() == 200) {
+                        $booking = $this->booking->getWhereFirst('id', $bookingId);
+                        if (!empty($booking)) {
+                            $massagePrice = 0;
+                            $bookingInfo  = $booking->bookingInfo;
+                            if (!empty($bookingInfo)) {
+                                foreach ($bookingInfo as $info) {
+                                    $massagePrice += $info->massagePrice->price;
+                                }
+                            }
+
+                            $getRequest['final_amounts']     = $massagePrice;
+                            $getRequest['remaining_amounts'] = $massagePrice - $getRequest['paid_amounts'];
+                            $getRequest['paid_percentage']   = number_format($getRequest['paid_amounts'] / $massagePrice * 100, 2);
+                        }
                         return $this->bookingPayment->create($getRequest);
                     }
                 }

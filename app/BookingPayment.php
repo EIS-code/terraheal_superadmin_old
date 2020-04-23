@@ -22,20 +22,12 @@ class BookingPayment extends Model
 
     public function validator(array $data)
     {
-        // $data = new Rules\CheckValidBookingPayment($data);
-        $bookingRepo = new BookingRepository();
-        $bookingInfo = $bookingRepo->getWhereFirst('id', $data['booking_id']);
-        if (!empty($bookingInfo)) {
-            $massagePrice = $bookingInfo->massage_price_id;
-            dd($massagePrice);
-        }
-
         $validator = Validator::make($data, [
-            'paid_amounts'           => ['required', 'float'],
-            'final_amounts'          => ['required', 'float'],
-            'paid_amounts'           => ['required', 'float'],
-            'remaining_amounts'      => ['required', 'float'],
-            'paid_percentage'        => ['required', 'integer'],
+            'paid_amounts'           => ['required'],
+            'final_amounts'          => ['required'],
+            'paid_amounts'           => ['required'],
+            'remaining_amounts'      => ['required'],
+            'paid_percentage'        => ['required'],
             'is_success'             => ['required', 'integer'],
             'api_responce'           => ['max:255'],
             'currency_id'            => ['required', 'integer'],

@@ -96,9 +96,14 @@ class Handler extends ExceptionHandler
     {
         if ($request->is('api/*')) {
             return response()->json([
-                'code' => 500,
-                'msg'  => 'Exception occurred.',
-                'data' => $exception
+                'code'   => 500,
+                'msg'    => 'Exception occurred.',
+                'string' => $exception->getMessage() . " " . $exception->getFile() . " " . $exception->getLine(),
+                /*'data'   => [
+                    "msg"  => $exception->getMessage(),
+                    "path" => $exception->getFile(),
+                    "line" => $exception->getLine()
+                ]*/
             ]);
         }
 

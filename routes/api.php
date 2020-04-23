@@ -58,7 +58,26 @@ Route::group(['middleware' => ['web']], function () {
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {
         Route::group(['prefix' => 'get'], function () {
             Route::get('/country', 'LocationController@getCountry')->name('getCountry');
+            Route::get('/province', 'LocationController@getProvince')->name('getProvince');
             Route::get('/city', 'LocationController@getCity')->name('getCity');
+        });
+    });
+
+    Route::group(['prefix' => 'therapist', 'namespace' => 'Therapist'], function () {
+        Route::group(['prefix' => 'freelancer', 'namespace' => 'Freelancer'], function () {
+            Route::post('/signup', 'FreelancerTherapistController@signup')->name('freelancerTherapistSignUp');
+
+            Route::group(['prefix' => 'booking'], function () {
+                Route::get('/list/past/{therapistId}', 'FreelancerTherapistController@getPastBooking')->name('freelancerTherapistGetPastBooking');
+                Route::get('/list/future/{therapistId}', 'FreelancerTherapistController@getFutureBooking')->name('freelancerTherapistGetFutureBooking');
+            });
+        });
+    });
+
+    Route::group(['prefix' => 'receptionist', 'namespace' => 'Receptionist'], function () {
+        Route::group(['prefix' => 'booking'], function () {
+            Route::get('/list/past/{shopId}', 'ReceptionistController@getPastBooking')->name('receptionistGetPastBooking');
+            Route::get('/list/future/{shopId}', 'ReceptionistController@getFutureBooking')->name('receptionistGetFutureBooking');
         });
     });
 });

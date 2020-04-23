@@ -110,9 +110,15 @@ class BookingRepository extends BaseRepository
                          ->get(); */
 
         if ($isApi === true) {
+            $messagePrefix = (($isPast) ? 'Past' : 'Future');
+            if (!empty($bookings)) {
+                $message = $messagePrefix . ' booking found successfully !';
+            } else {
+                $message = $messagePrefix . ' booking not found !';
+            }
             return response()->json([
                 'code' => 200,
-                'msg'  => 'Past booking found successfully !',
+                'msg'  => $message,
                 'data' => $bookings
             ]);
         }

@@ -31,7 +31,17 @@ class BookingPaymentRepository extends BaseRepository
                 ]);
             }
 
-            dd($data);
+            $bookingPayment                         = $this->bookingPayment;
+            $bookingPayment->final_amounts          = $data['final_amounts'];
+            $bookingPayment->paid_amounts           = $data['paid_amounts'];
+            $bookingPayment->remaining_amounts      = $data['remaining_amounts'];
+            $bookingPayment->paid_percentage        = $data['paid_percentage'];
+            $bookingPayment->is_success             = $data['is_success'];
+            $bookingPayment->api_responce           = $data['api_responce'];
+            $bookingPayment->currency_id            = $data['currency_id'];
+            $bookingPayment->booking_id             = $data['booking_id'];
+            $bookingPayment->shop_payment_detail_id = $data['shop_payment_detail_id'];
+            $bookingPayment->save();
         } catch (Exception $e) {
             DB::rollBack();
         }

@@ -65,4 +65,9 @@ class BookingInfo extends Model
     {
         return $this->belongsTo('App\Booking', 'booking_id', 'id');
     }
+
+    public function massagePrice()
+    {
+        return $this->belongsTo('App\MassagePrice', 'massage_price_id', 'id');
+    }
 }

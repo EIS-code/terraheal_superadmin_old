@@ -13,7 +13,7 @@ class MassagePricingTable extends Migration
      */
     public function up()
     {
-        Schema::create('massage_pricing', function (Blueprint $table) {
+        Schema::create('massage_prices', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('massage_id')->unsigned();
             $table->bigInteger('massage_timing_id')->unsigned()->unique();
@@ -31,6 +31,6 @@ class MassagePricingTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('massage_pricing');
+        Schema::dropIfExists('massage_prices');
     }
 }

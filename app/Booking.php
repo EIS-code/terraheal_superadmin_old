@@ -45,4 +45,9 @@ class Booking extends Model
     {
         return $this->hasMany('App\BookingInfo', 'booking_id', 'id');
     }
+
+    public function user()
+    {
+        return $this->hasMany('App\User', 'id', 'user_id');
+    }
 }
