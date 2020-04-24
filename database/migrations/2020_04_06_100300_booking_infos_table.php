@@ -23,14 +23,19 @@ class BookingInfosTable extends Migration
             $table->enum('is_cancelled', [0, 1])->default(0)->comment('0: Nope, 1: Yes');
             $table->string('cancelled_reason')->nullable();
             $table->enum('imc_type', [1, 2])->comment('1: ASAP, 2: Scheduled');
+            $table->string('massage_timing', 50);
+            $table->float('massage_pricing');
+            $table->enum('is_done', [0, 1])->default(0)->comment('0: Nope, 1: Yes');
             $table->bigInteger('massage_timing_id')->unsigned();
             $table->foreign('massage_timing_id')->references('id')->on('massage_timings')->onDelete('cascade');
             $table->bigInteger('therapist_id')->unsigned();
             $table->foreign('therapist_id')->references('id')->on('freelancer_therapists')->onDelete('cascade');
-            $table->bigInteger('massage_price_id')->unsigned();
-            $table->foreign('massage_price_id')->references('id')->on('massage_pricing')->onDelete('cascade');
+            $table->bigInteger('massage_prices_id')->unsigned();
+            $table->foreign('massage_prices_id')->references('id')->on('massage_prices')->onDelete('cascade');
             $table->bigInteger('booking_id')->unsigned();
             $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
+            $table->bigInteger('room_id')->nullable()->unsigned();
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
             $table->timestamps();
         });
     }

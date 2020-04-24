@@ -45,6 +45,10 @@ Route::group(['middleware' => ['web']], function () {
             Route::get('/list/future/{userId}', 'UserController@getFutureBooking')->name('userGetFutureBooking');
         });
 
+        Route::group(['prefix' => 'room'], function () {
+            Route::get('/add/{bookingInfoId}/{roomId}', 'UserController@addRoom')->name('userAddRoom');
+        });
+
         Route::group(['prefix' => 'review'], function () {
             Route::get('/create/{userId}/{rating}', 'UserController@reviewCreate')->name('userReview');
             Route::get('/delete/{reviewId}', 'UserController@reviewDelete')->name('userReviewDelete');
@@ -71,13 +75,24 @@ Route::group(['middleware' => ['web']], function () {
                 Route::get('/list/past/{therapistId}', 'FreelancerTherapistController@getPastBooking')->name('freelancerTherapistGetPastBooking');
                 Route::get('/list/future/{therapistId}', 'FreelancerTherapistController@getFutureBooking')->name('freelancerTherapistGetFutureBooking');
             });
+
+            Route::group(['prefix' => 'massage', 'namespace' => 'Massage'], function () {
+                Route::get('/start/{bookingInfoId}', 'FreelancerTherapistMassageHistoryController@startMassage')->name('freelancerTherapistStartMassage');
+                Route::get('/complete/{bookingInfoId}', 'FreelancerTherapistMassageHistoryController@completeMassage')->name('freelancerTherapistCompleteMassage');
+                Route::get('/pause/{bookingInfoId}', 'FreelancerTherapistMassageHistoryController@pauseMassage')->name('freelancerTherapistPauseMassage');
+                Route::get('/restart/{bookingInfoId}', 'FreelancerTherapistMassageHistoryController@restartMassage')->name('freelancerTherapistRestartMassage');
+            });
         });
     });
 
     Route::group(['prefix' => 'receptionist', 'namespace' => 'Receptionist'], function () {
+        Route::post('signup', 'ReceptionistController@signup')->name('receptionistSignup');
+
         Route::group(['prefix' => 'booking'], function () {
+            Route::get('/list/today/{shopId}', 'ReceptionistController@getTodayBooking')->name('receptionistGetTodayBooking');
             Route::get('/list/past/{shopId}', 'ReceptionistController@getPastBooking')->name('receptionistGetPastBooking');
             Route::get('/list/future/{shopId}', 'ReceptionistController@getFutureBooking')->name('receptionistGetFutureBooking');
+            Route::get('/list/done/{shopId}', 'ReceptionistController@getDoneBooking')->name('receptionistGetDoneBooking');
         });
     });
 });

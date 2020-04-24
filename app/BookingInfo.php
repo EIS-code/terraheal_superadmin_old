@@ -16,9 +16,12 @@ class BookingInfo extends Model
         'is_cancelled',
         'cancelled_reason',
         'imc_type',
+        'massage_timing',
+        'massage_pricing',
+        'is_done',
         'massage_timing_id',
         'therapist_id',
-        'massage_price_id',
+        'massage_prices_id',
         'booking_id'
     ];
 
@@ -43,6 +46,13 @@ class BookingInfo extends Model
         self::IMC_TYPE_SCHEDULED => 'Scheduled'
     ];
 
+    const IS_DONE     = 1;
+    const IS_NOT_DONE = 0;
+    public static $isDone = [
+        self::IS_DONE     => 'Done',
+        self::IS_NOT_DONE => 'Not done yet'
+    ];
+
     public function validator(array $data)
     {
         return Validator::make($data, [
@@ -56,7 +66,7 @@ class BookingInfo extends Model
             'imc_type'          => ['required', 'in:1,2'],
             'massage_timing_id' => ['required', 'integer'],
             'therapist_id'      => ['required', 'integer'],
-            'massage_price_id'  => ['required', 'integer'],
+            'massage_prices_id'  => ['required', 'integer'],
             'booking_id'        => ['required', 'integer']
         ]);
     }
@@ -68,6 +78,6 @@ class BookingInfo extends Model
 
     public function massagePrice()
     {
-        return $this->belongsTo('App\MassagePrice', 'massage_price_id', 'id');
+        return $this->belongsTo('App\MassagePrice', 'massage_prices_id', 'id');
     }
 }

@@ -88,4 +88,9 @@ class UserController extends BaseController
     {
         return $this->review->delete($reviewId, true);
     }
+
+    public function addRoom($bookingInfoId, $roomId)
+    {
+        return $this->booking->addRoom($bookingInfoId, $roomId);
+    }
 }

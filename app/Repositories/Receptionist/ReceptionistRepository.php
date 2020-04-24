@@ -3,7 +3,7 @@
 namespace App\Repositories\Receptionist;
 
 use App\Repositories\BaseRepository;
-// use App\Receptionist;
+use App\Receptionist;
 use App\Booking;
 use Carbon\Carbon;
 use DB;
@@ -15,12 +15,40 @@ class ReceptionistRepository extends BaseRepository
     public function __construct()
     {
         parent::__construct();
-        // $this->receptionist = new Receptionist();
+        $this->receptionist = new Receptionist();
         $this->booking      = new Booking();
     }
 
     public function create(array $data)
-    {}
+    {
+        $receptionist = [];
+        DB::beginTransaction();
+
+        try {
+            $validator = $this->receptionist->validator($data);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => $validator->errors()->first()
+                ]);
+            }
+
+            $receptionist = $this->receptionist;
+            $receptionist->fill($data);
+            $receptionist->save();
+        } catch(Exception $e) {
+            DB::rollBack();
+            // throw $e;
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'Receptionist created successfully !',
+            'data' => $receptionist
+        ]);
+    }
 
     public function all()
     {
@@ -47,7 +75,7 @@ class ReceptionistRepository extends BaseRepository
         return $receptionistData;
     }
 
-    public function getWherePastFuture(int $shopId, $isPast = true, $isApi = false)
+    public function getWherePastFutureToday(int $shopId, $type = 'today', $isDone = false, $isApi = false)
     {
         $now = Carbon::now();
 
@@ -55,13 +83,16 @@ class ReceptionistRepository extends BaseRepository
                          ->with(['user' => function($query) use($shopId) {
                                 $query->where('shop_id', $shopId);
                          }])
-                         ->with(['bookingInfo' => function($query) use($now, $isPast) {
-                                $query->where('massage_date', ($isPast === true ? '<' : '>='), $now);
+                         ->with(['bookingInfo' => function($query) use($now, $type, $isDone) {
+                                if ($isDone === true) {
+                                    $query->where('is_done', '=', '1');
+                                }
+                                $query->where('massage_date', ($type === 'today' ? '=' : ($type === 'past' ? '<' : '>=')), $now->toDateString());
                          }])
                          ->get();
 
         if ($isApi === true) {
-            $messagePrefix = (($isPast) ? 'Past' : 'Future');
+            $messagePrefix = ($type === 'today' ? 'Today' : (($type === 'past') ? 'Past' : 'Future'));
             if (!empty($bookings)) {
                 $message = $messagePrefix . ' booking found successfully !';
             } else {

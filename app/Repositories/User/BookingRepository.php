@@ -3,6 +3,8 @@
 namespace App\Repositories\User;
 
 use App\Repositories\BaseRepository;
+use App\Repositories\Massage\MassagePriceRepository;
+use App\Repositories\Massage\MassageTimingRepository;
 use App\Booking;
 use App\BookingInfo;
 use Carbon\Carbon;
@@ -10,18 +12,21 @@ use DB;
 
 class BookingRepository extends BaseRepository
 {
-    protected $booking, $bookingInfo;
+    protected $booking, $bookingInfo, $massagePrice, $massageTiming;
 
     public function __construct()
     {
         parent::__construct();
-        $this->booking     = new Booking();
-        $this->bookingInfo = new BookingInfo();
+        $this->booking       = new Booking();
+        $this->bookingInfo   = new BookingInfo();
+        $this->massagePrice  = new MassagePriceRepository();
+        $this->massageTiming = new MassageTimingRepository();
     }
 
     public function create(array $data)
     {
         $booking = [];
+        $now     = Carbon::now();
         DB::beginTransaction();
 
         try {
@@ -55,6 +60,24 @@ class BookingRepository extends BaseRepository
                     ]);
                 }
 
+                // Get massage pricing.
+                $getMassagePrice = $this->massagePrice->getWhereFirst('id', $infos['massage_prices_id']);
+                if (empty($getMassagePrice)) {
+                    return response()->json([
+                        'code' => 401,
+                        'msg'  => 'Massage price doesn\'t found.'
+                    ]);
+                }
+
+                // Get massage timing.
+                $getMassageTiming = $this->massageTiming->getWhereFirst('id', $infos['massage_timing_id']);
+                if (empty($getMassageTiming)) {
+                    return response()->json([
+                        'code' => 401,
+                        'msg'  => 'Massage duration doesn\'t found.'
+                    ]);
+                }
+
                 $bookingInfos[] = [
                     'preference'            => $infos['preference'],
                     'location'              => $infos['location'],
@@ -62,11 +85,15 @@ class BookingRepository extends BaseRepository
                     'massage_time'          => $infos['massage_time'],
                     'notes_of_injuries'     => $infos['notes_of_injuries'],
                     'imc_type'              => $infos['imc_type'],
+                    'massage_timing'        => $getMassageTiming->time,
+                    'massage_pricing'       => $getMassagePrice->price,
                     // 'copy_with_id'          => $infos['copy_with_id'],
                     'massage_timing_id'     => $infos['massage_timing_id'],
                     'therapist_id'          => $infos['therapist_id'],
-                    'massage_price_id'      => $infos['massage_price_id'],
-                    'booking_id'            => $infos['booking_id']
+                    'massage_prices_id'     => $infos['massage_prices_id'],
+                    'booking_id'            => $infos['booking_id'],
+                    'room_id'               => $infos['room_id'],
+                    'created_at'            => $now
                 ];
             }
             $bookingInfo->insert($bookingInfos);
@@ -266,6 +293,32 @@ class BookingRepository extends BaseRepository
         return response()->json([
             'code' => 401,
             'msg'  => 'Booking not found.'
+        ]);
+    }
+
+    public function setMassageDone(int $bookingInfoId)
+    {
+        return $this->bookingInfo->where('id', $bookingInfoId)->update(['is_done' => '1']);
+    }
+
+    public function addRoom(int $bookingInfoId, int $roomId)
+    {
+        $findBookingInfo = $this->getInfos($bookingInfoId);
+
+        if (!empty($findBookingInfo)) {
+            $isUpdateRoom = $this->bookingInfo->where('id', $bookingInfoId)->update(['room_id' => $roomId]);
+
+            if ($isUpdateRoom) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Room added successfully !'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'code' => 401,
+            'msg'  => 'Booking info not found.'
         ]);
     }
 

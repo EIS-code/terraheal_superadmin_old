@@ -31,8 +31,12 @@ class UserRepository extends BaseRepository
                 ]);
             }
 
-            $user                  = $this->user;
-            $user->name            = $data['name'];
+            $user             = $this->user;
+            $data['password'] = (!empty($data['password']) ? Hash::make($data['password']) : NULL);
+            $user->fill($data);
+            $user->save();
+
+            /*$user->name            = $data['name'];
             $user->dob             = (!empty($data['dob']) ? $data['dob'] : NULL);
             $user->email           = $data['email'];
             $user->tel_number      = (!empty($data['tel_number']) ? $data['tel_number'] : NULL);
@@ -47,7 +51,7 @@ class UserRepository extends BaseRepository
             $user->shop_id        = $data['shop_id'];
 
             // $user->fill($data);
-            $user->save();
+            $user->save();*/
         } catch(Exception $e) {
             DB::rollBack();
             // throw $e;
@@ -74,17 +78,17 @@ class UserRepository extends BaseRepository
 
     public function getWhereFirst($column, $value, $isApi = false)
     {
-        $userData = $this->user->where($column, $value)->first();
+        $data = $this->user->where($column, $value)->first();
 
         if ($isApi === true) {
             return response()->json([
                 'code' => 200,
                 'msg'  => 'User found successfully !',
-                'data' => $userData
+                'data' => $data
             ]);
         }
 
-        return $userData;
+        return $data;
     }
 
     public function update(int $id, array $data)
