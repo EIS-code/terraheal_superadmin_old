@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UserMassageHistoryTable extends Migration
+class TherapistCalendarTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class UserMassageHistoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_massage_history', function (Blueprint $table) {
+        Schema::create('therapist_calendar', function (Blueprint $table) {
             $table->id();
-            $table->time('start_time');
-            $table->time('end_time');
-            $table->bigInteger('booking_id')->unsigned();
-            $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
+            $table->date('date');
+            $table->time('time_from');
+            $table->time('time_to');
             $table->bigInteger('therapist_id')->unsigned();
             $table->foreign('therapist_id')->references('id')->on('therapists')->onDelete('cascade');
             $table->timestamps();
@@ -32,6 +31,6 @@ class UserMassageHistoryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_massage_history');
+        Schema::dropIfExists('therapist_calendar');
     }
 }

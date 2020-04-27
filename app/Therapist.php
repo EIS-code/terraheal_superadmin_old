@@ -5,9 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 
-class FreelancerTherapist extends Model
+class Therapist extends Model
 {
-    //
     protected $fillable = [
         'name',
         'dob',
@@ -16,6 +15,7 @@ class FreelancerTherapist extends Model
         'tel_number',
         'hobbies',
         'short_description',
+        'is_freelancer',
         'is_deleted',
         'shop_id'
     ];
@@ -32,9 +32,9 @@ class FreelancerTherapist extends Model
     {
         $user = NULL;
         if ($isUpdate === true && !empty($id)) {
-            $emailValidator = ['unique:freelancer_therapists,email,' . $id];
+            $emailValidator = ['unique:therapists,email,' . $id];
         } else {
-            $emailValidator = ['unique:freelancer_therapists'];
+            $emailValidator = ['unique:therapists'];
         }
 
         return Validator::make($data, [
@@ -45,7 +45,8 @@ class FreelancerTherapist extends Model
             'tel_number'        => ['required'],
             'hobbies'           => ['string', 'max:255'],
             'short_description' => ['required', 'string', 'max:255'],
-            'shop_id'           => ['required', 'integer']
+            'shop_id'           => ['required', 'integer'],
+            'is_freelancer'     => ['required', 'in:0,1']
         ]);
     }
 }

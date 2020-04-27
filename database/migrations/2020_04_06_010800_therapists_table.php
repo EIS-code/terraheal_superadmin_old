@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class FreelancerTherapistsTable extends Migration
+class TherapistsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class FreelancerTherapistsTable extends Migration
      */
     public function up()
     {
-        Schema::create('freelancer_therapists', function (Blueprint $table) {
+        Schema::create('therapists', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('dob');
@@ -24,6 +24,7 @@ class FreelancerTherapistsTable extends Migration
             // $table->string('spoken_language_ids')->comment('Comma separated language ids for spoken.');
             $table->string('short_description');
             // $table->string('profile_photo');
+            $table->enum('is_freelancer', [0, 1])->comment('0: Nope, 1: Yes');
             $table->enum('is_deleted', [0, 1])->comment('0: Nope, 1: Yes');
             $table->bigInteger('shop_id')->unsigned();
             $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
@@ -38,6 +39,6 @@ class FreelancerTherapistsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('freelancer_therapists');
+        Schema::dropIfExists('therapists');
     }
 }

@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Repositories\Therapist\Freelancer\Massage;
+namespace App\Repositories\Therapist\Massage;
 
 use App\Repositories\BaseRepository;
-use App\FreelancerTherapistMassageHistory;
+use App\TherapistMassageHistory;
 use App\Repositories\User\BookingRepository;
 use Carbon\Carbon;
 use DB;
 
-class FreelancerTherapistMassageHistoryRepository extends BaseRepository
+class TherapistMassageHistoryRepository extends BaseRepository
 {
-    protected $freelancerTherapistMassageHistory, $booking;
+    protected $therapistMassageHistory, $booking;
 
     public function __construct()
     {
         parent::__construct();
-        $this->freelancerTherapistMassageHistory = new FreelancerTherapistMassageHistory();
+        $this->therapistMassageHistory = new therapistMassageHistory();
         $this->booking = new BookingRepository();
     }
 
     public function startMassage(int $bookingInfoId)
     {
-        $freelancerTherapistMassageHistory = [];
+        $therapistMassageHistory = [];
         $now = Carbon::now();
         DB::beginTransaction();
 /*
@@ -37,16 +37,16 @@ class FreelancerTherapistMassageHistoryRepository extends BaseRepository
 */
         try {
             $data['start_time']                = $now;
-            $freelancerTherapistMassageHistory = $this->freelancerTherapistMassageHistory;
+            $therapistMassageHistory = $this->therapistMassageHistory;
 
             // If already exists then update it.
             $getMassageHistory = $this->getWhere('booking_infos_id', $bookingInfoId);
             if (!empty($getMassageHistory) && !$getMassageHistory->isEmpty()) {
-                $freelancerTherapistMassageHistory->where('booking_infos_id', $bookingInfoId)->update($data);
+                $therapistMassageHistory->where('booking_infos_id', $bookingInfoId)->update($data);
             } else {
                 $data['booking_infos_id'] = $bookingInfoId;
-                $freelancerTherapistMassageHistory->fill($data);
-                $freelancerTherapistMassageHistory->save();
+                $therapistMassageHistory->fill($data);
+                $therapistMassageHistory->save();
             }
         } catch(Exception $e) {
             DB::rollBack();
@@ -64,7 +64,7 @@ class FreelancerTherapistMassageHistoryRepository extends BaseRepository
 
     public function completeMassage(int $bookingInfoId)
     {
-        $freelancerTherapistMassageHistory = [];
+        $therapistMassageHistory = [];
         $now = Carbon::now();
         DB::beginTransaction();
 
@@ -82,12 +82,12 @@ class FreelancerTherapistMassageHistoryRepository extends BaseRepository
                 }
 
 
-                $freelancerTherapistMassageHistory = $this->freelancerTherapistMassageHistory;
+                $therapistMassageHistory = $this->therapistMassageHistory;
                 $createdDate            = new Carbon(date('Y-m-d', strtotime($getMassageHistory->created_at)) . ' ' . $getMassageHistory->start_time);
                 $remainingTime          = $now->diff($createdDate)->format('%H:%I:%S');
                 $data['end_time']       = $now;
                 $data['remaining_time'] = $remainingTime;
-                $isUpdate = $freelancerTherapistMassageHistory->where('booking_infos_id', $bookingInfoId)->update($data);
+                $isUpdate = $therapistMassageHistory->where('booking_infos_id', $bookingInfoId)->update($data);
 
                 if ($isUpdate) {
                     $isUpdate = $this->booking->setMassageDone($bookingInfoId);
@@ -121,16 +121,16 @@ class FreelancerTherapistMassageHistoryRepository extends BaseRepository
 
     public function pauseMassage($bookingInfoId)
     {
-        $freelancerTherapistMassageHistory = [];
+        $therapistMassageHistory = [];
         $now = Carbon::now();
         DB::beginTransaction();
 
         try {
             $getMassageHistory = $this->getWhereFirst('booking_infos_id', $bookingInfoId);
             if (!empty($getMassageHistory)) {
-                $freelancerTherapistMassageHistory = $this->freelancerTherapistMassageHistory;
+                $therapistMassageHistory = $this->therapistMassageHistory;
                 $data['pause_from'] = $now;
-                $freelancerTherapistMassageHistory->where('booking_infos_id', $bookingInfoId)->update($data);
+                $therapistMassageHistory->where('booking_infos_id', $bookingInfoId)->update($data);
             } else {
                 return response()->json([
                     'code' => 401,
@@ -153,16 +153,16 @@ class FreelancerTherapistMassageHistoryRepository extends BaseRepository
 
     public function restartMassage($bookingInfoId)
     {
-        $freelancerTherapistMassageHistory = [];
+        $therapistMassageHistory = [];
         $now = Carbon::now();
         DB::beginTransaction();
 
         try {
             $getMassageHistory = $this->getWhereFirst('booking_infos_id', $bookingInfoId);
             if (!empty($getMassageHistory)) {
-                $freelancerTherapistMassageHistory = $this->freelancerTherapistMassageHistory;
+                $therapistMassageHistory = $this->therapistMassageHistory;
                 $data['pause_to'] = $now;
-                $freelancerTherapistMassageHistory->where('booking_infos_id', $bookingInfoId)->update($data);
+                $therapistMassageHistory->where('booking_infos_id', $bookingInfoId)->update($data);
             } else {
                 return response()->json([
                     'code' => 401,
@@ -188,22 +188,22 @@ class FreelancerTherapistMassageHistoryRepository extends BaseRepository
 
     public function all()
     {
-        return $this->freelancerTherapistMassageHistory->all();
+        return $this->therapistMassageHistory->all();
     }
 
     public function getWhere($column, $value)
     {
-        return $this->freelancerTherapistMassageHistory->where($column, $value)->get();
+        return $this->therapistMassageHistory->where($column, $value)->get();
     }
 
     public function getWhereFirst($column, $value, $isApi = false)
     {
-        $data = $this->freelancerTherapistMassageHistory->where($column, $value)->first();
+        $data = $this->therapistMassageHistory->where($column, $value)->first();
 
         if ($isApi === true) {
             return response()->json([
                 'code' => 200,
-                'msg'  => 'Freelancer therapist massage history found successfully !',
+                'msg'  => 'Therapist massage history found successfully !',
                 'data' => $data
             ]);
         }
@@ -222,10 +222,10 @@ class FreelancerTherapistMassageHistoryRepository extends BaseRepository
 
     public function get(int $id)
     {
-        $freelancerTherapistMassageHistory = $this->freelancerTherapistMassageHistory->find($id);
+        $therapistMassageHistory = $this->therapistMassageHistory->find($id);
 
-        if (!empty($freelancerTherapistMassageHistory)) {
-            return $freelancerTherapistMassageHistory->get();
+        if (!empty($therapistMassageHistory)) {
+            return $therapistMassageHistory->get();
         }
 
         return NULL;

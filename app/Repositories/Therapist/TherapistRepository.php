@@ -1,34 +1,34 @@
 <?php
 
-namespace App\Repositories\Therapist\Freelancer;
+namespace App\Repositories\Therapist;
 
 use App\Repositories\BaseRepository;
-use App\Repositories\Therapist\Freelancer\FreelancerTherapistDocumentRepository;
-use App\FreelancerTherapist;
+use App\Repositories\Therapist\TherapistDocumentRepository;
+use App\Therapist;
 use App\Booking;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use DB;
 
-class FreelancerTherapistRepository extends BaseRepository
+class TherapistRepository extends BaseRepository
 {
-    protected $freelancerTherapist, $freelancerTherapistDocumentRepo, $booking;
+    protected $therapist, $therapistDocumentRepo, $booking;
 
     public function __construct()
     {
         parent::__construct();
-        $this->freelancerTherapist              = new FreelancerTherapist();
-        $this->freelancerTherapistDocumentRepo  = new FreelancerTherapistDocumentRepository();
+        $this->therapist              = new Therapist();
+        $this->therapistDocumentRepo  = new therapistDocumentRepository();
         $this->booking                          = new Booking();
     }
 
     public function create(array $data)
     {
-        $freelancerTherapist = [];
+        $therapist = [];
         DB::beginTransaction();
 
         try {
-            $validator = $this->freelancerTherapist->validator($data);
+            $validator = $this->therapist->validator($data);
             if ($validator->fails()) {
                 return response()->json([
                     'code' => 401,
@@ -36,10 +36,10 @@ class FreelancerTherapistRepository extends BaseRepository
                 ]);
             }
 
-            $freelancerTherapist = $this->freelancerTherapist;
-            $freelancerTherapist->fill($data);
-            if ($freelancerTherapist->save() && !empty($data['documents'])) {
-                $this->freelancerTherapistDocumentRepo->create($data['documents'], $freelancerTherapist->id);
+            $therapist = $this->therapist;
+            $therapist->fill($data);
+            if ($therapist->save() && !empty($data['documents'])) {
+                $this->therapistDocumentRepo->create($data['documents'], $therapist->id);
             }
         } catch(Exception $e) {
             DB::rollBack();
@@ -50,19 +50,19 @@ class FreelancerTherapistRepository extends BaseRepository
 
         return response()->json([
             'code' => 200,
-            'msg'  => 'Freelancer therapist created successfully !',
-            'data' => $freelancerTherapist
+            'msg'  => 'Therapist created successfully !',
+            'data' => $therapist
         ]);
     }
 
     public function all()
     {
-        return $this->freelancerTherapist->all();
+        return $this->therapist->all();
     }
 
     public function getWhere($column, $value)
     {
-        return $this->freelancerTherapist->where($column, $value)->get();
+        return $this->therapist->where($column, $value)->get();
     }
 
     public function getWherePastFuture(int $therapistId, $isPast = true, $isApi = false)
@@ -95,12 +95,12 @@ class FreelancerTherapistRepository extends BaseRepository
 
     public function getWhereFirst($column, $value, $isApi = false)
     {
-        $data = $this->freelancerTherapist->where($column, $value)->first();
+        $data = $this->therapist->where($column, $value)->first();
 
         if ($isApi === true) {
             return response()->json([
                 'code' => 200,
-                'msg'  => 'Freelancer therapist found successfully !',
+                'msg'  => 'Therapist found successfully !',
                 'data' => $data
             ]);
         }
@@ -119,10 +119,10 @@ class FreelancerTherapistRepository extends BaseRepository
 
     public function get(int $id)
     {
-        $freelancerTherapist = $this->freelancerTherapist->find($id);
+        $therapist = $this->therapist->find($id);
 
-        if (!empty($freelancerTherapist)) {
-            return $freelancerTherapist->get();
+        if (!empty($therapist)) {
+            return $therapist->get();
         }
 
         return NULL;

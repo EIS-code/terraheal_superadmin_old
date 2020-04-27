@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class FreelancerTherapistDocumentsTable extends Migration
+class TherapistDocumentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class FreelancerTherapistDocumentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('freelancer_therapist_documents', function (Blueprint $table) {
+        Schema::create('therapist_documents', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('path');
-            $table->bigInteger('freelancer_therapist_id')->unsigned();
-            $table->foreign('freelancer_therapist_id')->references('id')->on('freelancer_therapists')->onDelete('cascade');
+            $table->bigInteger('therapist_id')->unsigned();
+            $table->foreign('therapist_id')->references('id')->on('therapists')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class FreelancerTherapistDocumentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('freelancer_therapist_documents');
+        Schema::dropIfExists('therapist_documents');
     }
 }

@@ -21,12 +21,12 @@ class ShopsTable extends Migration
             $table->decimal('latitude', 11, 8);
             $table->string('owner_name');
             $table->string('tel_number', 50);
-            $table->string('owner_mobile_number');
+            $table->string('owner_mobile_number', 50);
             $table->string('owner_email')->unique();
             $table->string('email')->unique();
             $table->string('time_zone');
             $table->string('user_name');
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->bigInteger('city_id')->unsigned();
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             $table->bigInteger('country_id')->unsigned();

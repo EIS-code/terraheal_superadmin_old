@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class FreelancerTherapistMassageHistoriesTable extends Migration
+class TherapistMassageHistoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class FreelancerTherapistMassageHistoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('freelancer_therapist_massage_histories', function (Blueprint $table) {
+        Schema::create('therapist_massage_histories', function (Blueprint $table) {
             $table->id();
             $table->time('start_time');
             $table->time('end_time')->nullable();
@@ -23,7 +23,7 @@ class FreelancerTherapistMassageHistoriesTable extends Migration
             $table->bigInteger('booking_infos_id')->unsigned();
             $table->foreign('booking_infos_id')->references('id')->on('booking_infos')->onDelete('cascade');
             // $table->bigInteger('therapist_id')->unsigned();
-            // $table->foreign('therapist_id')->references('id')->on('freelancer_therapists')->onDelete('cascade');
+            // $table->foreign('therapist_id')->references('id')->on('therapists')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -35,6 +35,6 @@ class FreelancerTherapistMassageHistoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('freelancer_therapist_massage_histories');
+        Schema::dropIfExists('therapist_massage_histories');
     }
 }

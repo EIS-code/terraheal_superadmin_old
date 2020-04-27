@@ -29,7 +29,7 @@ class BookingInfosTable extends Migration
             $table->bigInteger('massage_timing_id')->unsigned();
             $table->foreign('massage_timing_id')->references('id')->on('massage_timings')->onDelete('cascade');
             $table->bigInteger('therapist_id')->unsigned();
-            $table->foreign('therapist_id')->references('id')->on('freelancer_therapists')->onDelete('cascade');
+            $table->foreign('therapist_id')->references('id')->on('therapists')->onDelete('cascade');
             $table->bigInteger('massage_prices_id')->unsigned();
             $table->foreign('massage_prices_id')->references('id')->on('massage_prices')->onDelete('cascade');
             $table->bigInteger('booking_id')->unsigned();

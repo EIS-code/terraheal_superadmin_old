@@ -68,19 +68,25 @@ Route::group(['middleware' => ['web']], function () {
     });
 
     Route::group(['prefix' => 'therapist', 'namespace' => 'Therapist'], function () {
-        Route::group(['prefix' => 'freelancer', 'namespace' => 'Freelancer'], function () {
-            Route::post('/signup', 'FreelancerTherapistController@signup')->name('freelancerTherapistSignUp');
+        Route::group(['prefix' => 'freelancer'], function () {
+            Route::post('/signup', 'TherapistController@signup')->name('therapistSignUp');
 
             Route::group(['prefix' => 'booking'], function () {
-                Route::get('/list/past/{therapistId}', 'FreelancerTherapistController@getPastBooking')->name('freelancerTherapistGetPastBooking');
-                Route::get('/list/future/{therapistId}', 'FreelancerTherapistController@getFutureBooking')->name('freelancerTherapistGetFutureBooking');
+                Route::get('/list/past/{therapistId}', 'TherapistController@getPastBooking')->name('therapistGetPastBooking');
+                Route::get('/list/future/{therapistId}', 'TherapistController@getFutureBooking')->name('therapistGetFutureBooking');
             });
 
             Route::group(['prefix' => 'massage', 'namespace' => 'Massage'], function () {
-                Route::get('/start/{bookingInfoId}', 'FreelancerTherapistMassageHistoryController@startMassage')->name('freelancerTherapistStartMassage');
-                Route::get('/complete/{bookingInfoId}', 'FreelancerTherapistMassageHistoryController@completeMassage')->name('freelancerTherapistCompleteMassage');
-                Route::get('/pause/{bookingInfoId}', 'FreelancerTherapistMassageHistoryController@pauseMassage')->name('freelancerTherapistPauseMassage');
-                Route::get('/restart/{bookingInfoId}', 'FreelancerTherapistMassageHistoryController@restartMassage')->name('freelancerTherapistRestartMassage');
+                Route::get('/start/{bookingInfoId}', 'TherapistMassageHistoryController@startMassage')->name('therapistStartMassage');
+                Route::get('/complete/{bookingInfoId}', 'TherapistMassageHistoryController@completeMassage')->name('therapistCompleteMassage');
+                Route::get('/pause/{bookingInfoId}', 'TherapistMassageHistoryController@pauseMassage')->name('therapistPauseMassage');
+                Route::get('/restart/{bookingInfoId}', 'TherapistMassageHistoryController@restartMassage')->name('therapistRestartMassage');
+            });
+
+            Route::group(['prefix' => 'calendar'], function () {
+                Route::post('/create', 'TherapistController@createCalendar')->name('therapistCreateCalendar');
+                Route::post('/updateTime/{therapistId}/{date}', 'TherapistController@updateTimeCalendar')->name('therapistUpdateTimeCalendar');
+                Route::get('/delete/{therapistId}/{date}', 'TherapistController@deleteCalendar')->name('therapistDeleteCalendar');
             });
         });
     });

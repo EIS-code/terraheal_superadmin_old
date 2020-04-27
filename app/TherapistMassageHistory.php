@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
-class FreelancerTherapistMassageHistory extends Model
+class TherapistMassageHistory extends Model
 {
     protected $fillable = [
         'start_time',
