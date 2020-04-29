@@ -19,4 +19,9 @@ class Massage extends Model
             'image' => ['string', 'max:255']
         ]);
     }
+
+    public function timing()
+    {
+        return $this->hasMany('App\MassageTiming', 'massage_id', 'id');
+    }
 }

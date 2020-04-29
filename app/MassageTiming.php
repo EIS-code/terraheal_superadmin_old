@@ -19,4 +19,9 @@ class MassageTiming extends Model
             'massage_id' => ['required', 'integer']
         ]);
     }
+
+    public function pricing()
+    {
+        return $this->hasMany('App\MassagePrice', 'massage_timing_id', 'id');
+    }
 }

@@ -14,12 +14,17 @@ use App\Repositories\User\Payment\UserCardDetailRepository;
 use App\Repositories\Therapist\TherapistRepository;
 use App\Repositories\Therapist\Massage\TherapistMassageHistoryRepository;
 use App\Repositories\Therapist\TherapistCalendarRepository;
+use App\Repositories\Therapist\TherapistReviewQuestionRepository;
+use App\Repositories\Therapist\TherapistReviewRepository;
 use App\Repositories\Receptionist\ReceptionistRepository;
+use App\Repositories\Staff\StaffRepository;
+use App\Repositories\Staff\StaffAttendanceRepository;
+use App\Repositories\Massage\MassageRepository;
 
 abstract class BaseController extends Controller
 {
     protected $httpRequest = null;
-    protected $userRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo, $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo;
+    protected $userRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo, $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo;
 
     public function __construct()
     {
@@ -35,6 +40,11 @@ abstract class BaseController extends Controller
         $this->therapistRepo           = new therapistRepository();
         $this->therapistMassageHistoryRepo = new therapistMassageHistoryRepository();
         $this->receptionistRepo        = new ReceptionistRepository();
+        $this->therapistReviewQuestionRepo = new TherapistReviewQuestionRepository();
+        $this->therapistReviewRepo     = new TherapistReviewRepository();
         $this->therapistCalendarRepo   = new TherapistCalendarRepository();
+        $this->staffRepo               = new StaffRepository();
+        $this->staffAttendanceRepo     = new StaffAttendanceRepository();
+        $this->massageRepo             = new MassageRepository();
     }
 }

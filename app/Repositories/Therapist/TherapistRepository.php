@@ -4,7 +4,9 @@ namespace App\Repositories\Therapist;
 
 use App\Repositories\BaseRepository;
 use App\Repositories\Therapist\TherapistDocumentRepository;
+use App\Repositories\Therapist\TherapistReviewRepository;
 use App\Therapist;
+use App\TherapistReview;
 use App\Booking;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -12,14 +14,15 @@ use DB;
 
 class TherapistRepository extends BaseRepository
 {
-    protected $therapist, $therapistDocumentRepo, $booking;
+    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking;
 
     public function __construct()
     {
         parent::__construct();
-        $this->therapist              = new Therapist();
-        $this->therapistDocumentRepo  = new therapistDocumentRepository();
-        $this->booking                          = new Booking();
+        $this->therapist                 = new Therapist();
+        $this->therapistDocumentRepo     = new therapistDocumentRepository();
+        $this->therapistReviewRepository = new TherapistReviewRepository();
+        $this->booking                   = new Booking();
     }
 
     public function create(array $data)
@@ -113,6 +116,108 @@ class TherapistRepository extends BaseRepository
 
     public function delete(int $id)
     {}
+
+    public function search(array $data, int $limit = 10)
+    {
+        $query = (!empty($data['q'])) ? $data['q'] : "";
+        $limit = (!is_integer($limit)) ? 10 : $limit;
+
+        $tableTherapist       = $this->therapist->getTableName();
+        $tableTherapistReview = TherapistReview::getTableName();
+        $getData              = $this->therapist
+                                    ->select(DB::raw("{$tableTherapist}.*, SUM(tr.rating) AS total_ratings"))
+                                    ->leftJoin($tableTherapistReview . ' AS tr', "{$tableTherapist}.id", '=', 'tr.therapist_id')
+                                    ->where(function ($qry) use ($query) {
+                                        $qry->where("name", "LIKE", "%" . $query . "%")
+                                            ->orWhere("email", "LIKE", "%" . $query . "%")
+                                            ->orWhere("short_description", "LIKE", "%" . $query . "%");
+                                    })
+                                    ->where("is_freelancer", "=", "1")
+                                    ->groupBy("{$tableTherapist}.id")
+                                    ->orderBy(DB::raw('SUM(tr.rating)'), 'desc')
+                                    ->limit($limit)
+                                    ->get();
+        /* 
+        
+        $getData = DB::select("SELECT * FROM (
+                                    SELECT tp.*, SUM(tr.rating) AS total_ratings FROM therapist_reviews AS tr, (
+                                        SELECT * FROM `{$tableTherapist}` AS t
+                                        WHERE (t.`name` LIKE '%{$query}%' OR t.`email` LIKE '%{$query}%' OR t.`short_description` LIKE '%{$query}%') AND t.`is_freelancer` = '1'
+                                        LIMIT {$limit}
+                                    ) AS tp 
+                                    WHERE tp.id = tr.therapist_id GROUP BY tr.therapist_id) AS t1 
+                               ORDER BY t1.total_ratings DESC;");
+        $subQuery = DB::table($tableTherapist)->where(function ($qry) use ($query) {
+                                                    $qry->where("name", "LIKE", "%" . $query . "%")
+                                                        ->orWhere("email", "LIKE", "%" . $query . "%")
+                                                        ->orWhere("short_description", "LIKE", "%" . $query . "%");
+                                                    })
+                                                ->where("is_freelancer", "=", "1")
+                                                ->limit($limit);
+        // DB::raw("({$subQuery->toSql()})")
+        $getData = DB::table(DB::raw("({$subQuery->toSql()})"))->mergeBindings($subQuery)
+                                                    ->select(DB::raw("{$tableTherapist}.*, SUM({$tableTherapistReview}.review) AS total_ratings FROM {$tableTherapistReview}"))
+                                                    ->where("id", "=", "therapist_id")->toSql(); */
+        /* $subQuery = DB::table($tableTherapist)->where(function ($qry) use ($query) {
+                                                    $qry->where("name", "LIKE", "%" . $query . "%")
+                                                        ->orWhere("email", "LIKE", "%" . $query . "%")
+                                                        ->orWhere("short_description", "LIKE", "%" . $query . "%");
+                                                    })
+                                                ->where("is_freelancer", "=", "1")
+                                                ->limit($limit);
+        $subQuery1 = DB::select(DB::raw("SELECT tp.*, SUM(tr.rating) AS total_ratings FROM {$tableTherapistReview} AS tr, ({$subQuery->toSql()}) as tp WHERE tp.id = tr.therapist_id GROUP BY tr.therapist_id"))->toSql(); */
+        dd($getData);
+
+        if (!empty($getData) && !$getData->isEmpty()) {
+            /* $therapistIds = $therapistInfos = [];
+            $getData->each(function($value, $index) use (&$therapistIds, &$therapistInfos) {
+                // $getReview = $this->therapistReviewRepository->getWhere('therapist_id', $value->id);
+                $therapistIds[]             = $value->id;
+                $therapistInfos[$value->id] = $value;
+            });
+
+            $getReviews = $this->therapistReviewRepository->getWhereIn('therapist_id', $therapistIds);
+
+            $reviewCount = [];
+            if (!empty($getReviews) && !$getReviews->isEmpty()) {
+                $getReviews->each(function($value) use(&$reviewCount) {
+                    $reviewCount = $this->reviewCount($value);
+                });
+            }
+            if (!empty($reviewCount)) {
+                arsort($reviewCount);
+                foreach ($reviewCount as $therapistId => $totalRatings) {
+                    $response[] = $therapistInfos[$therapistId];
+                }
+            } */
+
+            return response()->json([
+                'code' => 200,
+                'msg'  => 'Therapist found successfully !',
+                'data' => $getData
+            ]);
+        }
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'Therapist doesn\'t found.'
+        ]);
+    }
+
+    public function reviewCount(TherapistReview $collection)
+    {
+        if (!empty($collection) && $collection instanceof TherapistReview) {
+            $ratings = [];
+
+            $collection->each(function($value) use(&$ratings) {
+                $ratings[$value->therapist_id][] = $value->rating;
+            });
+
+            return array_map('array_sum', $ratings);
+        }
+
+        return false;
+    }
 
     public function deleteWhere($column, $value)
     {}

@@ -84,9 +84,15 @@ Route::group(['middleware' => ['web']], function () {
             });
 
             Route::group(['prefix' => 'calendar'], function () {
-                Route::post('/create', 'TherapistController@createCalendar')->name('therapistCreateCalendar');
-                Route::post('/updateTime/{therapistId}/{date}', 'TherapistController@updateTimeCalendar')->name('therapistUpdateTimeCalendar');
-                Route::get('/delete/{therapistId}/{date}', 'TherapistController@deleteCalendar')->name('therapistDeleteCalendar');
+                Route::post('/create', 'TherapistCalendarController@createCalendar')->name('therapistCreateCalendar');
+                Route::post('/updateTime/{therapistId}/{date}', 'TherapistCalendarController@updateTimeCalendar')->name('therapistUpdateTimeCalendar');
+                Route::get('/delete/{therapistId}/{date}', 'TherapistCalendarController@deleteCalendar')->name('therapistDeleteCalendar');
+            });
+
+            Route::get('/search', 'TherapistController@search')->name('therapistSearch');
+
+            Route::group(['prefix' => 'review'], function () {
+                Route::post('/create', 'TherapistReviewController@create')->name('therapistReviewCreate');
             });
         });
     });
@@ -100,5 +106,21 @@ Route::group(['middleware' => ['web']], function () {
             Route::get('/list/future/{shopId}', 'ReceptionistController@getFutureBooking')->name('receptionistGetFutureBooking');
             Route::get('/list/done/{shopId}', 'ReceptionistController@getDoneBooking')->name('receptionistGetDoneBooking');
         });
+    });
+
+    Route::group(['prefix' => 'staff', 'namespace' => 'Staff'], function () {
+        Route::post('signup', 'StaffController@signup')->name('staffSignup');
+        Route::post('update/{staffId}', 'StaffController@update')->name('staffUpdate');
+
+        Route::group(['prefix' => 'attendance'], function () {
+            Route::post('in/{staffId}', 'StaffAttendanceController@attendanceIn')->name('staffAttendanceIn');
+            Route::post('breakIn/{staffId}', 'StaffAttendanceController@attendanceBreakIn')->name('staffAttendanceBreakIn');
+            Route::post('breakOut/{staffId}', 'StaffAttendanceController@attendanceBreakOut')->name('staffAttendanceBreakOut');
+            Route::post('out/{staffId}', 'StaffAttendanceController@attendanceOut')->name('staffAttendanceOut');
+        });
+    });
+
+    Route::group(['prefix' => 'massage', 'namespace' => 'Massage'], function () {
+        Route::get('get', 'MassageController@get')->name('massageGet');
     });
 });

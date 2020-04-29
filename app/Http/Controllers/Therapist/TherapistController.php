@@ -31,18 +31,8 @@ class TherapistController extends BaseController
         return $this->therapist->getWherePastFuture($therapistId, false, true);
     }
 
-    public function createCalendar()
+    public function search()
     {
-        return $this->therapistCalendar->create($this->getRequest);
-    }
-
-    public function updateTimeCalendar($therapistId, $date)
-    {
-        return $this->therapistCalendar->updateTime($therapistId, $date, $this->getRequest);
-    }
-
-    public function deleteCalendar($therapistId, $date)
-    {
-        return $this->therapistCalendar->delete($therapistId, $date);
+        return $this->therapist->search($this->getRequest);
     }
 }

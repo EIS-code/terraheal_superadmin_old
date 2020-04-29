@@ -53,15 +53,27 @@ class MassageRepository extends BaseRepository
     public function deleteWhere($column, $value)
     {}
 
-    public function get(int $id)
+    public function get(array $data, int $limit = 10)
     {
-        $massage = $this->massage->find($id);
+        /* int $id $massage = $this->massage->find($id);
 
         if (!empty($massage)) {
             return $massage->get();
         }
 
-        return NULL;
+        return NULL; */
+        $query = (!empty($data['q'])) ? $data['q'] : NULL;
+        $limit = (!is_numeric($limit)) ? 10 : $limit;
+
+        $getMassages = $this->massage->where("name", "LIKE", "%{$query}%")->with(['timing' => function($qry) {
+            $qry->with('pricing');
+        }])->limit($limit)->get();
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'Massage found successfully !',
+            'data' => $getMassages
+        ]);
     }
 
     public function errors()

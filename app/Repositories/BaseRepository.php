@@ -14,4 +14,13 @@ class BaseRepository
         $this->emailRepo = new EmailRepository();
         $this->smsRepo   = new SmsRepository();
     }
+
+    public function getJsonResponseCode($response)
+    {
+        if (!empty($response) && $response instanceof \Illuminate\Http\JsonResponse) {
+            return (!empty($response->getData()->code)) ? $response->getData()->code : false;
+        }
+
+        return false;
+    }
 }
