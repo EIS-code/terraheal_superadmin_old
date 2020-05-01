@@ -15,6 +15,7 @@ class Therapist extends BaseModel
         'hobbies',
         'short_description',
         'is_freelancer',
+        'paid_percentage',
         'is_deleted',
         'shop_id'
     ];
@@ -45,7 +46,8 @@ class Therapist extends BaseModel
             'hobbies'           => ['string', 'max:255'],
             'short_description' => ['required', 'string', 'max:255'],
             'shop_id'           => ['required', 'integer'],
-            'is_freelancer'     => ['required', 'in:0,1']
+            'is_freelancer'     => ['required', 'in:0,1'],
+            'paid_percentage'   => ['required', 'integer']
         ]);
     }
 }

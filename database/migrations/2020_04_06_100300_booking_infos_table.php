@@ -24,8 +24,17 @@ class BookingInfosTable extends Migration
             $table->string('cancelled_reason')->nullable();
             $table->enum('imc_type', [1, 2])->comment('1: ASAP, 2: Scheduled');
             $table->string('massage_timing', 50);
-            $table->float('massage_pricing');
+            // $table->float('massage_pricing');
+            $table->float('price');
+            $table->float('cost');
+            $table->float('origional_price');
+            $table->float('origional_cost');
             $table->enum('is_done', [0, 1])->default(0)->comment('0: Nope, 1: Yes');
+            $table->decimal('exchange_rate', 8, 4);
+            $table->bigInteger('booking_currency_id')->unsigned();
+            $table->foreign('booking_currency_id')->references('id')->on('currencies')->onDelete('cascade');
+            $table->bigInteger('shop_currency_id')->unsigned();
+            $table->foreign('shop_currency_id')->references('id')->on('currencies')->onDelete('cascade');
             $table->bigInteger('massage_timing_id')->unsigned();
             $table->foreign('massage_timing_id')->references('id')->on('massage_timings')->onDelete('cascade');
             $table->bigInteger('therapist_id')->unsigned();

@@ -8,13 +8,15 @@ use App\Repositories\Therapist\TherapistReviewRepository;
 use App\Therapist;
 use App\TherapistReview;
 use App\Booking;
+use App\BookingInfo;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use DB;
 
 class TherapistRepository extends BaseRepository
 {
-    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking;
+    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo;
+    public    $isFreelancer = '0';
 
     public function __construct()
     {
@@ -22,7 +24,9 @@ class TherapistRepository extends BaseRepository
         $this->therapist                 = new Therapist();
         $this->therapistDocumentRepo     = new therapistDocumentRepository();
         $this->therapistReviewRepository = new TherapistReviewRepository();
+        $this->therapistReview           = new TherapistReview();
         $this->booking                   = new Booking();
+        $this->bookingInfo               = new BookingInfo();
     }
 
     public function create(array $data)
@@ -31,6 +35,7 @@ class TherapistRepository extends BaseRepository
         DB::beginTransaction();
 
         try {
+            $data['is_freelancer'] = $this->isFreelancer;
             $validator = $this->therapist->validator($data);
             if ($validator->fails()) {
                 return response()->json([
@@ -119,21 +124,26 @@ class TherapistRepository extends BaseRepository
 
     public function search(array $data, int $limit = 10)
     {
-        $query = (!empty($data['q'])) ? $data['q'] : "";
-        $limit = (!is_integer($limit)) ? 10 : $limit;
+        $query   = (!empty($data['q'])) ? $data['q'] : "";
+        $limit   = (!is_integer($limit)) ? 10 : $limit;
+        $now     = Carbon::now();
+        $nowDate = $now->toDateString();
 
         $tableTherapist       = $this->therapist->getTableName();
-        $tableTherapistReview = TherapistReview::getTableName();
+        $tableTherapistReview = $this->therapistReview->getTableName();
+        $tableBookingInfo     = $this->bookingInfo->getTableName();
         $getData              = $this->therapist
-                                    ->select(DB::raw("{$tableTherapist}.*, SUM(tr.rating) AS total_ratings"))
+                                    ->select(DB::raw("{$tableTherapist}.*, SUM(tr.rating) AS total_ratings, bi.id as booking_id"))
                                     ->leftJoin($tableTherapistReview . ' AS tr', "{$tableTherapist}.id", '=', 'tr.therapist_id')
+                                    ->leftJoin($tableBookingInfo . ' AS bi', 'bi.therapist_id', '=', DB::raw("(SELECT bii.therapist_id FROM `booking_infos` AS bii WHERE bii.therapist_id = therapists.id AND bii.is_done = '0' AND bii.massage_date = '{$nowDate}' GROUP BY bii.therapist_id)"))
                                     ->where(function ($qry) use ($query) {
                                         $qry->where("name", "LIKE", "%" . $query . "%")
                                             ->orWhere("email", "LIKE", "%" . $query . "%")
                                             ->orWhere("short_description", "LIKE", "%" . $query . "%");
                                     })
-                                    ->where("is_freelancer", "=", "1")
+                                    ->where("is_freelancer", "=", $this->isFreelancer)
                                     ->groupBy("{$tableTherapist}.id")
+                                    ->havingRaw("booking_id IS NULL")
                                     ->orderBy(DB::raw('SUM(tr.rating)'), 'desc')
                                     ->limit($limit)
                                     ->get();
@@ -166,7 +176,7 @@ class TherapistRepository extends BaseRepository
                                                 ->where("is_freelancer", "=", "1")
                                                 ->limit($limit);
         $subQuery1 = DB::select(DB::raw("SELECT tp.*, SUM(tr.rating) AS total_ratings FROM {$tableTherapistReview} AS tr, ({$subQuery->toSql()}) as tp WHERE tp.id = tr.therapist_id GROUP BY tr.therapist_id"))->toSql(); */
-        dd($getData);
+        // dd($getData);
 
         if (!empty($getData) && !$getData->isEmpty()) {
             /* $therapistIds = $therapistInfos = [];
@@ -190,6 +200,17 @@ class TherapistRepository extends BaseRepository
                     $response[] = $therapistInfos[$therapistId];
                 }
             } */
+
+            $getData->map(function($value, $key) use($getData) {
+                // Check is therapist busy or not.
+                /* $bookingInfos = $this->bookingInfo->where('therapist_id', $value->id)->where('is_done', '1')->get();
+                if (!empty($bookingInfos) && !$bookingInfos->isEmpty()) {
+                    $getData->forget($key);
+                } */
+
+                // Check whoes earned less per hour for this day.
+                
+            });
 
             return response()->json([
                 'code' => 200,

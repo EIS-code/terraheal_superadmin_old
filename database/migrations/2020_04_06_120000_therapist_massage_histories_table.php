@@ -15,6 +15,7 @@ class TherapistMassageHistoriesTable extends Migration
     {
         Schema::create('therapist_massage_histories', function (Blueprint $table) {
             $table->id();
+            $table->date('date');
             $table->time('start_time');
             $table->time('end_time')->nullable();
             $table->time('remaining_time')->nullable();

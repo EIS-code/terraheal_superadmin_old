@@ -10,7 +10,8 @@ class MassagePrice extends Model
     protected $fillable = [
         'massage_id',
         'massage_timing_id',
-        'price'
+        'price',
+        'cost'
     ];
 
     public function validator(array $data)
@@ -18,7 +19,8 @@ class MassagePrice extends Model
         return Validator::make($data, [
             'massage_id'        => ['required', 'integer'],
             'massage_timing_id' => ['required', 'integer'],
-            'price'             => ['required']
+            'price'             => ['required'],
+            'cost'              => ['required']
         ]);
     }
 }

@@ -8,19 +8,21 @@ use App\Repositories\Massage\MassageTimingRepository;
 use App\Booking;
 use App\BookingInfo;
 use Carbon\Carbon;
+use CurrencyHelper;
 use DB;
 
 class BookingRepository extends BaseRepository
 {
-    protected $booking, $bookingInfo, $massagePrice, $massageTiming;
+    protected $booking, $bookingInfo, $massagePrice, $massageTiming, $currencyHelper;
 
     public function __construct()
     {
         parent::__construct();
-        $this->booking       = new Booking();
-        $this->bookingInfo   = new BookingInfo();
-        $this->massagePrice  = new MassagePriceRepository();
-        $this->massageTiming = new MassageTimingRepository();
+        $this->booking        = new Booking();
+        $this->bookingInfo    = new BookingInfo();
+        $this->massagePrice   = new MassagePriceRepository();
+        $this->massageTiming  = new MassageTimingRepository();
+        $this->currencyHelper = new CurrencyHelper();
     }
 
     public function create(array $data)
@@ -78,6 +80,13 @@ class BookingRepository extends BaseRepository
                     ]);
                 }
 
+                $shopCurrencyId    = $this->currencyHelper->getDefaultShopCurrency($data['user_id'], true);
+                $bookingCurrencyId = (!empty($data['currency_id'])) ? $data['currency_id'] : $shopCurrencyId;
+                $exchangeRate      = $this->currencyHelper->getRate($bookingCurrencyId);
+                /* $bookingCurrency = (!empty($data['currency_id'])) ? $this->currencyHelper->getCodeFromId($data['currency_id']) : NULL;
+                $bookingCurrency = (empty($bookingCurrency)) ? $shopCurrency : $bookingCurrency;
+                $exchangeRate    = $this->currencyHelper->getRate($bookingCurrency); */
+
                 $bookingInfos[] = [
                     'preference'            => $infos['preference'],
                     'location'              => $infos['location'],
@@ -86,7 +95,14 @@ class BookingRepository extends BaseRepository
                     'notes_of_injuries'     => $infos['notes_of_injuries'],
                     'imc_type'              => $infos['imc_type'],
                     'massage_timing'        => $getMassageTiming->time,
-                    'massage_pricing'       => $getMassagePrice->price,
+                    'price'                 => $this->currencyHelper->convert($getMassagePrice->price, $exchangeRate, $bookingCurrencyId),
+                    'cost'                  => $this->currencyHelper->convert($getMassagePrice->cost, $exchangeRate, $bookingCurrencyId),
+                    'origional_price'       => $getMassagePrice->price,
+                    'origional_cost'        => $getMassagePrice->cost,
+                    'exchange_rate'         => $exchangeRate,
+                    'booking_currency_id'   => $bookingCurrencyId,
+                    'shop_currency_id'      => $shopCurrencyId,
+                    // 'massage_pricing'       => $getMassagePrice->price,
                     // 'copy_with_id'          => $infos['copy_with_id'],
                     'massage_timing_id'     => $infos['massage_timing_id'],
                     'therapist_id'          => $infos['therapist_id'],

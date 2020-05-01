@@ -18,7 +18,7 @@ class CurrenciesTable extends Migration
         Schema::create('currencies', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
-            $table->float('exchange_rate');
+            $table->decimal('exchange_rate', 8, 4);
             $table->bigInteger('country_id')->unsigned();
             $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
             $table->timestamps();

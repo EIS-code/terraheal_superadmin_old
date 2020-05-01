@@ -20,6 +20,7 @@ class MassagePricesTable extends Migration
             $table->foreign('massage_id')->references('id')->on('massages')->onDelete('cascade');
             $table->foreign('massage_timing_id')->references('id')->on('massage_timings')->onDelete('cascade');
             $table->float('price');
+            $table->float('cost');
             $table->timestamps();
         });
     }

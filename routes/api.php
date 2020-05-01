@@ -69,31 +69,37 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::group(['prefix' => 'therapist', 'namespace' => 'Therapist'], function () {
         Route::group(['prefix' => 'freelancer'], function () {
-            Route::post('/signup', 'TherapistController@signup')->name('therapistSignUp');
+            Route::post('/signup', 'TherapistController@signup')->name('freelancerTherapistSignUp');
 
             Route::group(['prefix' => 'booking'], function () {
-                Route::get('/list/past/{therapistId}', 'TherapistController@getPastBooking')->name('therapistGetPastBooking');
-                Route::get('/list/future/{therapistId}', 'TherapistController@getFutureBooking')->name('therapistGetFutureBooking');
+                Route::get('/list/past/{therapistId}', 'TherapistController@getPastBooking')->name('freelancerTherapistGetPastBooking');
+                Route::get('/list/future/{therapistId}', 'TherapistController@getFutureBooking')->name('freelancerTherapistGetFutureBooking');
             });
 
             Route::group(['prefix' => 'massage', 'namespace' => 'Massage'], function () {
-                Route::get('/start/{bookingInfoId}', 'TherapistMassageHistoryController@startMassage')->name('therapistStartMassage');
-                Route::get('/complete/{bookingInfoId}', 'TherapistMassageHistoryController@completeMassage')->name('therapistCompleteMassage');
-                Route::get('/pause/{bookingInfoId}', 'TherapistMassageHistoryController@pauseMassage')->name('therapistPauseMassage');
-                Route::get('/restart/{bookingInfoId}', 'TherapistMassageHistoryController@restartMassage')->name('therapistRestartMassage');
+                Route::get('/start/{bookingInfoId}', 'TherapistMassageHistoryController@startMassage')->name('freelancerTherapistStartMassage');
+                Route::get('/complete/{bookingInfoId}', 'TherapistMassageHistoryController@completeMassage')->name('freelancerTherapistCompleteMassage');
+                Route::get('/pause/{bookingInfoId}', 'TherapistMassageHistoryController@pauseMassage')->name('freelancerTherapistPauseMassage');
+                Route::get('/restart/{bookingInfoId}', 'TherapistMassageHistoryController@restartMassage')->name('freelancerTherapistRestartMassage');
             });
 
             Route::group(['prefix' => 'calendar'], function () {
-                Route::post('/create', 'TherapistCalendarController@createCalendar')->name('therapistCreateCalendar');
-                Route::post('/updateTime/{therapistId}/{date}', 'TherapistCalendarController@updateTimeCalendar')->name('therapistUpdateTimeCalendar');
-                Route::get('/delete/{therapistId}/{date}', 'TherapistCalendarController@deleteCalendar')->name('therapistDeleteCalendar');
+                Route::post('/create', 'TherapistCalendarController@createCalendar')->name('freelancerTherapistCreateCalendar');
+                Route::post('/updateTime/{therapistId}/{date}', 'TherapistCalendarController@updateTimeCalendar')->name('freelancerTherapistUpdateTimeCalendar');
+                Route::get('/delete/{therapistId}/{date}', 'TherapistCalendarController@deleteCalendar')->name('freelancerTherapistDeleteCalendar');
             });
 
-            Route::get('/search', 'TherapistController@search')->name('therapistSearch');
+            Route::get('/search', 'TherapistController@search')->name('freelancerTherapistSearch');
 
             Route::group(['prefix' => 'review'], function () {
-                Route::post('/create', 'TherapistReviewController@create')->name('therapistReviewCreate');
+                Route::post('/create', 'TherapistReviewController@create')->name('freelancerTherapistReviewCreate');
             });
+        });
+
+        Route::post('/signup', 'TherapistController@signup')->name('therapistSignUp');
+        Route::group(['prefix' => 'booking'], function () {
+            Route::get('/list/past/{therapistId}', 'TherapistController@getPastBooking')->name('therapistGetPastBooking');
+            Route::get('/list/future/{therapistId}', 'TherapistController@getFutureBooking')->name('therapistGetFutureBooking');
         });
     });
 

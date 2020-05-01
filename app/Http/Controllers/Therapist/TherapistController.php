@@ -14,6 +14,11 @@ class TherapistController extends BaseController
         $this->getRequest        = $this->httpRequest->all();
         $this->therapist         = $this->therapistRepo;
         $this->therapistCalendar = $this->therapistCalendarRepo;
+
+        $getPrifix = $this->httpRequest->route()->getPrefix();
+        if (strpos($getPrifix, 'freelancer') !== false) {
+            $this->therapist->isFreelancer = '1';
+        }
     }
 
     public function signup()

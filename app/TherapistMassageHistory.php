@@ -9,6 +9,7 @@ use Carbon\Carbon;
 class TherapistMassageHistory extends Model
 {
     protected $fillable = [
+        'date',
         'start_time',
         'end_time',
         'remaining_time',
@@ -20,6 +21,7 @@ class TherapistMassageHistory extends Model
     public function validator(array $data)
     {
         return Validator::make($data, [
+            'date'             => ['required', 'date'],
             'start_time'       => ['required', 'time'],
             'end_time'         => ['required', 'time'],
             'remaining_time'   => ['required', 'time'],

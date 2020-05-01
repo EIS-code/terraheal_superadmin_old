@@ -36,7 +36,7 @@ class TherapistMassageHistoryRepository extends BaseRepository
         }
 */
         try {
-            $data['start_time']                = $now;
+            $data['start_time']      = $now;
             $therapistMassageHistory = $this->therapistMassageHistory;
 
             // If already exists then update it.
@@ -44,6 +44,7 @@ class TherapistMassageHistoryRepository extends BaseRepository
             if (!empty($getMassageHistory) && !$getMassageHistory->isEmpty()) {
                 $therapistMassageHistory->where('booking_infos_id', $bookingInfoId)->update($data);
             } else {
+                $data['date']             = $now->toDateString();
                 $data['booking_infos_id'] = $bookingInfoId;
                 $therapistMassageHistory->fill($data);
                 $therapistMassageHistory->save();
@@ -83,7 +84,7 @@ class TherapistMassageHistoryRepository extends BaseRepository
 
 
                 $therapistMassageHistory = $this->therapistMassageHistory;
-                $createdDate            = new Carbon(date('Y-m-d', strtotime($getMassageHistory->created_at)) . ' ' . $getMassageHistory->start_time);
+                $createdDate            = new Carbon(date('Y-m-d', strtotime($getMassageHistory->date)) . ' ' . $getMassageHistory->start_time);
                 $remainingTime          = $now->diff($createdDate)->format('%H:%I:%S');
                 $data['end_time']       = $now;
                 $data['remaining_time'] = $remainingTime;

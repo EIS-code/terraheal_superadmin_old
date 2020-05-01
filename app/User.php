@@ -76,4 +76,9 @@ class User extends Authenticatable
             'shop_id' => ['required', 'integer']
         ]);
     }
+
+    public function shop()
+    {
+        return $this->hasOne('App\Shop', 'id', 'shop_id');
+    }
 }

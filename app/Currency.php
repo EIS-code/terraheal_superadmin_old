@@ -2,11 +2,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 
-class Currency extends Model
+class Currency extends BaseModel
 {
+    public static $defaultCurrency = 'EUR';
+
     protected $fillable = [
         'code',
         'exchange_rate',

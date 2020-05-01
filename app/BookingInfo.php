@@ -2,10 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 
-class BookingInfo extends Model
+class BookingInfo extends BaseModel
 {
     protected $fillable = [
         'preference',
@@ -17,7 +16,8 @@ class BookingInfo extends Model
         'cancelled_reason',
         'imc_type',
         'massage_timing',
-        'massage_pricing',
+        'price',
+        'cost',
         'is_done',
         'massage_timing_id',
         'therapist_id',
