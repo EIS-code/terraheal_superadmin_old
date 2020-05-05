@@ -25,7 +25,7 @@ class TherapistsTable extends Migration
             $table->string('short_description');
             // $table->string('profile_photo');
             $table->enum('is_freelancer', [0, 1])->comment('0: Nope, 1: Yes');
-            $table->integer('paid_percentage', 50)->default(0);
+            $table->integer('paid_percentage')->default(0);
             $table->string('password')->nullable();
             $table->enum('is_deleted', [0, 1])->comment('0: Nope, 1: Yes');
             $table->bigInteger('shop_id')->unsigned();
