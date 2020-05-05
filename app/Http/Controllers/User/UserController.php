@@ -6,14 +6,15 @@ use App\Http\Controllers\BaseController;
 
 class UserController extends BaseController
 {
-    protected $user, $booking, $review;
+    protected $user, $booking, $review, $getRequest;
 
     public function __construct()
     {
         parent::__construct();
-        $this->user    = $this->userRepo;
-        $this->booking = $this->bookingRepo;
-        $this->review  = $this->reviewRepo;
+        $this->user       = $this->userRepo;
+        $this->booking    = $this->bookingRepo;
+        $this->review     = $this->reviewRepo;
+        $this->getRequest = $this->httpRequest->all();
     }
 
     public function signupFacebook()
@@ -26,11 +27,14 @@ class UserController extends BaseController
         return view('test/signup-google');
     }
 
-    public function signup()
+    public function signUp()
     {
-        $getRequest = $this->httpRequest->all();
+        return $this->user->create($this->getRequest);
+    }
 
-        return $this->user->create($getRequest);
+    public function signIn()
+    {
+        return $this->user->signIn($this->getRequest);
     }
 
     public function sendOtpEmail($email)
@@ -45,9 +49,7 @@ class UserController extends BaseController
 
     public function update($id)
     {
-        $getRequest = $this->httpRequest->all();
-
-        return $this->user->update($id, $getRequest);
+        return $this->user->update($id, $this->getRequest);
     }
 
     public function getDetails($id)
@@ -57,16 +59,12 @@ class UserController extends BaseController
 
     public function bookingCreate()
     {
-        $getRequest = $this->httpRequest->all();
-
-        return $this->booking->create($getRequest);
+        return $this->booking->create($this->getRequest);
     }
 
     public function bookingUpdate($bookingInfoId)
     {
-        $getRequest = $this->httpRequest->all();
-
-        return $this->booking->update($bookingInfoId, $getRequest);
+        return $this->booking->update($bookingInfoId, $this->getRequest);
     }
 
     public function getPastBooking($userId)

@@ -3,17 +3,20 @@
 namespace App\Repositories\Therapist;
 
 use App\Repositories\BaseRepository;
+use App\Repositories\Therapist\TherapistRepository;
 use App\TherapistCalendar;
 use Carbon\Carbon;
 use DB;
 
 class TherapistCalendarRepository extends BaseRepository
 {
-    protected $therapist;
+    protected $therapist, $therapistCalendar;
+    public    $isFreelancer = '0';
 
     public function __construct()
     {
         parent::__construct();
+        $this->therapist         = new TherapistRepository();
         $this->therapistCalendar = new TherapistCalendar();
     }
 
@@ -24,9 +27,20 @@ class TherapistCalendarRepository extends BaseRepository
 
         try {
             if (!empty($data['dates'])) {
-                $now = Carbon::now();
+                $now         = Carbon::now();
+                $therapistId = (!empty($data['therapist_id'])) ? (int)$data['therapist_id'] : NULL;
+
+                // Check is therapist exists.
+                $getTherapist = $this->therapist->getWhereMany(['id' => $therapistId, 'is_freelancer' => $this->isFreelancer]);
+                if (empty($getTherapist) || $getTherapist->isEmpty()) {
+                    return response()->json([
+                        'code' => 401,
+                        'msg'  => 'Therapist didn\'t found.'
+                    ]);
+                }
+
                 foreach ($data['dates'] as &$dates) {
-                    $dates['therapist_id'] = (!empty($data['therapist_id'])) ? (int)$data['therapist_id'] : NULL;
+                    $dates['therapist_id'] = $therapistId;
                     $dates['created_at']   = $now;
                     $dates['updated_at']   = $now;
                     $validator = $this->therapistCalendar->validator($dates);
@@ -100,6 +114,15 @@ class TherapistCalendarRepository extends BaseRepository
         DB::beginTransaction();
 
         try {
+            // Check is therapist exists.
+            $getTherapist = $this->therapist->getWhereMany(['id' => $therapistId, 'is_freelancer' => $this->isFreelancer]);
+            if (empty($getTherapist) || $getTherapist->isEmpty()) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Therapist didn\'t found.'
+                ]);
+            }
+
             $getTherapistCalendar = $this->therapistCalendar->where('therapist_id', '=', $therapistId)->whereRaw("DATE(`date`) = '" . $date . "'")->get();
 
             if (empty($getTherapistCalendar) || $getTherapistCalendar->isEmpty()) {
@@ -137,6 +160,15 @@ class TherapistCalendarRepository extends BaseRepository
         DB::beginTransaction();
 
         try {
+            // Check is therapist exists.
+            $getTherapist = $this->therapist->getWhereMany(['id' => $therapistId, 'is_freelancer' => $this->isFreelancer]);
+            if (empty($getTherapist) || $getTherapist->isEmpty()) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Therapist didn\'t found.'
+                ]);
+            }
+
             $getTherapistCalendar = $this->therapistCalendar->where('therapist_id', '=', $therapistId)->whereRaw("DATE(`date`) = '" . $date . "'")->get();
 
             if (!empty($getTherapistCalendar)) {

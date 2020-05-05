@@ -100,6 +100,9 @@ class UserRepository extends BaseRepository
             DB::beginTransaction();
 
             try {
+                if (isset($data['password'])) {
+                    unset($data['password']);
+                }
                 $validator = $this->user->validator($data, $id, true);
                 if ($validator->fails()) {
                     return response()->json([
@@ -131,6 +134,46 @@ class UserRepository extends BaseRepository
         return response()->json([
             'code' => 401,
             'msg'  => 'User not found.'
+        ]);
+    }
+
+    public function signIn(array $data)
+    {
+        $email    = (!empty($data['email'])) ? $data['email'] : NULL;
+        $password = (!empty($data['password'])) ? $data['password'] : NULL;
+
+        if (empty($email)) {
+            return response()->json([
+                'code' => 401,
+                'msg'  => 'Please provide email properly.'
+            ]);
+        } elseif (empty($password)) {
+            return response()->json([
+                'code' => 401,
+                'msg'  => 'Please provide password properly.'
+            ]);
+        }
+
+        if (!empty($email) && !empty($password)) {
+            $getUser = $this->getWhereFirst('email', $email);
+
+            if (!empty($getUser) && Hash::check($password, $getUser->password)) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'User found successfully !',
+                    'data' => $getUser
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'User email or password seems wrong.'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'code' => 401,
+            'msg'  => 'Something went wrong.'
         ]);
     }
 

@@ -11,11 +11,12 @@ use App\Booking;
 use App\BookingInfo;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use CurrencyHelper;
 use DB;
 
 class TherapistRepository extends BaseRepository
 {
-    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo;
+    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo, $currencyHelper;
     public    $isFreelancer = '0';
 
     public function __construct()
@@ -27,6 +28,7 @@ class TherapistRepository extends BaseRepository
         $this->therapistReview           = new TherapistReview();
         $this->booking                   = new Booking();
         $this->bookingInfo               = new BookingInfo();
+        $this->currencyHelper            = new CurrencyHelper();
     }
 
     public function create(array $data)
@@ -44,7 +46,8 @@ class TherapistRepository extends BaseRepository
                 ]);
             }
 
-            $therapist = $this->therapist;
+            $therapist        = $this->therapist;
+            $data['password'] = (!empty($data['password']) ? Hash::make($data['password']) : NULL);
             $therapist->fill($data);
             if ($therapist->save() && !empty($data['documents'])) {
                 $this->therapistDocumentRepo->create($data['documents'], $therapist->id);
@@ -71,6 +74,11 @@ class TherapistRepository extends BaseRepository
     public function getWhere($column, $value)
     {
         return $this->therapist->where($column, $value)->get();
+    }
+
+    public function getWhereMany(array $where)
+    {
+        return $this->therapist->where($where)->get();
     }
 
     public function getWherePastFuture(int $therapistId, $isPast = true, $isApi = false)
@@ -117,7 +125,91 @@ class TherapistRepository extends BaseRepository
     }
 
     public function update(int $id, array $data)
-    {}
+    {
+        $update        = false;
+        $findTherapist = $this->therapist->where(['id' => $id, 'is_freelancer' => $this->isFreelancer])->get();
+
+        if (!empty($findTherapist) && !$findTherapist->isEmpty()) {
+            DB::beginTransaction();
+
+            try {
+                if (isset($data['password'])) {
+                    unset($data['password']);
+                }
+                $data['is_freelancer'] = $this->isFreelancer;
+                $validator = $this->therapist->validator($data, $id, true);
+                if ($validator->fails()) {
+                    return response()->json([
+                        'code' => 401,
+                        'msg'  => $validator->errors()->first()
+                    ]);
+                }
+
+                $update = $this->therapist->where(['id' => $id, 'is_freelancer' => $this->isFreelancer])->update($data);
+            } catch (Exception $e) {
+                DB::rollBack();
+                // throw $e;
+            }
+
+            if ($update) {
+                DB::commit();
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'Therapist updated successfully !'
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Something went wrong.'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'code' => 401,
+            'msg'  => 'Therapist not found.'
+        ]);
+    }
+
+    public function signIn(array $data)
+    {
+        $email    = (!empty($data['email'])) ? $data['email'] : NULL;
+        $password = (!empty($data['password'])) ? $data['password'] : NULL;
+
+        if (empty($email)) {
+            return response()->json([
+                'code' => 401,
+                'msg'  => 'Please provide email properly.'
+            ]);
+        } elseif (empty($password)) {
+            return response()->json([
+                'code' => 401,
+                'msg'  => 'Please provide password properly.'
+            ]);
+        }
+
+        if (!empty($email) && !empty($password)) {
+            $getTherapist = $this->getWhereMany(['email' => $email, 'is_freelancer' => $this->isFreelancer]);
+
+            if (!empty($getTherapist[0]) && Hash::check($password, $getTherapist[0]->password)) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Therapist found successfully !',
+                    'data' => $getTherapist
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Therapist email or password seems wrong.'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'code' => 401,
+            'msg'  => 'Something went wrong.'
+        ]);
+    }
 
     public function delete(int $id)
     {}
@@ -135,7 +227,7 @@ class TherapistRepository extends BaseRepository
         $getData              = $this->therapist
                                     ->select(DB::raw("{$tableTherapist}.*, SUM(tr.rating) AS total_ratings, bi.id as booking_id"))
                                     ->leftJoin($tableTherapistReview . ' AS tr', "{$tableTherapist}.id", '=', 'tr.therapist_id')
-                                    ->leftJoin($tableBookingInfo . ' AS bi', 'bi.therapist_id', '=', DB::raw("(SELECT bii.therapist_id FROM `booking_infos` AS bii WHERE bii.therapist_id = therapists.id AND bii.is_done = '0' AND bii.massage_date = '{$nowDate}' GROUP BY bii.therapist_id)"))
+                                    ->leftJoin($tableBookingInfo . ' AS bi', 'bi.therapist_id', '=', DB::raw("(SELECT bii.therapist_id FROM `booking_infos` AS bii WHERE bii.therapist_id = therapists.id AND bii.is_done = '0' AND bii.is_cancelled = '0' AND bii.massage_date = '{$nowDate}' GROUP BY bii.therapist_id)"))
                                     ->where(function ($qry) use ($query) {
                                         $qry->where("name", "LIKE", "%" . $query . "%")
                                             ->orWhere("email", "LIKE", "%" . $query . "%")
@@ -147,69 +239,36 @@ class TherapistRepository extends BaseRepository
                                     ->orderBy(DB::raw('SUM(tr.rating)'), 'desc')
                                     ->limit($limit)
                                     ->get();
-        /* 
-        
-        $getData = DB::select("SELECT * FROM (
-                                    SELECT tp.*, SUM(tr.rating) AS total_ratings FROM therapist_reviews AS tr, (
-                                        SELECT * FROM `{$tableTherapist}` AS t
-                                        WHERE (t.`name` LIKE '%{$query}%' OR t.`email` LIKE '%{$query}%' OR t.`short_description` LIKE '%{$query}%') AND t.`is_freelancer` = '1'
-                                        LIMIT {$limit}
-                                    ) AS tp 
-                                    WHERE tp.id = tr.therapist_id GROUP BY tr.therapist_id) AS t1 
-                               ORDER BY t1.total_ratings DESC;");
-        $subQuery = DB::table($tableTherapist)->where(function ($qry) use ($query) {
-                                                    $qry->where("name", "LIKE", "%" . $query . "%")
-                                                        ->orWhere("email", "LIKE", "%" . $query . "%")
-                                                        ->orWhere("short_description", "LIKE", "%" . $query . "%");
-                                                    })
-                                                ->where("is_freelancer", "=", "1")
-                                                ->limit($limit);
-        // DB::raw("({$subQuery->toSql()})")
-        $getData = DB::table(DB::raw("({$subQuery->toSql()})"))->mergeBindings($subQuery)
-                                                    ->select(DB::raw("{$tableTherapist}.*, SUM({$tableTherapistReview}.review) AS total_ratings FROM {$tableTherapistReview}"))
-                                                    ->where("id", "=", "therapist_id")->toSql(); */
-        /* $subQuery = DB::table($tableTherapist)->where(function ($qry) use ($query) {
-                                                    $qry->where("name", "LIKE", "%" . $query . "%")
-                                                        ->orWhere("email", "LIKE", "%" . $query . "%")
-                                                        ->orWhere("short_description", "LIKE", "%" . $query . "%");
-                                                    })
-                                                ->where("is_freelancer", "=", "1")
-                                                ->limit($limit);
-        $subQuery1 = DB::select(DB::raw("SELECT tp.*, SUM(tr.rating) AS total_ratings FROM {$tableTherapistReview} AS tr, ({$subQuery->toSql()}) as tp WHERE tp.id = tr.therapist_id GROUP BY tr.therapist_id"))->toSql(); */
-        // dd($getData);
 
         if (!empty($getData) && !$getData->isEmpty()) {
-            /* $therapistIds = $therapistInfos = [];
-            $getData->each(function($value, $index) use (&$therapistIds, &$therapistInfos) {
-                // $getReview = $this->therapistReviewRepository->getWhere('therapist_id', $value->id);
-                $therapistIds[]             = $value->id;
-                $therapistInfos[$value->id] = $value;
-            });
-
-            $getReviews = $this->therapistReviewRepository->getWhereIn('therapist_id', $therapistIds);
-
-            $reviewCount = [];
-            if (!empty($getReviews) && !$getReviews->isEmpty()) {
-                $getReviews->each(function($value) use(&$reviewCount) {
-                    $reviewCount = $this->reviewCount($value);
-                });
-            }
-            if (!empty($reviewCount)) {
-                arsort($reviewCount);
-                foreach ($reviewCount as $therapistId => $totalRatings) {
-                    $response[] = $therapistInfos[$therapistId];
-                }
-            } */
-
-            $getData->map(function($value, $key) use($getData) {
-                // Check is therapist busy or not.
-                /* $bookingInfos = $this->bookingInfo->where('therapist_id', $value->id)->where('is_done', '1')->get();
-                if (!empty($bookingInfos) && !$bookingInfos->isEmpty()) {
-                    $getData->forget($key);
-                } */
-
+            $getData->map(function($value, $key) use($getData, $nowDate) {
                 // Check whoes earned less per hour for this day.
-                
+                $value->total_earned = 0;
+                $bookingInfos        = $this->bookingInfo
+                                     ->with('booking')
+                                     ->where('therapist_id', $value->id)
+                                     ->where('is_done', '1')
+                                     ->where('is_cancelled', '0')
+                                     ->whereRaw("DATE(`massage_date`) = '{$nowDate}'")
+                                     ->get();
+                if (!empty($bookingInfos) && !$bookingInfos->isEmpty()) {
+                    $bookingInfos->each(function($bookingInfo, $index) use($value, &$earningInfo) {
+                        $paidPercentage     = $value->paid_percentage;
+                        $finalPrice         = ($bookingInfo->price - $bookingInfo->cost);
+                        $totalEarned        = (($paidPercentage / 100) * $finalPrice);
+                        $totalEarnedAsShop  = $this->currencyHelper->convertToDefaultShopCurrency($bookingInfo->booking->user_id, $totalEarned, $bookingInfo->booking_currency_id);
+
+                        if (!isset($earningInfo[$value->id])) {
+                            $earningInfo[$value->id]['totalEarned'] = 0;
+                        }
+                        $value->total_earned += $totalEarnedAsShop;
+                    });
+                }
+
+                unset($value->booking_id);
+            });
+            $getData = $getData->sortBy(function($value, $key) {
+                return $value->total_earned;
             });
 
             return response()->json([

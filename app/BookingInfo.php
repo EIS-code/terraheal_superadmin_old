@@ -71,7 +71,7 @@ class BookingInfo extends BaseModel
         ]);
     }
 
-    public function bookings()
+    public function booking()
     {
         return $this->belongsTo('App\Booking', 'booking_id', 'id');
     }

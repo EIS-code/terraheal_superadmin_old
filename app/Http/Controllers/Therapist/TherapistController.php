@@ -26,6 +26,16 @@ class TherapistController extends BaseController
         return $this->therapist->create($this->getRequest);
     }
 
+    public function signIn()
+    {
+        return $this->therapist->signIn($this->getRequest);
+    }
+
+    public function update($therapistId)
+    {
+        return $this->therapist->update($therapistId, $this->getRequest);
+    }
+
     public function getPastBooking($therapistId)
     {
         return $this->therapist->getWherePastFuture($therapistId, true, true);

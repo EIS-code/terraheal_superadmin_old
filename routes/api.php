@@ -18,10 +18,10 @@ use Illuminate\Support\Facades\Route;
     return $request->user();
 }); */
 
-Route::group(['middleware' => ['web']], function () {
+Route::group(['middleware' => ['web.auth.api']], function () {
     Route::group(['prefix' => 'user', 'namespace' => 'User'], function () {
         Route::group(['prefix' => 'signup'], function () {
-            Route::post('/', 'UserController@signup')->name('userSignup');
+            Route::post('/', 'UserController@signUp')->name('userSignup');
             // Route::get('/facebook', 'FacebookController@signupFacebook')->name('signupFacebook');
             Route::get('/facebook/redirect', 'FacebookController@redirect')->name('redirectFacebookSignup');
             Route::get('/facebook/callback', 'FacebookController@callback')->name('callbackFacebookSignup');
@@ -35,6 +35,7 @@ Route::group(['middleware' => ['web']], function () {
             Route::get('/sms/sendOtp/{number}', 'UserController@sendOtpSms')->name('sendOtpSms');
         });
 
+        Route::post('/signin', 'UserController@signIn')->name('userSignIn');
         Route::get('/getDetails/{id}', 'UserController@getDetails')->name('userGetDetails');
         Route::post('/update/{id}', 'UserController@update')->name('userUpdate');
 
@@ -70,6 +71,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::group(['prefix' => 'therapist', 'namespace' => 'Therapist'], function () {
         Route::group(['prefix' => 'freelancer'], function () {
             Route::post('/signup', 'TherapistController@signup')->name('freelancerTherapistSignUp');
+            Route::post('/signin', 'TherapistController@signIn')->name('freelancerTherapistSignIn');
+            Route::post('/update/{therapistId}', 'TherapistController@update')->name('freelancerTherapistUpdate');
 
             Route::group(['prefix' => 'booking'], function () {
                 Route::get('/list/past/{therapistId}', 'TherapistController@getPastBooking')->name('freelancerTherapistGetPastBooking');
@@ -97,9 +100,16 @@ Route::group(['middleware' => ['web']], function () {
         });
 
         Route::post('/signup', 'TherapistController@signup')->name('therapistSignUp');
+        Route::post('/signin', 'TherapistController@signIn')->name('therapistSignIn');
+        Route::post('/update/{therapistId}', 'TherapistController@update')->name('therapistUpdate');
         Route::group(['prefix' => 'booking'], function () {
             Route::get('/list/past/{therapistId}', 'TherapistController@getPastBooking')->name('therapistGetPastBooking');
             Route::get('/list/future/{therapistId}', 'TherapistController@getFutureBooking')->name('therapistGetFutureBooking');
+        });
+        Route::group(['prefix' => 'calendar'], function () {
+            Route::post('/create', 'TherapistCalendarController@createCalendar')->name('therapistCreateCalendar');
+            Route::post('/updateTime/{therapistId}/{date}', 'TherapistCalendarController@updateTimeCalendar')->name('therapistUpdateTimeCalendar');
+            Route::get('/delete/{therapistId}/{date}', 'TherapistCalendarController@deleteCalendar')->name('therapistDeleteCalendar');
         });
     });
 

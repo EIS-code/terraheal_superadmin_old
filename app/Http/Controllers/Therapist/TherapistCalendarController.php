@@ -13,6 +13,11 @@ class TherapistCalendarController extends BaseController
         parent::__construct();
         $this->getRequest        = $this->httpRequest->all();
         $this->therapistCalendar = $this->therapistCalendarRepo;
+
+        $getPrifix = $this->httpRequest->route()->getPrefix();
+        if (strpos($getPrifix, 'freelancer') !== false) {
+            $this->therapistCalendar->isFreelancer = '1';
+        }
     }
 
     public function createCalendar()

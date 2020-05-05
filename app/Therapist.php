@@ -17,7 +17,8 @@ class Therapist extends BaseModel
         'is_freelancer',
         'paid_percentage',
         'is_deleted',
-        'shop_id'
+        'shop_id',
+        'password'
     ];
 
     const GENDER_MALE   = 'm';
@@ -45,9 +46,12 @@ class Therapist extends BaseModel
             'tel_number'        => ['required'],
             'hobbies'           => ['string', 'max:255'],
             'short_description' => ['required', 'string', 'max:255'],
-            'shop_id'           => ['required', 'integer'],
+            'shop_id'           => [(!$isUpdate ? 'required' : ''), 'integer'],
             'is_freelancer'     => ['required', 'in:0,1'],
-            'paid_percentage'   => ['required', 'integer']
+            'paid_percentage'   => ['required', 'integer'],
+            'password'          => [(!$isUpdate ? 'required': ''), 'min:6', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[@$!%*#?&]/'],
+        ], [
+            'password.regex' => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
         ]);
     }
 }

@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Validator;
 
 class Currency extends BaseModel
 {
-    public static $defaultCurrency = 'EUR';
+    public static $defaultCurrency   = 'EUR';
+    public static $defaultCurrencyId = 1;
 
     protected $fillable = [
         'code',

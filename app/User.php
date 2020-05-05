@@ -29,7 +29,8 @@ class User extends Authenticatable
         'oauth_uid',
         'oauth_provider',
         'country_id',
-        'shop_id'
+        'shop_id',
+        'password'
     ];
 
     /**
@@ -71,9 +72,12 @@ class User extends Authenticatable
         }
 
         return Validator::make($data, [
-            'name'    => ['required', 'string', 'max:255'],
-            'email'   => array_merge(['required', 'string', 'email', 'max:255'], $emailValidator),
-            'shop_id' => ['required', 'integer']
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => array_merge(['required', 'string', 'email', 'max:255'], $emailValidator),
+            'password' => [(!$isUpdate ? 'required' : ''), 'min:6', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[@$!%*#?&]/'],
+            'shop_id'  => ['required', 'integer']
+        ], [
+            'password.regex' => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
         ]);
     }
 

@@ -284,6 +284,13 @@ class CurrencyHelper
         return $result;
     }
 
+    public function convertToDefaultShopCurrency(int $userId, float $amount, int $fromId)
+    {
+        $shopCurrencyId = $this->getDefaultShopCurrency($userId, true);
+        $exchangeRate   = $this->getRate($shopCurrencyId);
+
+        return $this->convert($amount, $exchangeRate, $shopCurrencyId, $fromId);
+    }
 
     /**
      * Returns specific currency information
@@ -338,20 +345,20 @@ class CurrencyHelper
         }
 
         $fromCurrencyXchangeRate = $fromCurrency->exchange_rate;
-        $valueInEUR              = bcdiv(floatval($amount) , floatval($fromCurrencyXchangeRate), 4);
+        $valueInDefaultCurrency  = bcdiv(floatval($amount) , floatval($fromCurrencyXchangeRate), 4);
 
-        if ($toId == 1) {
-            $value = $valueInEUR;
-            $value = number_format($value, 2, '.', '');
+        if ($toId == Currency::$defaultCurrencyId) {
+            $value = $valueInDefaultCurrency;
         } else {
             $toCurrencyXchangeRate = $toCurrency->exchange_rate;
             // $toCurrencyXchangeRate = $toCurrency['xchg_rate'] * (1 + $toCurrency['markup_rate']/100);
             // $toCurrencyXchangeRate = $amount * $toCurrencyXchangeRate;
 
             $toCurrencyXchangeRate = number_format($toCurrencyXchangeRate, 4, '.', '');
-            $value                 = bcmul($valueInEUR, floatval($toCurrencyXchangeRate), 4);
-            $value                 = number_format($value, 2, '.', '');
+            $value                 = bcmul($valueInDefaultCurrency, floatval($toCurrencyXchangeRate), 4);
+            // $value                 = number_format($value, 2, '.', '');
         }
+        $value = number_format($value, 2, '.', '');
 
         return $value;
     }
