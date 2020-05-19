@@ -45,6 +45,7 @@ class TherapistDocumentRepository extends BaseRepository
                 $therapistDocument->save();
             } */
             $data = $request->all();
+            \Log::info($data);
 
             if (empty($therapipstId)) {
                 $this->errorMsg[] = "Please provide valid therapist id.";
