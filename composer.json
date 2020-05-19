@@ -13,6 +13,7 @@
         "fruitcake/laravel-cors": "^1.0",
         "guzzlehttp/guzzle": "^6.5",
         "laravel/framework": "^7.0",
+        "laravel/scout": "^8.0",
         "laravel/socialite": "^4.3",
         "laravel/tinker": "^2.0",
         "paypal/rest-api-sdk-php": "^1.14"
@@ -42,6 +43,9 @@
             "database/seeds",
             "database/factories",
             "app/Libraries"
+        ],
+        "files": [
+            "app/commonHelper.php"
         ]
     },
     "autoload-dev": {

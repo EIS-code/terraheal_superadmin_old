@@ -55,13 +55,6 @@ class MassageRepository extends BaseRepository
 
     public function get(array $data, int $limit = 10)
     {
-        /* int $id $massage = $this->massage->find($id);
-
-        if (!empty($massage)) {
-            return $massage->get();
-        }
-
-        return NULL; */
         $query = (!empty($data['q'])) ? $data['q'] : NULL;
         $limit = (!is_numeric($limit)) ? 10 : $limit;
 

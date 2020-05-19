@@ -34,4 +34,9 @@ class TherapistCalendarController extends BaseController
     {
         return $this->therapistCalendar->delete($therapistId, $date);
     }
+
+    public function absentCalendar()
+    {
+        return $this->response($this->therapistCalendar->absent($this->getRequest));
+    }
 }

@@ -11,13 +11,16 @@ use DB;
 class TherapistCalendarRepository extends BaseRepository
 {
     protected $therapist, $therapistCalendar;
-    public    $isFreelancer = '0';
+    public    $isFreelancer = '0', $errorMsg, $successMsg;
 
     public function __construct()
     {
         parent::__construct();
         $this->therapist         = new TherapistRepository();
         $this->therapistCalendar = new TherapistCalendar();
+
+        $this->errorMsg   = [];
+        $this->successMsg = [];
     }
 
     public function create(array $data)
@@ -109,7 +112,7 @@ class TherapistCalendarRepository extends BaseRepository
     public function update(int $id, array $data)
     {}
 
-    public function updateTime(int $therapistId, string $date, array $data)
+    public function updateTime(int $therapistId, string $date)
     {
         DB::beginTransaction();
 
@@ -153,6 +156,48 @@ class TherapistCalendarRepository extends BaseRepository
             'code' => 200,
             'msg'  => 'Therapist calender updated successfully !'
         ]);
+    }
+
+    public function absent(array $data)
+    {
+        DB::beginTransaction();
+
+        try {
+            if (!empty($data)) {
+                $therapistId = (!empty($data['therapist_id'])) ? $data['therapist_id'] : 0;
+                $dates       = (!empty($data['dates'])) ? $data['dates'] : [];
+
+                if (empty($therapistId)) {
+                    $this->errorMsg[] = "Please provide therapist id.";
+                }
+                if (empty($dates)) {
+                    $this->errorMsg[] = "Please provide valid dates.";
+                }
+
+                foreach ($dates as $date) {
+                    // Check is therapist and date exists.
+                    $getTherapistCalendar = $this->therapistCalendar->where('therapist_id', '=', $therapistId)->whereRaw("DATE(`date`) = '" . $date . "'")->get();
+                    if (empty($getTherapistCalendar) || $getTherapistCalendar->isEmpty()) {
+                        $this->errorMsg[] = "Therapist or present date didn't found.";
+                    }
+                }
+
+                if ($this->isErrorFree()) {
+                    $this->therapistCalendar->where('therapist_id', '=', $therapistId)->whereRaw("DATE(`date`) = '" . $date . "'")->update(['is_absent' => '1']);
+                }
+            } else {
+                $this->errorMsg[] = "Please provide valid dates for absent therapist.";
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            // throw $e;
+        }
+
+        DB::commit();
+
+        $this->successMsg[] = "Therapist absent successfully !";
+
+        return $this;
     }
 
     public function delete(int $therapistId, string $date)
@@ -208,4 +253,9 @@ class TherapistCalendarRepository extends BaseRepository
 
     public function errors()
     {}
+
+    public function isErrorFree()
+    {
+        return (empty($this->errorMsg));
+    }
 }

@@ -29,7 +29,7 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             Route::get('/google/redirect', 'GoogleController@redirect')->name('redirectGoogleSignup');
             Route::get('/google/callback', 'GoogleController@callback')->name('callbackGoogleSignup');
 
-            Route::get('/google/callback', 'GoogleController@callback')->name('callbackGoogleSignup');
+            // Route::get('/google/callback', 'GoogleController@callback')->name('callbackGoogleSignup');
 
             Route::get('/email/sendOtp/{email}', 'UserController@sendOtpEmail')->name('sendOtpEmail');
             Route::get('/sms/sendOtp/{number}', 'UserController@sendOtpSms')->name('sendOtpSms');
@@ -110,6 +110,11 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             Route::post('/create', 'TherapistCalendarController@createCalendar')->name('therapistCreateCalendar');
             Route::post('/updateTime/{therapistId}/{date}', 'TherapistCalendarController@updateTimeCalendar')->name('therapistUpdateTimeCalendar');
             Route::get('/delete/{therapistId}/{date}', 'TherapistCalendarController@deleteCalendar')->name('therapistDeleteCalendar');
+            Route::post('/absent', 'TherapistCalendarController@absentCalendar')->name('therapistAbsentCalendar');
+        });
+
+        Route::group(['prefix' => 'language'], function () {
+            Route::post('/add', 'TherapistLanguageController@addLanguage')->name('therapistAddLanguage');
         });
     });
 
@@ -137,6 +142,6 @@ Route::group(['middleware' => ['web.auth.api']], function () {
     });
 
     Route::group(['prefix' => 'massage', 'namespace' => 'Massage'], function () {
-        Route::get('get', 'MassageController@get')->name('massageGet');
+        Route::post('get', 'MassageController@get')->name('massageGet');
     });
 });

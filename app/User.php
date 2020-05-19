@@ -25,6 +25,12 @@ class User extends Authenticatable
         'tel_number',
         'nif',
         'address',
+        'avatar',
+        'avatar_original',
+        'login_by',
+        'device_token',
+        'device_type',
+        'app_version',
         'photo',
         'oauth_uid',
         'oauth_provider',
@@ -72,10 +78,11 @@ class User extends Authenticatable
         }
 
         return Validator::make($data, [
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => array_merge(['required', 'string', 'email', 'max:255'], $emailValidator),
-            'password' => [(!$isUpdate ? 'required' : ''), 'min:6', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[@$!%*#?&]/'],
-            'shop_id'  => ['required', 'integer']
+            'name'     => ['string', 'max:255'],
+            'email'    => array_merge(['string', 'email', 'max:255'], $emailValidator),
+            'password' => ['min:6', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[@$!%*#?&]/'],
+            // 'shop_id'  => ['required', 'integer'],
+            'oauth_provider' => [(!empty($data['oauth_uid']) ? 'required' : ''), (!empty($data['oauth_uid']) ? 'in:1,2,3,4' : '')]
         ], [
             'password.regex' => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
         ]);

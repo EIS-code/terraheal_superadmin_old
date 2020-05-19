@@ -16,8 +16,11 @@ class TherapistLanguagesTable extends Migration
         Schema::create('therapist_languages', function (Blueprint $table) {
             $table->id();
             $table->enum('type', [1, 2, 3])->comment('1: Read, 2: Write, 3: Speak');
+            $table->enum('value', [0, 1])->comment('1 means they can and 0 means not.');
             $table->bigInteger('language_id')->unsigned();
             $table->foreign('language_id')->references('id')->on('languages')->onDelete('cascade');
+            $table->bigInteger('therapist_id')->unsigned();
+            $table->foreign('therapist_id')->references('id')->on('therapists')->onDelete('cascade');
             $table->timestamps();
         });
     }

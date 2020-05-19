@@ -14,6 +14,7 @@ use App\Repositories\User\Payment\UserCardDetailRepository;
 use App\Repositories\Therapist\TherapistRepository;
 use App\Repositories\Therapist\Massage\TherapistMassageHistoryRepository;
 use App\Repositories\Therapist\TherapistCalendarRepository;
+use App\Repositories\Therapist\TherapistLanguageRepository;
 use App\Repositories\Therapist\TherapistReviewQuestionRepository;
 use App\Repositories\Therapist\TherapistReviewRepository;
 use App\Repositories\Receptionist\ReceptionistRepository;
@@ -23,8 +24,8 @@ use App\Repositories\Massage\MassageRepository;
 
 abstract class BaseController extends Controller
 {
-    protected $httpRequest = null;
-    protected $userRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo, $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo;
+    protected $httpRequest = null, $defaultCode = 0, $defaultMessage = "No any response found !", $errorCode = 401, $successCode = 200;
+    protected $userRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo, $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistLanguageRepo, $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo;
 
     public function __construct()
     {
@@ -43,8 +44,28 @@ abstract class BaseController extends Controller
         $this->therapistReviewQuestionRepo = new TherapistReviewQuestionRepository();
         $this->therapistReviewRepo     = new TherapistReviewRepository();
         $this->therapistCalendarRepo   = new TherapistCalendarRepository();
+        $this->therapistLanguageRepo   = new TherapistLanguageRepository();
         $this->staffRepo               = new StaffRepository();
         $this->staffAttendanceRepo     = new StaffAttendanceRepository();
         $this->massageRepo             = new MassageRepository();
+    }
+
+    public function response($response = [])
+    {
+        $responseCode    = $this->defaultCode;
+        $responseMessage = $this->defaultMessage;
+
+        if (!empty($response->errorMsg)) {
+            $responseCode    = $this->errorCode;
+            $responseMessage = $response->errorMsg;
+        } elseif (!empty($response->successMsg)) {
+            $responseCode    = $this->successCode;
+            $responseMessage = $response->successMsg;
+        }
+
+        return response()->json([
+            'code' => $responseCode,
+            'msg'  => $responseMessage
+        ]);
     }
 }
