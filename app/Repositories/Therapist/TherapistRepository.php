@@ -193,7 +193,7 @@ class TherapistRepository extends BaseRepository
 
             if (!empty($getTherapist[0]) && Hash::check($password, $getTherapist[0]->password)) {
                 return response()->json([
-                    'code' => 401,
+                    'code' => 200,
                     'msg'  => 'Therapist found successfully !',
                     'data' => $getTherapist
                 ]);
