@@ -78,13 +78,20 @@ class User extends Authenticatable
         }
 
         return Validator::make($data, [
-            'name'     => ['string', 'max:255'],
-            'email'    => array_merge(['string', 'email', 'max:255'], $emailValidator),
-            'password' => ['min:6', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[@$!%*#?&]/'],
-            // 'shop_id'  => ['required', 'integer'],
-            'oauth_provider' => [(!empty($data['oauth_uid']) ? 'required' : ''), (!empty($data['oauth_uid']) ? 'in:1,2,3,4' : '')]
+            'name'            => ['string', 'max:255'],
+            'email'           => array_merge(['string', 'email', 'max:255'], $emailValidator),
+            'password'        => ['min:6', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[@$!%*#?&]/'],
+            // 'shop_id'      => ['required', 'integer'],
+            'avatar'          => ['max:255'],
+            'avatar_original' => ['max:255'],
+            'login_by'        => ['max:255'],
+            'device_token'    => ['max:255'],
+            'device_type'     => ['max:255'],
+            'app_version'     => ['max:255'],
+            'oauth_uid'       => ['max:255'],
+            'oauth_provider'  => [(!empty($data['oauth_uid']) ? 'required' : ''), (!empty($data['oauth_uid']) ? 'in:1,2,3,4' : '')]
         ], [
-            'password.regex' => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
+            'password.regex'  => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
         ]);
     }
 
