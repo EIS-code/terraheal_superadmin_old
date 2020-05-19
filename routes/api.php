@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 }); */
 
 Route::group(['middleware' => ['web.auth.api']], function () {
+    Route::get('/error', 'ErrorController@error')->name('error');
+
     Route::group(['prefix' => 'user', 'namespace' => 'User'], function () {
         Route::group(['prefix' => 'signup'], function () {
             Route::post('/', 'UserController@signUp')->name('userSignup');
