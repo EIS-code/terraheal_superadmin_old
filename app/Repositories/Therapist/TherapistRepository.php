@@ -62,7 +62,7 @@ class TherapistRepository extends BaseRepository
         return response()->json([
             'code' => 200,
             'msg'  => 'Therapist created successfully !',
-            'data' => $therapist
+            'data' => $therapist->where('id', $therapist->id)->get()
         ]);
     }
 

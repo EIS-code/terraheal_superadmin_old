@@ -40,15 +40,15 @@ class Therapist extends BaseModel
 
         return Validator::make($data, [
             'name'              => ['required', 'string', 'max:255'],
-            'dob'               => ['required', 'date'],
-            'gender'            => ['required', 'in:m,f'],
+            'dob'               => ['date'],
+            'gender'            => ['in:m,f'],
             'email'             => array_merge(['required', 'string', 'email', 'max:255'], $emailValidator),
-            'tel_number'        => ['required'],
+            'tel_number'        => ['string', 'max:50'],
             'hobbies'           => ['string', 'max:255'],
-            'short_description' => ['required', 'string', 'max:255'],
-            'shop_id'           => [(!$isUpdate ? 'required' : ''), 'integer'],
+            'short_description' => ['string', 'max:255'],
+            'shop_id'           => ['integer'],
             'is_freelancer'     => ['required', 'in:0,1'],
-            'paid_percentage'   => ['required', 'integer'],
+            'paid_percentage'   => ['integer'],
             'password'          => [(!$isUpdate ? 'required': ''), 'min:6', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[@$!%*#?&]/'],
         ], [
             'password.regex' => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
