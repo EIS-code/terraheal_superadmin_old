@@ -72,15 +72,17 @@ class TherapistDocumentRepository extends BaseRepository
                 }
             }
 
-            $fileName  = $request->file->getClientOriginalName();
-            $storeFile = $request->file->storeAs('therapist/document', $fileName);
-            if ($storeFile) {
-                unset($data['file']);
-                $data['therapist_id'] = $therapipstId;
-                $data['file_name']    = $fileName;
-                $therapistDocument    = new therapistDocument();
-                $therapistDocument->fill($data);
-                $therapistDocument->save();
+            if ($this->isErrorFree()) {
+                $fileName  = $request->file->getClientOriginalName();
+                $storeFile = $request->file->storeAs('therapist/document', $fileName);
+                if ($storeFile) {
+                    unset($data['file']);
+                    $data['therapist_id'] = $therapipstId;
+                    $data['file_name']    = $fileName;
+                    $therapistDocument    = new therapistDocument();
+                    $therapistDocument->fill($data);
+                    $therapistDocument->save();
+                }
             }
         } catch(Exception $e) {
             DB::rollBack();
