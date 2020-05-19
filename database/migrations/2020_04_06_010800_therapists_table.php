@@ -28,14 +28,16 @@ class TherapistsTable extends Migration
             $table->integer('paid_percentage')->default(0);
             $table->string('avatar')->nullable();
             $table->string('avatar_original')->nullable();
-            $table->string('login_by')->nullable();
+            // $table->string('login_by')->nullable();
             $table->string('device_token')->nullable();
             $table->string('device_type')->nullable();
             $table->string('app_version')->nullable();
             $table->string('oauth_uid')->nullable();
-            $table->tinyInteger('oauth_provider')->nullable()->comment('1: google, 2: facebook, 3: twitter, 4: linkedin');
+            $table->tinyInteger('oauth_provider')->nullable()->comment('1: google, 2: facebook, 3: apple, 4: linkedin');
             $table->string('password')->nullable();
             $table->enum('is_deleted', [0, 1])->comment('0: Nope, 1: Yes');
+            $table->enum('is_email_verified', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
+            $table->enum('is_mobile_verified', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->bigInteger('shop_id')->unsigned()->nullable();
             $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
             $table->timestamps();

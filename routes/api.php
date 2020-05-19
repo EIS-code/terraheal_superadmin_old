@@ -118,6 +118,15 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::group(['prefix' => 'language'], function () {
             Route::post('/add', 'TherapistLanguageController@addLanguage')->name('therapistAddLanguage');
         });
+
+        Route::group(['prefix' => 'verify'], function () {
+            Route::get('/mobile/{therapistId}/{number}', 'TherapistController@verifyMobile')->name('therapistVerifyMobile');
+            Route::get('/email/{therapistId}/{emailId}', 'TherapistController@verifyEmail')->name('therapistVerifyEmail');
+        });
+
+        Route::group(['prefix' => 'documents/{therapistId}'], function () {
+            Route::post('/', 'TherapistDocumentController@create')->name('therapistDocumentCreate');
+        });
     });
 
     Route::group(['prefix' => 'receptionist', 'namespace' => 'Receptionist'], function () {

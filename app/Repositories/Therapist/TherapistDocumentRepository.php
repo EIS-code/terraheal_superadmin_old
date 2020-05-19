@@ -4,11 +4,16 @@ namespace App\Repositories\Therapist;
 
 use App\Repositories\BaseRepository;
 use App\TherapistDocument;
+use App\Repositories\Therapist\TherapistRepository;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Http\Request;
 use DB;
 
 class TherapistDocumentRepository extends BaseRepository
 {
-    protected $therapistDocument;
+    protected $therapistDocument, $therapist;
+
+    public $isFreelancer = '0', $errorMsg, $successMsg;
 
     public function __construct()
     {
@@ -16,13 +21,14 @@ class TherapistDocumentRepository extends BaseRepository
         $this->therapistDocument = new therapistDocument();
     }
 
-    public function create(array $data, int $therapipstId)
+    public function create(int $therapipstId, Request $request)
     {
         $therapistDocument = [];
+        $this->therapist   = new TherapistRepository();
         DB::beginTransaction();
 
         try {
-            $data = (is_array($data) ? $data : [$data]);
+            /* $data = (is_array($data) ? $data : [$data]);
 
             foreach ($data as $row) {
                 $row['therapist_id'] = $therapipstId;
@@ -37,6 +43,44 @@ class TherapistDocumentRepository extends BaseRepository
                 $therapistDocument = new therapistDocument();
                 $therapistDocument->fill($row);
                 $therapistDocument->save();
+            } */
+            $data = $request->all();
+
+            if (empty($therapipstId)) {
+                $this->errorMsg[] = "Please provide valid therapist id.";
+                return $this;
+            }
+
+            $getTherapist = $this->therapist->getWhereFirst('id', $therapipstId);
+            if (empty($getTherapist)) {
+                $this->errorMsg[] = "Please provide valid therapist id.";
+                return $this;
+            }
+
+            if (empty($data['type'])) {
+                $this->errorMsg[] = "Please provide document type. 1: Address Proof, 2: Identity Proof, 3: Insurance";
+            }
+
+            if (empty($data['file']) || !($request->hasFile('file'))) {
+                $this->errorMsg[] = "Please add document.";
+            } else {
+                $allowedfileExtensions = ['jpg', 'png', 'jpeg'];
+                $fileExtensions        = $request->file('file')->getClientOriginalExtension();
+
+                if (!in_array($fileExtensions, $allowedfileExtensions)) {
+                    $this->errorMsg[] = "Allowed only jpg, jpeg, png but you uploaded {$fileExtensions}.";
+                }
+            }
+
+            $fileName  = $request->file->getClientOriginalName();
+            $storeFile = $request->file->storeAs('therapist/document', $fileName);
+            if ($storeFile) {
+                unset($data['file']);
+                $data['therapist_id'] = $therapipstId;
+                $data['file_name']    = $fileName;
+                $therapistDocument    = new therapistDocument();
+                $therapistDocument->fill($data);
+                $therapistDocument->save();
             }
         } catch(Exception $e) {
             DB::rollBack();
@@ -44,6 +88,13 @@ class TherapistDocumentRepository extends BaseRepository
         }
 
         DB::commit();
+
+        if (!$this->isErrorFree()) {
+            return response()->json([
+                'code' => 401,
+                'msg'  => $this->errorMsg
+            ]);
+        }
 
         return response()->json([
             'code' => 200,
@@ -99,4 +150,9 @@ class TherapistDocumentRepository extends BaseRepository
 
     public function errors()
     {}
+
+    public function isErrorFree()
+    {
+        return (empty($this->errorMsg));
+    }
 }

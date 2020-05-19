@@ -17,7 +17,7 @@ use DB;
 class TherapistRepository extends BaseRepository
 {
     protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo, $currencyHelper;
-    public    $isFreelancer = '0';
+    public    $isFreelancer = '0', $errorMsg, $successMsg;
 
     public function __construct()
     {
@@ -315,4 +315,39 @@ class TherapistRepository extends BaseRepository
 
     public function errors()
     {}
+
+    public function isErrorFree()
+    {
+        return (empty($this->errorMsg));
+    }
+
+    public function verifyMobile(int $id, string $number)
+    {
+
+    }
+
+    public function verifyEmail(int $id, string $emailId)
+    {
+        $getTherapist = $this->getWhereFirst('id', $id);
+
+        if (!empty($getTherapist)) {
+            if ($getTherapist->is_email_verified == '1') {
+                $this->errorMsg[] = "{$emailId} already verified !";
+                return $this;
+            }
+
+            $validate = (filter_var($emailId, FILTER_VALIDATE_EMAIL) && preg_match('/@.+\./', $emailId));
+            if (!$validate) {
+                $this->errorMsg[] = "Please provide valid email id.";
+            }
+
+            if ($this->isErrorFree()) {
+                // $this->emailRepo->send('user-otp');
+            }
+        }
+
+        $this->errorMsg[] = "Please provide valid therapist id.";
+
+        return $this;
+    }
 }

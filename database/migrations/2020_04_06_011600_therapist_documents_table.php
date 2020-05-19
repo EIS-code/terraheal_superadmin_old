@@ -15,8 +15,8 @@ class TherapistDocumentsTable extends Migration
     {
         Schema::create('therapist_documents', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('path');
+            $table->enum('type', ['1', '2', '3'])->comment('1: Address Proof, 2: Identity Proof, 3: Insurance');
+            $table->string('file_name');
             $table->bigInteger('therapist_id')->unsigned();
             $table->foreign('therapist_id')->references('id')->on('therapists')->onDelete('cascade');
             $table->timestamps();

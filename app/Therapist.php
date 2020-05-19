@@ -20,13 +20,14 @@ class Therapist extends BaseModel
         'shop_id',
         'avatar',
         'avatar_original',
-        'login_by',
         'device_token',
         'device_type',
         'app_version',
         'oauth_uid',
         'oauth_provider',
         'password',
+        'is_email_verified',
+        'is_mobile_verified'
     ];
 
     const GENDER_MALE   = 'm';
@@ -59,15 +60,16 @@ class Therapist extends BaseModel
             'paid_percentage'   => ['integer'],
             'avatar'            => ['max:255'],
             'avatar_original'   => ['max:255'],
-            'login_by'          => ['max:255'],
             'device_token'      => ['max:255'],
             'device_type'       => ['max:255'],
             'app_version'       => ['max:255'],
             'oauth_uid'         => ['max:255'],
             'oauth_provider'    => [(!empty($data['oauth_uid']) ? 'required' : ''), (!empty($data['oauth_uid']) ? 'in:1,2,3,4' : '')],
             'password'          => [(!$isUpdate ? 'required': ''), 'min:6', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[@$!%*#?&]/'],
+            'is_email_verified' => ['in:0,1'],
+            'is_mobile_verified' => ['in:0,1'],
         ], [
-            'password.regex' => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
+            'password.regex'    => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
         ]);
     }
 }

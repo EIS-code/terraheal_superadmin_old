@@ -17,6 +17,7 @@ use App\Repositories\Therapist\TherapistCalendarRepository;
 use App\Repositories\Therapist\TherapistLanguageRepository;
 use App\Repositories\Therapist\TherapistReviewQuestionRepository;
 use App\Repositories\Therapist\TherapistReviewRepository;
+use App\Repositories\Therapist\TherapistDocumentRepository;
 use App\Repositories\Receptionist\ReceptionistRepository;
 use App\Repositories\Staff\StaffRepository;
 use App\Repositories\Staff\StaffAttendanceRepository;
@@ -25,7 +26,9 @@ use App\Repositories\Massage\MassageRepository;
 abstract class BaseController extends Controller
 {
     protected $httpRequest = null, $defaultCode = 0, $defaultMessage = "No any response found !", $errorCode = 401, $successCode = 200;
-    protected $userRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo, $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistLanguageRepo, $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo;
+    protected $userRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo,
+              $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistLanguageRepo,
+              $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo, $therapistDocumentRepo;
 
     public function __construct()
     {
@@ -45,6 +48,7 @@ abstract class BaseController extends Controller
         $this->therapistReviewRepo     = new TherapistReviewRepository();
         $this->therapistCalendarRepo   = new TherapistCalendarRepository();
         $this->therapistLanguageRepo   = new TherapistLanguageRepository();
+        $this->therapistDocumentRepo   = new TherapistDocumentRepository();
         $this->staffRepo               = new StaffRepository();
         $this->staffAttendanceRepo     = new StaffAttendanceRepository();
         $this->massageRepo             = new MassageRepository();

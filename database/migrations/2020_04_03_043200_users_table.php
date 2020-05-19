@@ -24,12 +24,12 @@ class UsersTable extends Migration
             // $table->string('photo');
             $table->string('avatar')->nullable();
             $table->string('avatar_original')->nullable();
-            $table->string('login_by')->nullable();
+            // $table->string('login_by')->nullable();
             $table->string('device_token')->nullable();
             $table->string('device_type')->nullable();
             $table->string('app_version')->nullable();
             $table->string('oauth_uid')->nullable();
-            $table->tinyInteger('oauth_provider')->nullable()->comment('1: google, 2: facebook, 3: twitter, 4: linkedin');
+            $table->tinyInteger('oauth_provider')->nullable()->comment('1: google, 2: facebook, 3: apple, 4: linkedin');
             $table->string('password')->nullable();
             $table->bigInteger('country_id')->unsigned()->nullable();
             $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
