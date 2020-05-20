@@ -127,6 +127,10 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::group(['prefix' => 'documents/{therapistId}'], function () {
             Route::post('/', 'TherapistDocumentController@create')->name('therapistDocumentCreate');
         });
+
+        Route::group(['prefix' => 'profile'], function () {
+            Route::post('update/{therapistId}', 'TherapistController@updateProfile')->name('therapistProfileUpdate');
+        });
     });
 
     Route::group(['prefix' => 'receptionist', 'namespace' => 'Receptionist'], function () {

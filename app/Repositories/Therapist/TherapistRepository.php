@@ -9,6 +9,7 @@ use App\Therapist;
 use App\TherapistReview;
 use App\Booking;
 use App\BookingInfo;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use CurrencyHelper;
@@ -16,7 +17,7 @@ use DB;
 
 class TherapistRepository extends BaseRepository
 {
-    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo, $currencyHelper;
+    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo, $currencyHelper, $profilePhotoPath;
     public    $isFreelancer = '0', $errorMsg, $successMsg;
 
     public function __construct()
@@ -29,6 +30,8 @@ class TherapistRepository extends BaseRepository
         $this->booking                   = new Booking();
         $this->bookingInfo               = new BookingInfo();
         $this->currencyHelper            = new CurrencyHelper();
+
+        $this->profilePhotoPath          = $this->therapist->profilePhotoPath;
     }
 
     public function create(array $data)
@@ -44,6 +47,22 @@ class TherapistRepository extends BaseRepository
                     'code' => 401,
                     'msg'  => $validator->errors()->first()
                 ]);
+            }
+
+            // Clone avatar / origional image for profile photos.
+            if (!empty($data['avatar']) || !empty($data['avatar_original'])) {
+                $image       = (!empty($data['avatar'])) ? $data['avatar'] : $data['avatar_original'];
+                $getPathInfo = pathinfo($image);
+                if (!empty($getPathInfo['basename'])) {
+                    if (!is_dir(storage_path('app\\' . $this->profilePhotoPath))) {
+                        mkdir(storage_path('app\\' . $this->profilePhotoPath));
+                    }
+                    $isUpload = copy($image, storage_path('app\\' . $this->profilePhotoPath) . $getPathInfo['basename']);
+
+                    if ($isUpload) {
+                        $data['profile_photo'] = $getPathInfo['basename'];
+                    }
+                }
             }
 
             $therapist        = $this->therapist;
@@ -168,6 +187,65 @@ class TherapistRepository extends BaseRepository
         return response()->json([
             'code' => 401,
             'msg'  => 'Therapist not found.'
+        ]);
+    }
+
+    public function updateProfile(int $therapistId, Request $request)
+    {
+        $therapist = [];
+        DB::beginTransaction();
+
+        try {
+            $data = $request->all();
+
+            if (empty($therapistId)) {
+                $this->errorMsg[] = "Please provide valid therapist id.";
+                return $this;
+            }
+
+            $getTherapist = $this->getWhereFirst('id', $therapistId);
+            if (empty($getTherapist)) {
+                $this->errorMsg[] = "Please provide valid therapist id.";
+                return $this;
+            }
+
+            if (!empty($request->profile_photo)) {
+                $validate = $this->therapist->validateProfilePhoto($request);
+                if ($validate->fails()) {
+                    $this->errorMsg = $validate->errors();
+                }
+            }
+
+            if ($this->isErrorFree()) {
+                unset($data['profile_photo']);
+
+                $fileName               = $request->profile_photo->getClientOriginalName();
+                $storeFile              = $request->profile_photo->storeAs($this->profilePhotoPath, $fileName);
+                $data['profile_photo']  = $fileName;
+
+                $isUpdate = $this->therapist->where('id', $therapistId)->update($data);
+                if ($isUpdate) {
+                    $therapist = $this->getWhereFirst('id', $therapistId);
+                }
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            // throw $e;
+        }
+
+        DB::commit();
+
+        if (!$this->isErrorFree()) {
+            return response()->json([
+                'code' => 401,
+                'msg'  => $this->errorMsg
+            ]);
+        }
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'Therapist profile updated successfully !',
+            'data' => $therapist
         ]);
     }
 

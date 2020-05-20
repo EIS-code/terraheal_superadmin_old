@@ -23,7 +23,7 @@ class TherapistDocumentRepository extends BaseRepository
         $this->directory = $this->therapistDocument->directory;
     }
 
-    public function create(int $therapipstId, Request $request)
+    public function create(int $therapistId, Request $request)
     {
         $therapistDocument = [];
         $this->therapist   = new TherapistRepository();
@@ -33,7 +33,7 @@ class TherapistDocumentRepository extends BaseRepository
             /* $data = (is_array($data) ? $data : [$data]);
 
             foreach ($data as $row) {
-                $row['therapist_id'] = $therapipstId;
+                $row['therapist_id'] = $therapistId;
                 $validator = $this->therapistDocument->validator($row);
                 if ($validator->fails()) {
                     return response()->json([
@@ -48,12 +48,12 @@ class TherapistDocumentRepository extends BaseRepository
             } */
             $data = $request->all();
 
-            if (empty($therapipstId)) {
+            if (empty($therapistId)) {
                 $this->errorMsg[] = "Please provide valid therapist id.";
                 return $this;
             }
 
-            $getTherapist = $this->therapist->getWhereFirst('id', $therapipstId);
+            $getTherapist = $this->therapist->getWhereFirst('id', $therapistId);
             if (empty($getTherapist)) {
                 $this->errorMsg[] = "Please provide valid therapist id.";
                 return $this;
@@ -74,7 +74,7 @@ class TherapistDocumentRepository extends BaseRepository
 
             if ($this->isErrorFree()) {
                 unset($data['file']);
-                $data['therapist_id'] = $therapipstId;
+                $data['therapist_id'] = $therapistId;
                 foreach ($request->file as $file) {
                     $fileName  = $file->getClientOriginalName();
                     $storeFile = $file->storeAs($this->directory, $fileName);

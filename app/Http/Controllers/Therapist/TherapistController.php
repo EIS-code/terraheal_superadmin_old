@@ -60,4 +60,9 @@ class TherapistController extends BaseController
     {
         return $this->response($this->therapist->verifyEmail($therapistId, $emailId));
     }
+
+    public function updateProfile($therapistId)
+    {
+        return $this->therapist->updateProfile($therapistId, $this->httpRequest);
+    }
 }

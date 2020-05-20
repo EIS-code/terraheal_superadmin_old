@@ -25,10 +25,13 @@ class Therapist extends BaseModel
         'app_version',
         'oauth_uid',
         'oauth_provider',
+        'profile_photo',
         'password',
         'is_email_verified',
         'is_mobile_verified'
     ];
+
+    public $profilePhotoPath = 'therapist\profile\\';
 
     const GENDER_MALE   = 'm';
     const GENDER_FEMALE = 'f';
@@ -70,6 +73,15 @@ class Therapist extends BaseModel
             'is_mobile_verified' => ['in:0,1'],
         ], [
             'password.regex'    => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
+        ]);
+    }
+
+    public function validateProfilePhoto($request)
+    {
+        return Validator::make($request->all(), [
+            'profile_photo' => 'mimes:jpeg,png,jpg',
+        ], [
+            'profile_photo' => 'Please select proper file. The file must be a file of type: jpeg, png, jpg.'
         ]);
     }
 }
