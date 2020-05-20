@@ -219,9 +219,11 @@ class TherapistRepository extends BaseRepository
             if ($this->isErrorFree()) {
                 unset($data['profile_photo']);
 
-                $fileName               = $request->profile_photo->getClientOriginalName();
-                $storeFile              = $request->profile_photo->storeAs($this->profilePhotoPath, $fileName);
-                $data['profile_photo']  = $fileName;
+                if (!empty($request->profile_photo)) {
+                    $fileName               = $request->profile_photo->getClientOriginalName();
+                    $storeFile              = $request->profile_photo->storeAs($this->profilePhotoPath, $fileName);
+                    $data['profile_photo']  = $fileName;
+                }
 
                 $isUpdate = $this->therapist->where('id', $therapistId)->update($data);
                 if ($isUpdate) {
