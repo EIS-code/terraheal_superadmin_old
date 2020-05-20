@@ -11,7 +11,7 @@ use DB;
 
 class TherapistDocumentRepository extends BaseRepository
 {
-    protected $therapistDocument, $therapist;
+    protected $therapistDocument, $therapist, $directory;
 
     public $isFreelancer = '0', $errorMsg, $successMsg;
 
@@ -19,6 +19,8 @@ class TherapistDocumentRepository extends BaseRepository
     {
         parent::__construct();
         $this->therapistDocument = new therapistDocument();
+
+        $this->directory = $this->therapistDocument->directory;
     }
 
     public function create(int $therapipstId, Request $request)
@@ -45,7 +47,6 @@ class TherapistDocumentRepository extends BaseRepository
                 $therapistDocument->save();
             } */
             $data = $request->all();
-            \Log::info($data);
 
             if (empty($therapipstId)) {
                 $this->errorMsg[] = "Please provide valid therapist id.";
@@ -65,24 +66,25 @@ class TherapistDocumentRepository extends BaseRepository
             if (empty($data['file']) || !($request->hasFile('file'))) {
                 $this->errorMsg[] = "Please add document.";
             } else {
-                $allowedfileExtensions = ['jpg', 'png', 'jpeg'];
-                $fileExtensions        = $request->file('file')->getClientOriginalExtension();
-
-                if (!in_array($fileExtensions, $allowedfileExtensions)) {
-                    $this->errorMsg[] = "Allowed only jpg, jpeg, png but you uploaded {$fileExtensions}.";
+                $validator = $this->therapistDocument->validateMimeTypes($request);
+                if ($validator->fails()) {
+                    $this->errorMsg = $validator->errors();
                 }
             }
 
             if ($this->isErrorFree()) {
-                $fileName  = $request->file->getClientOriginalName();
-                $storeFile = $request->file->storeAs('therapist/document', $fileName);
-                if ($storeFile) {
-                    unset($data['file']);
-                    $data['therapist_id'] = $therapipstId;
-                    $data['file_name']    = $fileName;
-                    $therapistDocument    = new therapistDocument();
-                    $therapistDocument->fill($data);
-                    $therapistDocument->save();
+                unset($data['file']);
+                $data['therapist_id'] = $therapipstId;
+                foreach ($request->file as $file) {
+                    $fileName  = $file->getClientOriginalName();
+                    $storeFile = $file->storeAs($this->directory, $fileName);
+
+                    if ($storeFile) {
+                        $data['file_name']    = $fileName;
+                        $therapistDocument    = new therapistDocument();
+                        $therapistDocument->fill($data);
+                        $therapistDocument->save();
+                    }
                 }
             }
         } catch(Exception $e) {
