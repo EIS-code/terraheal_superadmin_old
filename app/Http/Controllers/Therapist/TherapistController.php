@@ -75,4 +75,9 @@ class TherapistController extends BaseController
     {
         return $this->therapist->updateProfile($therapistId, $this->httpRequest);
     }
+
+    public function getDetails($therapistId)
+    {
+        return $this->therapist->getWhereFirst('id', $therapistId, true);
+    }
 }
