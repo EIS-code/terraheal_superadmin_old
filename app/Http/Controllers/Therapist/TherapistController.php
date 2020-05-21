@@ -51,19 +51,19 @@ class TherapistController extends BaseController
         return $this->therapist->search($this->getRequest);
     }
 
-    public function verifyMobile($therapistId, $number)
+    public function verifyMobile($therapistId)
     {
-        return $this->response($this->therapist->verifyMobile($therapistId, $number));
+        return $this->response($this->therapist->verifyMobile($therapistId, $this->getRequest));
     }
 
-    public function verifyEmail($therapistId, $emailId)
+    public function verifyEmail($therapistId)
     {
-        return $this->response($this->therapist->verifyEmail($therapistId, $emailId));
+        return $this->response($this->therapist->verifyEmail($therapistId, $this->getRequest));
     }
 
-    public function compareOtp($therapistId, $otp)
+    public function compareOtp($therapistId)
     {
-        return $this->response($this->therapist->compareOtp($therapistId, $otp));
+        return $this->response($this->therapist->compareOtp($therapistId, $this->getRequest));
     }
 
     public function updateProfile($therapistId)

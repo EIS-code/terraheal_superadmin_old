@@ -411,11 +411,13 @@ class TherapistRepository extends BaseRepository
 
     }
 
-    public function verifyEmail(int $id, string $emailId)
+    public function verifyEmail(int $id, array $data)
     {
         $getTherapist = $this->getWhereFirst('id', $id);
 
         if (!empty($getTherapist)) {
+            $emailId = (!empty($data['email'])) ? $data['email'] : NULL;
+
             // Validate
             $data = [
                 'therapist_id' => $id,
@@ -426,10 +428,11 @@ class TherapistRepository extends BaseRepository
             $validator = $this->therapistEmailOtpRepo->validate($data);
             if ($validator['is_validate'] == '0') {
                 $this->errorMsg[] = $validator['msg'];
+                return $this;
             }
 
-            if ($getTherapist->is_email_verified == '1') {
-                $this->errorMsg[] = "{$emailId} already verified !";
+            if ($emailId == $getTherapist->email && $getTherapist->is_email_verified == '1') {
+                $this->errorMsg[] = "This therapist email already verified with this {$emailId} email id !";
                 return $this;
             }
 
@@ -439,19 +442,22 @@ class TherapistRepository extends BaseRepository
             } */
 
             if ($this->isErrorFree()) {
-                $sendOtp = $this->emailRepo->sendOtp($emailId);
+                $sendOtp         = $this->emailRepo->sendOtp($emailId);
+                $data['otp']     = NULL;
+                $data['is_send'] = '0';
                 if ($this->getJsonResponseCode($sendOtp) == '200') {
-                    $data['is_send'] = '1';
-                    $data['otp']     = $this->getJsonResponseOtp($sendOtp);
-                    $getData = $this->therapistEmailOtpRepo->getWhereMany(['therapist_id' => $id, 'email' => $emailId]);
-                    if (!empty($getData) && !$getData->isEmpty()) {
-                        $this->therapistEmailOtpRepo->update($id, $data);
-                    } else {
-                        $this->therapistEmailOtpRepo->create($data);
-                    }
-                    $this->successMsg = $this->getJsonResponseMsg($sendOtp);
+                    $data['is_send']     = '1';
+                    $data['is_verified'] = '0';
+                    $data['otp']         = $this->getJsonResponseOtp($sendOtp);
+                    $this->successMsg    = $this->getJsonResponseMsg($sendOtp);
                 } else {
                     $this->errorMsg[] = $this->getJsonResponseMsg($sendOtp);
+                }
+                $getData = $this->therapistEmailOtpRepo->getWhereMany(['therapist_id' => $id]);
+                if (!empty($getData) && !$getData->isEmpty()) {
+                    $this->therapistEmailOtpRepo->updateOtp($id, $data);
+                } else {
+                    $this->therapistEmailOtpRepo->create($data);
                 }
             }
         } else {
@@ -461,15 +467,29 @@ class TherapistRepository extends BaseRepository
         return $this;
     }
 
-    public function compareOtp(int $therapistId, string $otp)
+    public function compareOtp(int $therapistId, array $data)
     {
-        $getTherapist = $this->therapistEmailOtpRepo->getWhereMany(['therapist_id' => $therapistId, 'otp' => $otp]);
+        $otp = (!empty($data['otp'])) ? $data['otp'] : NULL;
 
-        if (!empty($getTherapist) && !$getTherapist->isEmpty()) {
-            $this->therapist->where(['id' => $therapistId])->update(['is_email_verified' => '1']);
-            $this->successMsg = "OTP matched successfully !";
-        } else {
-            $this->errorMsg[] = "OTP seems wrong.";
+        if (empty($otp)) {
+            $this->errorMsg[] = "Please provide OTP properly.";
+        }
+
+        if ($this->isErrorFree()) {
+            $getTherapist = $this->therapistEmailOtpRepo->getWhereMany(['therapist_id' => $therapistId, 'otp' => $otp]);
+
+            if (!empty($getTherapist) && !$getTherapist->isEmpty()) {
+                $getTherapist = $getTherapist->first();
+                if ($getTherapist->is_verified == '1') {
+                    $this->errorMsg[] = "OTP already verified.";
+                } else {
+                    $this->therapist->where(['id' => $therapistId])->update(['email' => $getTherapist->email, 'is_email_verified' => '1']);
+                    $this->therapistEmailOtpRepo->setIsVerified($getTherapist->id, '1');
+                    $this->successMsg = "OTP matched successfully !";
+                }
+            } else {
+                $this->errorMsg[] = "OTP seems wrong.";
+            }
         }
 
         return $this;

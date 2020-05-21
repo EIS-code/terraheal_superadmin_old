@@ -4,13 +4,14 @@ namespace App;
 
 use Illuminate\Support\Facades\Validator;
 
-class therapistEmailOtp extends BaseModel
+class TherapistEmailOtp extends BaseModel
 {
     protected $fillable = [
         'otp',
         'email',
         'is_send',
-        'therapist_id'
+        'is_verified',
+        'therapist_id',
     ];
 
     public function validator(array $data, $id = false, $isUpdate = false)
@@ -22,10 +23,11 @@ class therapistEmailOtp extends BaseModel
         }
 
         return Validator::make($data, [
-            'otp'          => ['required', 'max:4'],
+            'otp'          => ['max:4'],
             // 'email'        => array_merge(['required', 'string', 'email', 'max:255'], $emailValidator),
             'email'        => ['required', 'email'],
-            'is_send'      => ['required', 'in:0,1'],
+            'is_verified'  => ['in:0,1'],
+            'is_send'      => ['in:0,1'],
             'therapist_id' => ['required', 'integer']
         ]);
     }

@@ -16,8 +16,9 @@ class TherapistEmailOtpsTable extends Migration
         Schema::create('therapist_email_otps', function (Blueprint $table) {
             $table->id();
             $table->string('otp');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->enum('is_send', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
+            $table->enum('is_verified', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->bigInteger('therapist_id')->unsigned();
             $table->foreign('therapist_id')->references('id')->on('therapists')->onDelete('cascade');
             $table->timestamps();
