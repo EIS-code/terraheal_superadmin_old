@@ -422,11 +422,16 @@ class TherapistRepository extends BaseRepository
             }
 
             if ($this->isErrorFree()) {
-                // $this->emailRepo->send('user-otp');
+                $sendOtp = $this->emailRepo->sendOtp($emailId);
+                if ($this->getJsonResponseCode($sendOtp) == '200') {
+                    $this->successMsg = $this->getJsonResponseMsg($sendOtp);
+                } else {
+                    $this->errorMsg[] = $this->getJsonResponseMsg($sendOtp);
+                }
             }
+        } else {
+            $this->errorMsg[] = "Please provide valid therapist id.";
         }
-
-        $this->errorMsg[] = "Please provide valid therapist id.";
 
         return $this;
     }

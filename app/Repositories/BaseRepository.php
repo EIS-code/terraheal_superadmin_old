@@ -23,4 +23,13 @@ class BaseRepository
 
         return false;
     }
+
+    public function getJsonResponseMsg($response)
+    {
+        if (!empty($response) && $response instanceof \Illuminate\Http\JsonResponse) {
+            return (!empty($response->getData()->msg)) ? $response->getData()->msg : false;
+        }
+
+        return false;
+    }
 }
