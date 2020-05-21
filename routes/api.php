@@ -124,7 +124,8 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             Route::post('/email/{therapistId}', 'TherapistController@verifyEmail')->name('therapistVerifyEmail');
         });
         Route::group(['prefix' => 'compare'], function () {
-            Route::post('/otp/email/{therapistId}', 'TherapistController@compareOtp')->name('therapistCompareOtp');
+            Route::post('/otp/email/{therapistId}', 'TherapistController@compareOtpEmail')->name('therapistCompareOtpEmail');
+            Route::post('/otp/mobile/{therapistId}', 'TherapistController@compareOtpSms')->name('therapistCompareOtpSms');
         });
 
         Route::group(['prefix' => 'documents/{therapistId}'], function () {
