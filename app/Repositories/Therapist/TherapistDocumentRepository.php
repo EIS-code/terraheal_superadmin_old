@@ -55,7 +55,7 @@ class TherapistDocumentRepository extends BaseRepository
 
             $getTherapist = $this->therapist->getWhereFirst('id', $therapistId);
             if (empty($getTherapist)) {
-                $this->errorMsg[] = "Please provide valid therapist id.";
+                $this->errorMsg[] = "Therapist couldn't found with given therapist id.";
                 return $this;
             }
 
@@ -85,6 +85,11 @@ class TherapistDocumentRepository extends BaseRepository
                         $therapistDocument->fill($data);
                         $therapistDocument->save();
                     }
+                }
+
+                // Check all documents uploaded.
+                if ($this->checkAllDocumentsUploaded($therapistId)) {
+                    $this->therapist->isDocumentVerified($therapistId, '1');
                 }
             }
         } catch(Exception $e) {
@@ -159,5 +164,27 @@ class TherapistDocumentRepository extends BaseRepository
     public function isErrorFree()
     {
         return (empty($this->errorMsg));
+    }
+
+    public function checkAllDocumentsUploaded($therapistId)
+    {
+        $isUploadedAll = false;
+
+        $getDocuments = $this->getWhere('therapist_id', $therapistId);
+
+        if (!empty($getDocuments) && !$getDocuments->isEmpty()) {
+            $documentTypes = $this->therapistDocument->documentTypes;
+            $uploadedType  = $getDocuments->pluck('type')->unique();
+
+            foreach ($uploadedType as $type) {
+                if (array_key_exists($type, $documentTypes)) {
+                    unset($documentTypes[$type]);
+                }
+            }
+
+            $isUploadedAll = ((empty($documentTypes)) ? true : false);
+        }
+
+        return $isUploadedAll;
     }
 }

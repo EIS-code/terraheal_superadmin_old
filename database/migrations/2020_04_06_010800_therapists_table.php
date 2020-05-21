@@ -39,6 +39,7 @@ class TherapistsTable extends Migration
             $table->enum('is_deleted', [0, 1])->comment('0: Nope, 1: Yes');
             $table->enum('is_email_verified', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->enum('is_mobile_verified', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
+            $table->enum('is_document_verified', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->bigInteger('shop_id')->unsigned()->nullable();
             $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
             $table->timestamps();

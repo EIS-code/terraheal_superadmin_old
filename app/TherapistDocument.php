@@ -19,7 +19,11 @@ class TherapistDocument extends Model
     const TYPE_IDENTITY_PROOF = '2';
     const TYPE_INSURANCE      = '3';
 
-    public $documentTypes = [];
+    public $documentTypes = [
+        self::TYPE_ADDRESS_PROOF  => 'Address Proof',
+        self::TYPE_IDENTITY_PROOF => 'Identity Proof',
+        self::TYPE_INSURANCE      => 'Insurance'
+    ];
 
     public function validator(array $data)
     {

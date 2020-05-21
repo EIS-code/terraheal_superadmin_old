@@ -516,4 +516,11 @@ class TherapistRepository extends BaseRepository
 
         return $this;
     }
+
+    public function isDocumentVerified(int $id, string $isVerified = '0')
+    {
+        $isVerified = (!in_array($isVerified, ['0', '1'])) ? '0' : $isVerified;
+
+        return $this->therapist->where('id', $id)->update(['is_document_verified' => $isVerified]);
+    }
 }
