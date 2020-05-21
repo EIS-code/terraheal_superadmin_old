@@ -123,6 +123,9 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             Route::get('/mobile/{therapistId}/{number}', 'TherapistController@verifyMobile')->name('therapistVerifyMobile');
             Route::get('/email/{therapistId}/{emailId}', 'TherapistController@verifyEmail')->name('therapistVerifyEmail');
         });
+        Route::group(['prefix' => 'compare'], function () {
+            Route::get('/otp/email/{therapistId}/{otp}', 'TherapistController@compareOtp')->name('therapistCompareOtp');
+        });
 
         Route::group(['prefix' => 'documents/{therapistId}'], function () {
             Route::post('/', 'TherapistDocumentController@create')->name('therapistDocumentCreate');

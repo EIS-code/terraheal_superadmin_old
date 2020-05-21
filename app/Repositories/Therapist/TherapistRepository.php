@@ -5,6 +5,7 @@ namespace App\Repositories\Therapist;
 use App\Repositories\BaseRepository;
 use App\Repositories\Therapist\TherapistDocumentRepository;
 use App\Repositories\Therapist\TherapistReviewRepository;
+use App\Repositories\Therapist\TherapistEmailOtpRepository;
 use App\Therapist;
 use App\TherapistReview;
 use App\Booking;
@@ -17,7 +18,7 @@ use DB;
 
 class TherapistRepository extends BaseRepository
 {
-    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo, $currencyHelper, $profilePhotoPath;
+    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo, $currencyHelper, $profilePhotoPath, $therapistEmailOtpRepo;
     public    $isFreelancer = '0', $errorMsg, $successMsg;
 
     public function __construct()
@@ -26,6 +27,7 @@ class TherapistRepository extends BaseRepository
         $this->therapist                 = new Therapist();
         $this->therapistDocumentRepo     = new therapistDocumentRepository();
         $this->therapistReviewRepository = new TherapistReviewRepository();
+        $this->therapistEmailOtpRepo     = new TherapistEmailOtpRepository();
         $this->therapistReview           = new TherapistReview();
         $this->booking                   = new Booking();
         $this->bookingInfo               = new BookingInfo();
@@ -197,6 +199,9 @@ class TherapistRepository extends BaseRepository
 
         try {
             $data = $request->all();
+            if (isset($data['password'])) {
+                unset($data['password']);
+            }
 
             if (empty($therapistId)) {
                 $this->errorMsg[] = "Please provide valid therapist id.";
@@ -411,19 +416,39 @@ class TherapistRepository extends BaseRepository
         $getTherapist = $this->getWhereFirst('id', $id);
 
         if (!empty($getTherapist)) {
+            // Validate
+            $data = [
+                'therapist_id' => $id,
+                'otp'          => 1434,
+                'email'        => $emailId,
+                'is_send'      => '0'
+            ];
+            $validator = $this->therapistEmailOtpRepo->validate($data);
+            if ($validator['is_validate'] == '0') {
+                $this->errorMsg[] = $validator['msg'];
+            }
+
             if ($getTherapist->is_email_verified == '1') {
                 $this->errorMsg[] = "{$emailId} already verified !";
                 return $this;
             }
 
-            $validate = (filter_var($emailId, FILTER_VALIDATE_EMAIL) && preg_match('/@.+\./', $emailId));
+            /* $validate = (filter_var($emailId, FILTER_VALIDATE_EMAIL) && preg_match('/@.+\./', $emailId));
             if (!$validate) {
                 $this->errorMsg[] = "Please provide valid email id.";
-            }
+            } */
 
             if ($this->isErrorFree()) {
                 $sendOtp = $this->emailRepo->sendOtp($emailId);
                 if ($this->getJsonResponseCode($sendOtp) == '200') {
+                    $data['is_send'] = '1';
+                    $data['otp']     = $this->getJsonResponseOtp($sendOtp);
+                    $getData = $this->therapistEmailOtpRepo->getWhereMany(['therapist_id' => $id, 'email' => $emailId]);
+                    if (!empty($getData) && !$getData->isEmpty()) {
+                        $this->therapistEmailOtpRepo->update($id, $data);
+                    } else {
+                        $this->therapistEmailOtpRepo->create($data);
+                    }
                     $this->successMsg = $this->getJsonResponseMsg($sendOtp);
                 } else {
                     $this->errorMsg[] = $this->getJsonResponseMsg($sendOtp);
@@ -431,6 +456,20 @@ class TherapistRepository extends BaseRepository
             }
         } else {
             $this->errorMsg[] = "Please provide valid therapist id.";
+        }
+
+        return $this;
+    }
+
+    public function compareOtp(int $therapistId, string $otp)
+    {
+        $getTherapist = $this->therapistEmailOtpRepo->getWhereMany(['therapist_id' => $therapistId, 'otp' => $otp]);
+
+        if (!empty($getTherapist) && !$getTherapist->isEmpty()) {
+            $this->therapist->where(['id' => $therapistId])->update(['is_email_verified' => '1']);
+            $this->successMsg = "OTP matched successfully !";
+        } else {
+            $this->errorMsg[] = "OTP seems wrong.";
         }
 
         return $this;

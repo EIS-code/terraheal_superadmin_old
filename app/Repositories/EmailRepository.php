@@ -12,7 +12,7 @@ use App\Mail\ExceptionOccured;
 use Carbon\Carbon;
 use View;
 
-class EmailRepository
+class EmailRepository extends BaseRepository
 {
     use Queueable, SerializesModels;
 
@@ -99,7 +99,7 @@ class EmailRepository
 
         $return = $this->send('user-otp', $email, $subject, ['otp' => $otp]);
 
-        if ($return->getData()->code == 200) {
+        if ($this->getJsonResponseCode($return) == '200') {
             return response()->json([
                 'code' => 200,
                 'msg'  => 'Email sent successfully !',

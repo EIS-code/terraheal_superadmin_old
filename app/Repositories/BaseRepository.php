@@ -32,4 +32,13 @@ class BaseRepository
 
         return false;
     }
+
+    public function getJsonResponseOtp($response)
+    {
+        if (!empty($response) && $response instanceof \Illuminate\Http\JsonResponse) {
+            return (!empty($response->getData()->otp)) ? $response->getData()->otp : false;
+        }
+
+        return false;
+    }
 }
