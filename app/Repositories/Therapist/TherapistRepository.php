@@ -85,7 +85,7 @@ class TherapistRepository extends BaseRepository
         return response()->json([
             'code' => 200,
             'msg'  => 'Therapist created successfully !',
-            'data' => $therapist->where('id', $therapist->id)->get()
+            'data' => $this->getGlobalResponse($therapist->id)
         ]);
     }
 
@@ -145,6 +145,11 @@ class TherapistRepository extends BaseRepository
         }
 
         return $data;
+    }
+
+    public function getGlobalResponse(int $id)
+    {
+        return $this->therapist->with('selectedMassages')->where('id', $id)->get();
     }
 
     public function update(int $id, array $data)
@@ -262,7 +267,8 @@ class TherapistRepository extends BaseRepository
 
                 $isUpdate = $this->therapist->where('id', $therapistId)->update($data);
                 if ($isUpdate) {
-                    $therapist = $this->getWhereFirst('id', $therapistId);
+                    // $therapist = $this->getWhereFirst('id', $therapistId);
+                    $therapist = $this->getGlobalResponse($therapistId);
                 }
             }
         } catch (Exception $e) {
@@ -307,10 +313,11 @@ class TherapistRepository extends BaseRepository
             $getTherapist = $this->getWhereMany(['email' => $email, 'is_freelancer' => $this->isFreelancer]);
 
             if (!empty($getTherapist[0]) && Hash::check($password, $getTherapist[0]->password)) {
+                $getTherapist = $getTherapist->first();
                 return response()->json([
                     'code' => 200,
                     'msg'  => 'Therapist found successfully !',
-                    'data' => $getTherapist->first()
+                    'data' => $this->getGlobalResponse($getTherapist->id)
                 ]);
             } else {
                 return response()->json([

@@ -78,6 +78,6 @@ class TherapistController extends BaseController
 
     public function getDetails($therapistId)
     {
-        return $this->therapist->getWhereFirst('id', $therapistId, true);
+        return $this->therapist->getGlobalResponse($therapistId);
     }
 }

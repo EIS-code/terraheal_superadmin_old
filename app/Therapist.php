@@ -84,4 +84,9 @@ class Therapist extends BaseModel
             'profile_photo' => 'Please select proper file. The file must be a file of type: jpeg, png, jpg.'
         ]);
     }
+
+    public function selectedMassages()
+    {
+        return $this->hasMany('App\TherapistSelectedMassage', 'therapist_id', 'id');
+    }
 }
