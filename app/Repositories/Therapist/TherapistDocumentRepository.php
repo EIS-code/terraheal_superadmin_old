@@ -46,7 +46,7 @@ class TherapistDocumentRepository extends BaseRepository
                 $therapistDocument->fill($row);
                 $therapistDocument->save();
             } */
-            $data = $request->all();
+            $data = $tmpData = $request->all();
 
             if (empty($therapistId)) {
                 $this->errorMsg[] = "Please provide valid therapist id.";
@@ -112,7 +112,7 @@ class TherapistDocumentRepository extends BaseRepository
             'code' => 200,
             'msg'  => 'Therapist documents created successfully !',
             'data' => $therapistDocument,
-            'request' => $data
+            'request' => $tmpData
         ]);
     }
 
