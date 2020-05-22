@@ -228,16 +228,20 @@ class TherapistRepository extends BaseRepository
             if (!empty($data['selected_massages'])) {
                 $selectedMassages = (is_array($data['selected_massages'])) ? $data['selected_massages'] : [$data['selected_massages']];
                 foreach ($selectedMassages as $index => $selectedMassage) {
-                    $validateData[$index] = [
-                        'therapist_id' => $therapistId,
-                        'massage_id'   => $selectedMassage
-                    ];
-                    $validateData[$index]['created_at'] = $now;
-                    $validateData[$index]['updated_at'] = $now;
-                    $validate = $this->therapistSelectedMassageRepo->validate($validateData[$index]);
-                    if ($validate['is_validate'] == '0') {
-                        $this->errorMsg[] = $validate['msg'];
-                        break;
+                    // Check already exists or not.
+                    $exists = $this->therapistSelectedMassageRepo->getWhereMany(['therapist_id' => $therapistId, 'massage_id' => $selectedMassage]);
+                    if (empty($exists) || $exists->isEmpty()) {
+                        $validateData[$index] = [
+                            'therapist_id' => $therapistId,
+                            'massage_id'   => $selectedMassage
+                        ];
+                        $validateData[$index]['created_at'] = $now;
+                        $validateData[$index]['updated_at'] = $now;
+                        $validate = $this->therapistSelectedMassageRepo->validate($validateData[$index]);
+                        if ($validate['is_validate'] == '0') {
+                            $this->errorMsg[] = $validate['msg'];
+                            break;
+                        }
                     }
                 }
             }
