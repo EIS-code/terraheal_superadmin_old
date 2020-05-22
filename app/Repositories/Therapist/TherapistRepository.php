@@ -280,7 +280,7 @@ class TherapistRepository extends BaseRepository
                 return response()->json([
                     'code' => 200,
                     'msg'  => 'Therapist found successfully !',
-                    'data' => $getTherapist
+                    'data' => $getTherapist->first()
                 ]);
             } else {
                 return response()->json([
