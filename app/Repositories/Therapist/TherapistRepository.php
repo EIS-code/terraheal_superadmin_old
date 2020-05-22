@@ -6,6 +6,7 @@ use App\Repositories\BaseRepository;
 use App\Repositories\Therapist\TherapistDocumentRepository;
 use App\Repositories\Therapist\TherapistReviewRepository;
 use App\Repositories\Therapist\TherapistEmailOtpRepository;
+use App\Repositories\Therapist\TherapistSelectedMassageRepository;
 use App\Therapist;
 use App\TherapistReview;
 use App\Booking;
@@ -18,22 +19,23 @@ use DB;
 
 class TherapistRepository extends BaseRepository
 {
-    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo, $currencyHelper, $profilePhotoPath, $therapistEmailOtpRepo;
+    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo, $currencyHelper, $profilePhotoPath, $therapistEmailOtpRepo, $therapistSelectedMassageRepo;
     public    $isFreelancer = '0', $errorMsg, $successMsg;
 
     public function __construct()
     {
         parent::__construct();
-        $this->therapist                 = new Therapist();
-        $this->therapistDocumentRepo     = new therapistDocumentRepository();
-        $this->therapistReviewRepository = new TherapistReviewRepository();
-        $this->therapistEmailOtpRepo     = new TherapistEmailOtpRepository();
-        $this->therapistReview           = new TherapistReview();
-        $this->booking                   = new Booking();
-        $this->bookingInfo               = new BookingInfo();
-        $this->currencyHelper            = new CurrencyHelper();
+        $this->therapist                    = new Therapist();
+        $this->therapistDocumentRepo        = new therapistDocumentRepository();
+        $this->therapistReviewRepository    = new TherapistReviewRepository();
+        $this->therapistEmailOtpRepo        = new TherapistEmailOtpRepository();
+        $this->therapistSelectedMassageRepo = new TherapistSelectedMassageRepository();
+        $this->therapistReview              = new TherapistReview();
+        $this->booking                      = new Booking();
+        $this->bookingInfo                  = new BookingInfo();
+        $this->currencyHelper               = new CurrencyHelper();
 
-        $this->profilePhotoPath          = $this->therapist->profilePhotoPath;
+        $this->profilePhotoPath             = $this->therapist->profilePhotoPath;
     }
 
     public function create(array $data)
@@ -199,6 +201,7 @@ class TherapistRepository extends BaseRepository
 
         try {
             $data = $request->all();
+            $now  = Carbon::now();
             if (isset($data['password'])) {
                 unset($data['password']);
             }
@@ -221,13 +224,36 @@ class TherapistRepository extends BaseRepository
                 }
             }
 
+            $validateData = [];
+            if (!empty($data['selected_massages'])) {
+                $selectedMassages = (is_array($data['selected_massages'])) ? $data['selected_massages'] : [$data['selected_massages']];
+                foreach ($selectedMassages as $index => $selectedMassage) {
+                    $validateData[$index] = [
+                        'therapist_id' => $therapistId,
+                        'massage_id'   => $selectedMassage
+                    ];
+                    $validateData[$index]['created_at'] = $now;
+                    $validateData[$index]['updated_at'] = $now;
+                    $validate = $this->therapistSelectedMassageRepo->validate($validateData[$index]);
+                    if ($validate['is_validate'] == '0') {
+                        $this->errorMsg[] = $validate['msg'];
+                        break;
+                    }
+                }
+            }
+
             if ($this->isErrorFree()) {
                 unset($data['profile_photo']);
+                unset($data['selected_massages']);
 
                 if (!empty($request->profile_photo)) {
                     $fileName               = $request->profile_photo->getClientOriginalName();
                     $storeFile              = $request->profile_photo->storeAs($this->profilePhotoPath, $fileName);
                     $data['profile_photo']  = $fileName;
+                }
+
+                if (!empty($validateData)) {
+                    $this->therapistSelectedMassageRepo->create($validateData, true);
                 }
 
                 $isUpdate = $this->therapist->where('id', $therapistId)->update($data);
