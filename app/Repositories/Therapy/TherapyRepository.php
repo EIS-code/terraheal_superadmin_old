@@ -58,9 +58,7 @@ class TherapyRepository extends BaseRepository
         $query = (!empty($data['q'])) ? $data['q'] : NULL;
         $limit = (!is_numeric($limit)) ? 10 : $limit;
 
-        $getTherapies = $this->therapy->where("name", "LIKE", "%{$query}%")->with(['timing' => function($qry) {
-            $qry->with('pricing');
-        }])->limit($limit)->get();
+        $getTherapies = $this->therapy->where("name", "LIKE", "%{$query}%")->limit($limit)->get();
 
         return response()->json([
             'code' => 200,

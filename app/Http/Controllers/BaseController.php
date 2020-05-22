@@ -22,13 +22,15 @@ use App\Repositories\Receptionist\ReceptionistRepository;
 use App\Repositories\Staff\StaffRepository;
 use App\Repositories\Staff\StaffAttendanceRepository;
 use App\Repositories\Massage\MassageRepository;
+use App\Repositories\Therapy\TherapyRepository;
 
 abstract class BaseController extends Controller
 {
     protected $httpRequest = null, $defaultCode = 0, $defaultMessage = "No any response found !", $errorCode = 401, $successCode = 200;
     protected $userRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo,
               $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistLanguageRepo,
-              $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo, $therapistDocumentRepo;
+              $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo, $therapistDocumentRepo,
+              $therapyRepo;
 
     public function __construct()
     {
@@ -52,6 +54,7 @@ abstract class BaseController extends Controller
         $this->staffRepo               = new StaffRepository();
         $this->staffAttendanceRepo     = new StaffAttendanceRepository();
         $this->massageRepo             = new MassageRepository();
+        $this->therapyRepo             = new TherapyRepository();
     }
 
     public function response($response = [])
