@@ -46,7 +46,7 @@ class TherapistDocumentRepository extends BaseRepository
                 $therapistDocument->fill($row);
                 $therapistDocument->save();
             } */
-            $data = $tmpData = $request->all();
+            $data = $request->all();
 
             if (empty($therapistId)) {
                 $this->errorMsg[] = "Please provide valid therapist id.";
@@ -71,12 +71,11 @@ class TherapistDocumentRepository extends BaseRepository
                     $this->errorMsg = $validator->errors();
                 }
             }
-\Log::info(['$isErrorFree' => $this->isErrorFree()]);
+
             if ($this->isErrorFree()) {
                 unset($data['file']);
                 $data['therapist_id'] = $therapistId;
                 $requestFiles         = (is_array($request->file)) ? $request->file : [$request->file];
-                \Log::info(['$requestFiles' => $requestFiles]);
                 foreach ($requestFiles as $index => $file) {
                     $fileName  = $file->getClientOriginalName();
                     $storeFile = $file->storeAs($this->directory, $fileName);
@@ -111,8 +110,7 @@ class TherapistDocumentRepository extends BaseRepository
         return response()->json([
             'code' => 200,
             'msg'  => 'Therapist documents created successfully !',
-            'data' => $therapistDocument,
-            'request' => $tmpData
+            'data' => $therapistDocument
         ]);
     }
 
