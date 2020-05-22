@@ -71,11 +71,12 @@ class TherapistDocumentRepository extends BaseRepository
                     $this->errorMsg = $validator->errors();
                 }
             }
-
+\Log::info(['$isErrorFree' => $this->isErrorFree()]);
             if ($this->isErrorFree()) {
                 unset($data['file']);
                 $data['therapist_id'] = $therapistId;
                 $requestFiles         = (is_array($request->file)) ? $request->file : [$request->file];
+                \Log::info(['$requestFiles' => $requestFiles]);
                 foreach ($requestFiles as $file) {
                     $fileName  = $file->getClientOriginalName();
                     $storeFile = $file->storeAs($this->directory, $fileName);
