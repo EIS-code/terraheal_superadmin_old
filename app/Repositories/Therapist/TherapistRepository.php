@@ -132,7 +132,7 @@ class TherapistRepository extends BaseRepository
         return $bookings;
     }
 
-    public function getWhereFirst($column, $value, $isApi = false)
+    public function getWhereFirst($column, $value, bool $isApi = false)
     {
         $data = $this->therapist->where($column, $value)->first();
 
@@ -147,9 +147,19 @@ class TherapistRepository extends BaseRepository
         return $data;
     }
 
-    public function getGlobalResponse(int $id)
+    public function getGlobalResponse(int $id, bool $isApi = false)
     {
-        return $this->therapist->with('selectedMassages')->where('id', $id)->get();
+        $data = $this->therapist->with('selectedMassages')->where('id', $id)->get();
+
+        if ($isApi === true) {
+            return response()->json([
+                'code' => 200,
+                'msg'  => 'Therapist found successfully !',
+                'data' => $data
+            ]);
+        }
+
+        return $data;
     }
 
     public function update(int $id, array $data)
