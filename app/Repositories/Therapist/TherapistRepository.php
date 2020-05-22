@@ -149,7 +149,7 @@ class TherapistRepository extends BaseRepository
 
     public function getGlobalResponse(int $id, bool $isApi = false)
     {
-        $data = $this->therapist->with('selectedMassages')->where('id', $id)->get();
+        $data = $this->therapist->with('selectedMassages')->where('id', $id)->first();
 
         if ($isApi === true) {
             return response()->json([
