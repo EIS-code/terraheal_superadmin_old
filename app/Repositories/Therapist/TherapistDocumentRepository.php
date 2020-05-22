@@ -78,6 +78,7 @@ class TherapistDocumentRepository extends BaseRepository
                 foreach ($request->file as $file) {
                     $fileName  = $file->getClientOriginalName();
                     $storeFile = $file->storeAs($this->directory, $fileName);
+                    \Log::info(['$storeFile' => $storeFile]);
 
                     if ($storeFile) {
                         $data['file_name']    = $fileName;
