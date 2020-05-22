@@ -112,7 +112,7 @@ class TherapistDocumentRepository extends BaseRepository
             'code' => 200,
             'msg'  => 'Therapist documents created successfully !',
             'data' => $therapistDocument,
-            'request' => $request->all()
+            'request' => $data
         ]);
     }
 
