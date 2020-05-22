@@ -7,6 +7,7 @@ use App\Repositories\Therapist\TherapistDocumentRepository;
 use App\Repositories\Therapist\TherapistReviewRepository;
 use App\Repositories\Therapist\TherapistEmailOtpRepository;
 use App\Repositories\Therapist\TherapistSelectedMassageRepository;
+use App\Repositories\Therapist\TherapistSelectedTherapyRepository;
 use App\Therapist;
 use App\TherapistReview;
 use App\Booking;
@@ -19,7 +20,7 @@ use DB;
 
 class TherapistRepository extends BaseRepository
 {
-    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo, $currencyHelper, $profilePhotoPath, $therapistEmailOtpRepo, $therapistSelectedMassageRepo;
+    protected $therapist, $therapistDocumentRepo, $therapistReviewRepository, $booking, $bookingInfo, $currencyHelper, $profilePhotoPath, $therapistEmailOtpRepo, $therapistSelectedMassageRepo, $therapistSelectedTherapyRepo;
     public    $isFreelancer = '0', $errorMsg, $successMsg;
 
     public function __construct()
@@ -30,6 +31,7 @@ class TherapistRepository extends BaseRepository
         $this->therapistReviewRepository    = new TherapistReviewRepository();
         $this->therapistEmailOtpRepo        = new TherapistEmailOtpRepository();
         $this->therapistSelectedMassageRepo = new TherapistSelectedMassageRepository();
+        $this->therapistSelectedTherapyRepo = new TherapistSelectedTherapyRepository();
         $this->therapistReview              = new TherapistReview();
         $this->booking                      = new Booking();
         $this->bookingInfo                  = new BookingInfo();
@@ -149,7 +151,7 @@ class TherapistRepository extends BaseRepository
 
     public function getGlobalResponse(int $id, bool $isApi = false)
     {
-        $data = $this->therapist->with('selectedMassages')->where('id', $id)->first();
+        $data = $this->therapist->with('selectedMassages', 'selectedTherapies')->where('id', $id)->first();
 
         if ($isApi === true) {
             return response()->json([
@@ -239,20 +241,42 @@ class TherapistRepository extends BaseRepository
                 }
             }
 
-            $validateData = [];
+            $validateDataMassages = [];
             if (!empty($data['selected_massages'])) {
                 $selectedMassages = (is_array($data['selected_massages'])) ? $data['selected_massages'] : [$data['selected_massages']];
                 foreach ($selectedMassages as $index => $selectedMassage) {
                     // Check already exists or not.
                     $exists = $this->therapistSelectedMassageRepo->getWhereMany(['therapist_id' => $therapistId, 'massage_id' => $selectedMassage]);
                     if (empty($exists) || $exists->isEmpty()) {
-                        $validateData[$index] = [
+                        $validateDataMassages[$index] = [
                             'therapist_id' => $therapistId,
                             'massage_id'   => $selectedMassage
                         ];
-                        $validateData[$index]['created_at'] = $now;
-                        $validateData[$index]['updated_at'] = $now;
-                        $validate = $this->therapistSelectedMassageRepo->validate($validateData[$index]);
+                        $validateDataMassages[$index]['created_at'] = $now;
+                        $validateDataMassages[$index]['updated_at'] = $now;
+                        $validate = $this->therapistSelectedMassageRepo->validate($validateDataMassages[$index]);
+                        if ($validate['is_validate'] == '0') {
+                            $this->errorMsg[] = $validate['msg'];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            $validateDataTherapies = [];
+            if (!empty($data['selected_therapies'])) {
+                $selectedTherapies = (is_array($data['selected_therapies'])) ? $data['selected_therapies'] : [$data['selected_therapies']];
+                foreach ($selectedTherapies as $index => $selectedTherapy) {
+                    // Check already exists or not.
+                    $exists = $this->therapistSelectedTherapyRepo->getWhereMany(['therapist_id' => $therapistId, 'therapy_id' => $selectedTherapy]);
+                    if (empty($exists) || $exists->isEmpty()) {
+                        $validateDataTherapies[$index] = [
+                            'therapist_id' => $therapistId,
+                            'therapy_id'   => $selectedTherapy
+                        ];
+                        $validateDataTherapies[$index]['created_at'] = $now;
+                        $validateDataTherapies[$index]['updated_at'] = $now;
+                        $validate = $this->therapistSelectedTherapyRepo->validate($validateDataTherapies[$index]);
                         if ($validate['is_validate'] == '0') {
                             $this->errorMsg[] = $validate['msg'];
                             break;
@@ -264,6 +288,7 @@ class TherapistRepository extends BaseRepository
             if ($this->isErrorFree()) {
                 unset($data['profile_photo']);
                 unset($data['selected_massages']);
+                unset($data['selected_therapies']);
 
                 if (!empty($request->profile_photo)) {
                     $fileName               = $request->profile_photo->getClientOriginalName();
@@ -271,8 +296,12 @@ class TherapistRepository extends BaseRepository
                     $data['profile_photo']  = $fileName;
                 }
 
-                if (!empty($validateData)) {
-                    $this->therapistSelectedMassageRepo->create($validateData, true);
+                if (!empty($validateDataMassages)) {
+                    $this->therapistSelectedMassageRepo->create($validateDataMassages, true);
+                }
+
+                if (!empty($validateDataTherapies)) {
+                    $this->therapistSelectedTherapyRepo->create($validateDataTherapies, true);
                 }
 
                 $isUpdate = $this->therapist->where('id', $therapistId)->update($data);

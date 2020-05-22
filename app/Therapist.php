@@ -89,4 +89,9 @@ class Therapist extends BaseModel
     {
         return $this->hasMany('App\TherapistSelectedMassage', 'therapist_id', 'id');
     }
+
+    public function selectedTherapies()
+    {
+        return $this->hasMany('App\TherapistSelectedTherapy', 'therapist_id', 'id');
+    }
 }

@@ -3,23 +3,23 @@
 namespace App\Repositories\Therapist;
 
 use App\Repositories\BaseRepository;
-use App\TherapistSelectedMassage;
+use App\TherapistSelectedTherapy;
 use DB;
 
-class TherapistSelectedMassageRepository extends BaseRepository
+class TherapistSelectedTherapyRepository extends BaseRepository
 {
-    protected $therapistSelectedMassage;
+    protected $therapistSelectedTherapy;
     public    $errorMsg, $successMsg;
 
     public function __construct()
     {
         parent::__construct();
-        $this->therapistSelectedMassage = new TherapistSelectedMassage();
+        $this->therapistSelectedTherapy = new TherapistSelectedTherapy();
     }
 
     public function validate(array $data)
     {
-        $validator = $this->therapistSelectedMassage->validator($data);
+        $validator = $this->therapistSelectedTherapy->validator($data);
         if ($validator->fails()) {
             return ['is_validate' => 0, 'msg' => $validator->errors()->first()];
         }
@@ -29,12 +29,12 @@ class TherapistSelectedMassageRepository extends BaseRepository
 
     public function create(array $data, bool $isExcludeValidation = false)
     {
-        $therapistSelectedMassage = [];
+        $therapistSelectedTherapy = [];
         DB::beginTransaction();
 
         try {
             if (!$isExcludeValidation) {
-                $validator = $this->therapistSelectedMassage->validator($data);
+                $validator = $this->therapistSelectedTherapy->validator($data);
                 if ($validator->fails()) {
                     return response()->json([
                         'code' => 401,
@@ -43,9 +43,9 @@ class TherapistSelectedMassageRepository extends BaseRepository
                 }
             }
 
-            $therapistSelectedMassage = $this->therapistSelectedMassage;
-            // $therapistSelectedMassage->fill($data);
-            $therapistSelectedMassage->insert($data);
+            $therapistSelectedTherapy = $this->therapistSelectedTherapy;
+            // $therapistSelectedTherapy->fill($data);
+            $therapistSelectedTherapy->insert($data);
         } catch (Exception $e) {
             DB::rollBack();
             // throw $e;
@@ -55,34 +55,34 @@ class TherapistSelectedMassageRepository extends BaseRepository
 
         return response()->json([
             'code' => 200,
-            'msg'  => 'Therapist massage created successfully !',
-            'data' => $therapistSelectedMassage
+            'msg'  => 'Therapist therapy created successfully !',
+            'data' => $therapistSelectedTherapy
         ]);
     }
 
     public function all()
     {
-        return $this->therapistSelectedMassage->all();
+        return $this->therapistSelectedTherapy->all();
     }
 
     public function getWhere($column, $value)
     {
-        return $this->therapistSelectedMassage->where($column, $value)->get();
+        return $this->therapistSelectedTherapy->where($column, $value)->get();
     }
 
     public function getWhereMany(array $where)
     {
-        return $this->therapistSelectedMassage->where($where)->get();
+        return $this->therapistSelectedTherapy->where($where)->get();
     }
 
     public function getWhereFirst($column, $value, $isApi = false)
     {
-        $data = $this->therapistSelectedMassage->where($column, $value)->first();
+        $data = $this->therapistSelectedTherapy->where($column, $value)->first();
 
         if ($isApi === true) {
             return response()->json([
                 'code' => 200,
-                'msg'  => 'Therapist massage found successfully !',
+                'msg'  => 'Therapist therapy found successfully !',
                 'data' => $data
             ]);
         }
@@ -97,7 +97,7 @@ class TherapistSelectedMassageRepository extends BaseRepository
 
         DB::beginTransaction();
         try {
-            $validator = $this->therapistSelectedMassage->validator($data);
+            $validator = $this->therapistSelectedTherapy->validator($data);
             if ($validator->fails()) {
                 return response()->json([
                     'code' => 401,
@@ -105,7 +105,7 @@ class TherapistSelectedMassageRepository extends BaseRepository
                 ]);
             }
 
-            $update = $this->therapistSelectedMassage->where(['id' => $id])->update($data);
+            $update = $this->therapistSelectedTherapy->where(['id' => $id])->update($data);
         } catch (Exception $e) {
             DB::rollBack();
             // throw $e;
@@ -115,7 +115,7 @@ class TherapistSelectedMassageRepository extends BaseRepository
             DB::commit();
             return response()->json([
                 'code' => 200,
-                'msg'  => 'Therapist massage updated successfully !'
+                'msg'  => 'Therapist therapy updated successfully !'
             ]);
         } else {
             return response()->json([
@@ -133,10 +133,10 @@ class TherapistSelectedMassageRepository extends BaseRepository
 
     public function get(int $id)
     {
-        $therapistSelectedMassage = $this->therapistSelectedMassage->find($id);
+        $therapistSelectedTherapy = $this->therapistSelectedTherapy->find($id);
 
-        if (!empty($therapistSelectedMassage)) {
-            return $therapistSelectedMassage->get();
+        if (!empty($therapistSelectedTherapy)) {
+            return $therapistSelectedTherapy->get();
         }
 
         return NULL;
