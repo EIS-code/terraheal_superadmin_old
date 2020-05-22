@@ -47,7 +47,6 @@ class TherapistDocumentRepository extends BaseRepository
                 $therapistDocument->save();
             } */
             $data = $request->all();
-\Log::info(['$data' => $data]);
 
             if (empty($therapistId)) {
                 $this->errorMsg[] = "Please provide valid therapist id.";
@@ -72,15 +71,14 @@ class TherapistDocumentRepository extends BaseRepository
                     $this->errorMsg = $validator->errors();
                 }
             }
-\Log::info(['$isErrorFree' => $this->isErrorFree()]);
+
             if ($this->isErrorFree()) {
                 unset($data['file']);
                 $data['therapist_id'] = $therapistId;
-                \Log::info(['$files' => $request->file]);
-                foreach ($request->file as $file) {
+                $requestFiles         = (is_array($request->file)) ? $request->file : [$request->file];
+                foreach ($requestFiles as $file) {
                     $fileName  = $file->getClientOriginalName();
                     $storeFile = $file->storeAs($this->directory, $fileName);
-                    \Log::info(['$storeFile' => $storeFile]);
 
                     if ($storeFile) {
                         $data['file_name']    = $fileName;
@@ -97,7 +95,7 @@ class TherapistDocumentRepository extends BaseRepository
             }
         } catch(Exception $e) {
             DB::rollBack();
-            throw $e;
+            // throw $e;
         }
 
         DB::commit();
