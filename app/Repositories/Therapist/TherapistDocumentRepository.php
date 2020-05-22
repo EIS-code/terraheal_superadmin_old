@@ -77,15 +77,15 @@ class TherapistDocumentRepository extends BaseRepository
                 $data['therapist_id'] = $therapistId;
                 $requestFiles         = (is_array($request->file)) ? $request->file : [$request->file];
                 \Log::info(['$requestFiles' => $requestFiles]);
-                foreach ($requestFiles as $file) {
+                foreach ($requestFiles as $index => $file) {
                     $fileName  = $file->getClientOriginalName();
                     $storeFile = $file->storeAs($this->directory, $fileName);
 
                     if ($storeFile) {
                         $data['file_name']    = $fileName;
-                        $therapistDocument    = new therapistDocument();
-                        $therapistDocument->fill($data);
-                        $therapistDocument->save();
+                        $therapistDocument[$index]    = new therapistDocument();
+                        $therapistDocument[$index]->fill($data);
+                        $therapistDocument[$index]->save();
                     }
                 }
 
@@ -111,7 +111,8 @@ class TherapistDocumentRepository extends BaseRepository
         return response()->json([
             'code' => 200,
             'msg'  => 'Therapist documents created successfully !',
-            'data' => $therapistDocument
+            'data' => $therapistDocument,
+            'request' => $request->all()
         ]);
     }
 
