@@ -4,17 +4,21 @@ namespace App\Repositories\User;
 
 use App\Repositories\BaseRepository;
 use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 use DB;
 
 class UserRepository extends BaseRepository
 {
-    protected $user;
+    protected $user, $profilePhotoPath;
 
     public function __construct()
     {
         parent::__construct();
         $this->user = new User();
+
+        $this->profilePhotoPath = $this->user->profilePhotoPath;
     }
 
     public function create(array $data)
@@ -137,6 +141,71 @@ class UserRepository extends BaseRepository
         ]);
     }
 
+    public function updateProfile(int $userId, Request $request)
+    {
+        $user = [];
+        DB::beginTransaction();
+
+        try {
+            $data = $request->all();
+            $now  = Carbon::now();
+            if (isset($data['password'])) {
+                unset($data['password']);
+            }
+
+            if (empty($userId)) {
+                $this->errorMsg[] = "Please provide valid user id.";
+                return $this;
+            }
+
+            $getUser = $this->getWhereFirst('id', $userId);
+            if (empty($getUser)) {
+                $this->errorMsg[] = "Please provide valid user id.";
+                return $this;
+            }
+
+            if (!empty($request->profile_photo)) {
+                $validate = $this->user->validateProfilePhoto($request);
+                if ($validate->fails()) {
+                    $this->errorMsg = $validate->errors();
+                }
+            }
+
+            if ($this->isErrorFree()) {
+                unset($data['profile_photo']);
+
+                if (!empty($request->profile_photo)) {
+                    $fileName               = $request->profile_photo->getClientOriginalName();
+                    $storeFile              = $request->profile_photo->storeAs($this->profilePhotoPath, $fileName);
+                    $data['profile_photo']  = $fileName;
+                }
+
+                $isUpdate = $this->user->where('id', $userId)->update($data);
+                if ($isUpdate) {
+                    $user = $this->getGlobalResponse($userId);
+                }
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            // throw $e;
+        }
+
+        DB::commit();
+
+        if (!$this->isErrorFree()) {
+            return response()->json([
+                'code' => 401,
+                'msg'  => $this->errorMsg
+            ]);
+        }
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'User profile updated successfully !',
+            'data' => $user
+        ]);
+    }
+
     public function signIn(array $data)
     {
         $email    = (!empty($data['email'])) ? $data['email'] : NULL;
@@ -196,4 +265,24 @@ class UserRepository extends BaseRepository
 
     public function errors()
     {}
+
+    public function isErrorFree()
+    {
+        return (empty($this->errorMsg));
+    }
+
+    public function getGlobalResponse(int $id, bool $isApi = false)
+    {
+        $data = $this->user->where('id', $id)->first();
+
+        if ($isApi === true) {
+            return response()->json([
+                'code' => 200,
+                'msg'  => 'User found successfully !',
+                'data' => $data
+            ]);
+        }
+
+        return $data;
+    }
 }

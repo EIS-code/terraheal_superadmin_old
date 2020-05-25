@@ -60,6 +60,10 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::group(['prefix' => 'payment', 'namespace' => 'Payment'], function () {
             Route::post('/{bookingId}', 'PaymentController@pay')->name('userPay');
         });
+
+        Route::group(['prefix' => 'profile'], function () {
+            Route::post('update/{usertId}', 'UserController@updateProfile')->name('userProfileUpdate');
+        });
     });
 
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {
