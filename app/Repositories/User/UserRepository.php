@@ -3,6 +3,7 @@
 namespace App\Repositories\User;
 
 use App\Repositories\BaseRepository;
+use App\Repositories\User\UserEmailOtpRepository;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,7 +12,7 @@ use DB;
 
 class UserRepository extends BaseRepository
 {
-    protected $user, $profilePhotoPath;
+    protected $user, $profilePhotoPath, $userEmailOtpRepo;
 
     public function __construct()
     {
@@ -19,6 +20,7 @@ class UserRepository extends BaseRepository
         $this->user = new User();
 
         $this->profilePhotoPath = $this->user->profilePhotoPath;
+        $this->userEmailOtpRepo = new UserEmailOtpRepository();
     }
 
     public function create(array $data)
@@ -244,6 +246,117 @@ class UserRepository extends BaseRepository
             'code' => 401,
             'msg'  => 'Something went wrong.'
         ]);
+    }
+
+    public function verifyEmail(int $id, array $data)
+    {
+        $getUser = $this->getWhereFirst('id', $id);
+
+        if (!empty($getUser)) {
+            $emailId = (!empty($data['email'])) ? $data['email'] : NULL;
+
+            // Validate
+            $data = [
+                'user_id'      => $id,
+                'otp'          => 1434,
+                'email'        => $emailId,
+                'is_send'      => '0'
+            ];
+            $validator = $this->userEmailOtpRepo->validate($data);
+            if ($validator['is_validate'] == '0') {
+                $this->errorMsg[] = $validator['msg'];
+                return $this;
+            }
+
+            if ($emailId == $getUser->email && $getUser->is_email_verified == '1') {
+                $this->errorMsg[] = "This user email already verified with this {$emailId} email id !";
+                return $this;
+            }
+
+            /* $validate = (filter_var($emailId, FILTER_VALIDATE_EMAIL) && preg_match('/@.+\./', $emailId));
+            if (!$validate) {
+                $this->errorMsg[] = "Please provide valid email id.";
+            } */
+
+            if ($this->isErrorFree()) {
+                $sendOtp         = $this->emailRepo->sendOtp($emailId);
+                $data['otp']     = NULL;
+                $data['is_send'] = '0';
+                if ($this->getJsonResponseCode($sendOtp) == '200') {
+                    $data['is_send']     = '1';
+                    $data['is_verified'] = '0';
+                    $data['otp']         = $this->getJsonResponseOtp($sendOtp);
+                    $this->successMsg    = $this->getJsonResponseMsg($sendOtp);
+                } else {
+                    $this->errorMsg[] = $this->getJsonResponseMsg($sendOtp);
+                }
+                $getData = $this->userEmailOtpRepo->getWhereMany(['user_id' => $id]);
+                if (!empty($getData) && !$getData->isEmpty()) {
+                    $this->userEmailOtpRepo->updateOtp($id, $data);
+                } else {
+                    $this->userEmailOtpRepo->create($data);
+                }
+            }
+        } else {
+            $this->errorMsg[] = "Please provide valid user id.";
+        }
+
+        return $this;
+    }
+
+    public function verifyMobile(int $id, array $data)
+    {
+        /* TODO all things like email otp after get sms gateway. */
+        $this->successMsg = "SMS sent successfully !";
+
+        return $this;
+    }
+
+    public function compareOtpEmail(int $userId, array $data)
+    {
+        $otp = (!empty($data['otp'])) ? $data['otp'] : NULL;
+
+        if (empty($otp)) {
+            $this->errorMsg[] = "Please provide OTP properly.";
+        }
+
+        if ($this->isErrorFree()) {
+            if (strtolower(env('APP_ENV') != 'live') && $otp == '1234') {
+                $getUser = $this->userEmailOtpRepo->getWhereMany(['user_id' => $userId]);
+            } else {
+                $getUser = $this->userEmailOtpRepo->getWhereMany(['user_id' => $userId, 'otp' => $otp]);
+            }
+
+            if (!empty($getUser) && !$getUser->isEmpty()) {
+                $getUser = $getUser->first();
+                if ($getUser->is_verified == '1') {
+                    $this->errorMsg[] = "OTP already verified.";
+                } else {
+                    $this->user->where(['id' => $userId])->update(['email' => $getUser->email, 'is_email_verified' => '1']);
+                    $this->userEmailOtpRepo->setIsVerified($getUser->id, '1');
+                    $this->successMsg = "OTP matched successfully !";
+                }
+            } else {
+                $this->errorMsg[] = "OTP seems wrong.";
+            }
+        }
+
+        return $this;
+    }
+
+    public function compareOtpSms(int $userId, array $data)
+    {
+        /* TODO all things like email otp compare after get sms gateway. */
+        $otp = (!empty($data['otp'])) ? $data['otp'] : NULL;
+
+        if ($otp == '1234') {
+            $this->user->where(['id' => $userId])->update(['is_mobile_verified' => '1']);
+            $this->successMsg = "OTP matched successfully !";
+        } else {
+            $this->errorMsg[] = "OTP seems wrong.";
+        }
+
+        return $this;
     }
 
     public function delete(int $id)

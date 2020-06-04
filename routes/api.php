@@ -64,6 +64,15 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::group(['prefix' => 'profile'], function () {
             Route::post('update/{usertId}', 'UserController@updateProfile')->name('userProfileUpdate');
         });
+
+        Route::group(['prefix' => 'verify'], function () {
+            Route::post('/mobile/{userId}', 'UserController@verifyMobile')->name('userVerifyMobile');
+            Route::post('/email/{userId}', 'UserController@verifyEmail')->name('userVerifyEmail');
+        });
+        Route::group(['prefix' => 'compare'], function () {
+            Route::post('/otp/email/{userId}', 'UserController@compareOtpEmail')->name('userCompareOtpEmail');
+            Route::post('/otp/mobile/{userId}', 'UserController@compareOtpSms')->name('userCompareOtpSms');
+        });
     });
 
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {
