@@ -33,6 +33,7 @@ class UsersTable extends Migration
             $table->tinyInteger('oauth_provider')->nullable()->comment('1: google, 2: facebook, 3: apple, 4: linkedin');
             $table->string('profile_photo')->nullable();
             $table->string('password')->nullable();
+            $table->string('referral_code')->nullable();
             $table->enum('is_deleted', [0, 1])->comment('0: Nope, 1: Yes');
             $table->enum('is_email_verified', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->enum('is_mobile_verified', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');

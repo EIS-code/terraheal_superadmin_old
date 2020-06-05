@@ -35,6 +35,7 @@ class User extends Authenticatable
         'oauth_provider',
         'country_id',
         'shop_id',
+        'referral_code',
         'password'
     ];
 
@@ -97,6 +98,7 @@ class User extends Authenticatable
             'is_email_verified'    => ['in:0,1'],
             'is_mobile_verified'   => ['in:0,1'],
             'is_document_verified' => ['in:0,1'],
+            'referral_code'        => ['max:255'],
         ], [
             'password.regex'  => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
         ]);
