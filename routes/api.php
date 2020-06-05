@@ -73,6 +73,8 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             Route::post('/otp/email/{userId}', 'UserController@compareOtpEmail')->name('userCompareOtpEmail');
             Route::post('/otp/mobile/{userId}', 'UserController@compareOtpSms')->name('userCompareOtpSms');
         });
+
+        Route::get('/get/{userId}', 'UserController@getDetails')->name('userGetDetails');
     });
 
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {

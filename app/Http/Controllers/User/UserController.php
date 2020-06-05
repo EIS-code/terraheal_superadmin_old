@@ -52,10 +52,10 @@ class UserController extends BaseController
         return $this->user->update($id, $this->getRequest);
     }
 
-    public function getDetails($id)
+    /* public function getDetails($id)
     {
         return $this->user->getWhereFirst('id', $id, true);
-    }
+    } */
 
     public function bookingCreate()
     {
@@ -115,5 +115,10 @@ class UserController extends BaseController
     public function compareOtpSms($userId)
     {
         return $this->response($this->user->compareOtpSms($userId, $this->getRequest));
+    }
+
+    public function getDetails($userId)
+    {
+        return $this->user->getGlobalResponse($userId, true);
     }
 }
