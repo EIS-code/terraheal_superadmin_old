@@ -230,7 +230,7 @@ class UserRepository extends BaseRepository
 
             if (!empty($getUser) && Hash::check($password, $getUser->password)) {
                 return response()->json([
-                    'code' => 401,
+                    'code' => 200,
                     'msg'  => 'User found successfully !',
                     'data' => $getUser
                 ]);
