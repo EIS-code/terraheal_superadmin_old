@@ -21,4 +21,18 @@ class Country extends Model
             'iso3'       => ['required', 'string', 'max:255']
         ]);
     }
+
+    public function validatorMultiple(array $data, $id = false, $isUpdate = false)
+    {
+        return Validator::make($data, [
+            'name.*'       => ['required', 'string', 'max:255'],
+            'short_name.*' => ['string', 'max:255'],
+            'iso3.*'       => ['string', 'max:255']
+        ]);
+    }
+
+    public function province()
+    {
+        return $this->hasMany('App\Province', 'country_id', 'id');
+    }
 }

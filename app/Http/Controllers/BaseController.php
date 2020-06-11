@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use File;
+use Response;
 use App\Repositories\User\UserRepository;
 use App\Repositories\User\BookingRepository;
 use App\Repositories\User\ReviewRepository;
@@ -74,5 +76,28 @@ abstract class BaseController extends Controller
             'code' => $responseCode,
             'msg'  => $responseMessage
         ]);
+    }
+
+    public function getStorageFiles($path, $isGetFile = true)
+    {
+        // $path = storage_path('public/' . $filename);
+
+        if (!File::exists($path)) {
+            // abort(404);
+            return false;
+        }
+
+        $file = File::get($path);
+
+        if ($isGetFile) {
+            return $file;
+        }
+
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
     }
 }

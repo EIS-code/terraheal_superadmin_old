@@ -81,7 +81,12 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::group(['prefix' => 'get'], function () {
             Route::get('/country', 'LocationController@getCountry')->name('getCountry');
             Route::get('/province', 'LocationController@getProvince')->name('getProvince');
-            Route::get('/city', 'LocationController@getCity')->name('getCity');
+            Route::post('/city', 'LocationController@getCity')->name('getCity');
+        });
+        Route::group(['prefix' => 'load'], function () {
+            Route::get('/country', 'LocationController@loadCountries')->name('loadCountries');
+            Route::get('/province', 'LocationController@loadProvince')->name('loadProvince');
+            Route::get('/city', 'LocationController@loadCities')->name('loadCities');
         });
     });
 

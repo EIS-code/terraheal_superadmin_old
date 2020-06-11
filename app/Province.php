@@ -19,4 +19,17 @@ class Province extends Model
             'country_id' => ['required', 'integer']
         ]);
     }
+
+    public function validatorMultiple(array $data, $id = false, $isUpdate = false)
+    {
+        return Validator::make($data, [
+            'name.*'       => ['required', 'string', 'max:255'],
+            'country_id.*' => ['required', 'integer']
+        ]);
+    }
+
+    public function city()
+    {
+        return $this->hasMany('App\City', 'province_id', 'id');
+    }
 }

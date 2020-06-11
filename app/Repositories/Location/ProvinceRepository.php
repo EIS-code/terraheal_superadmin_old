@@ -19,6 +19,35 @@ class ProvinceRepository extends BaseRepository
     public function create(array $data)
     {}
 
+    public function createMultiple(array $data)
+    {
+        $province = [];
+        DB::beginTransaction();
+
+        try {
+            $validator = $this->province->validatorMultiple($data);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => $validator->errors()->first()
+                ]);
+            }
+
+            $province = $this->province;
+            $province->insert($data);
+        } catch (Exception $e) {
+            DB::rollBack();
+            // throw $e;
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'Province created successfully !'
+        ]);
+    }
+
     public function all()
     {
         /* TODO : To set limit. */

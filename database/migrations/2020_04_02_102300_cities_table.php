@@ -18,8 +18,8 @@ class CitiesTable extends Migration
             $table->string('name');
             $table->bigInteger('province_id')->unsigned();
             $table->foreign('province_id')->references('id')->on('provinces')->onDelete('cascade');
-            $table->bigInteger('country_id')->unsigned();
-            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
+            /*$table->bigInteger('country_id')->unsigned();
+            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');*/
             $table->timestamps();
         });
     }

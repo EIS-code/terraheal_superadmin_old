@@ -16,8 +16,34 @@ class CountryRepository extends BaseRepository
         $this->country = new Country();
     }
 
-    public function create(array $data)
-    {}
+    public function createMultiple(array $data)
+    {
+        $country = [];
+        DB::beginTransaction();
+
+        try {
+            $validator = $this->country->validatorMultiple($data);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => $validator->errors()->first()
+                ]);
+            }
+
+            $country = $this->country;
+            $country->insert($data);
+        } catch (Exception $e) {
+            DB::rollBack();
+            // throw $e;
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'Countries created successfully !'
+        ]);
+    }
 
     public function all()
     {
