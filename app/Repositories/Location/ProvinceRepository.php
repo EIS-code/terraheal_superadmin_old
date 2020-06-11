@@ -48,10 +48,28 @@ class ProvinceRepository extends BaseRepository
         ]);
     }
 
-    public function all()
+    public function all($isApi = false)
     {
         /* TODO : To set limit. */
-        return $this->province->all();
+        $data = $this->province->all();
+
+        if ($isApi === true) {
+            if (!empty($data)) {
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'Provinces get successfully !',
+                    'data' => $data
+                ]);
+            }
+
+            return response()->json([
+                'code' => 200,
+                'msg'  => 'Didn\'t found any province.',
+                'data' => []
+            ]);
+        }
+
+        return $data;
     }
 
     public function getWhere($column, $value)

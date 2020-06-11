@@ -108,7 +108,7 @@ class LocationController extends BaseController
 
     public function getCountry()
     {
-        return $this->country->all();
+        return $this->country->all(true);
     }
 
     public function getCity()
@@ -118,6 +118,6 @@ class LocationController extends BaseController
 
     public function getProvince()
     {
-        return $this->province->all();
+        return $this->province->all(true);
     }
 }

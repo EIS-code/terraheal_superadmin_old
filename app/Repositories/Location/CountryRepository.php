@@ -45,10 +45,28 @@ class CountryRepository extends BaseRepository
         ]);
     }
 
-    public function all()
+    public function all($isApi = false)
     {
         /* TODO : To set limit. */
-        return $this->country->all();
+        $data = $this->country->all();
+
+        if ($isApi === true) {
+            if (!empty($data)) {
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'Countries get successfully !',
+                    'data' => $data
+                ]);
+            }
+
+            return response()->json([
+                'code' => 200,
+                'msg'  => 'Didn\'t found any country.',
+                'data' => []
+            ]);
+        }
+
+        return $data;
     }
 
     public function getWhere($column, $value)
