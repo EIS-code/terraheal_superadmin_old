@@ -154,6 +154,13 @@ class UserRepository extends BaseRepository
             if (isset($data['password'])) {
                 unset($data['password']);
             }
+            $validator = $this->user->validator($data, $userId, true);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => $validator->errors()->first()
+                ]);
+            }
 
             if (empty($userId)) {
                 $this->errorMsg[] = "Please provide valid user id.";
@@ -180,6 +187,15 @@ class UserRepository extends BaseRepository
                     $fileName               = $request->profile_photo->getClientOriginalName();
                     $storeFile              = $request->profile_photo->storeAs($this->profilePhotoPath, $fileName);
                     $data['profile_photo']  = $fileName;
+                }
+
+                // Update is_email_verified flag if email got changed.
+                if ((empty($data['email'])) || ($getUser->email != $data['email'])) {
+                    $data['is_email_verified'] = '0';
+                }
+                // Update is_mobile_verified flag if email got changed.
+                if ((empty($data['tel_number']) || empty($data['tel_number_code'])) || ($getUser->tel_number != $data['tel_number'] || $getUser->tel_number_code != $data['tel_number_code'])) {
+                    $data['is_mobile_verified'] = '0';
                 }
 
                 $isUpdate = $this->user->where('id', $userId)->update($data);

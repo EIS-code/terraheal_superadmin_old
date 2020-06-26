@@ -2,10 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 
-class Shop extends Model
+class Shop extends BaseModel
 {
     protected $fillable = [
         'name',

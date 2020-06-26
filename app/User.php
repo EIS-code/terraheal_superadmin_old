@@ -7,6 +7,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Country;
+use App\City;
+use App\Shop;
 
 class User extends Authenticatable
 {
@@ -19,24 +22,35 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'surname',
         'dob',
-        'country',
+        // 'country',
         'email',
+        'tel_number_code',
         'tel_number',
+        'emergency_tel_number_code',
+        'emergency_tel_number',
         'nif',
         'address',
+        'id_passport',
         'avatar',
         'avatar_original',
         'device_token',
         'device_type',
         'app_version',
-        'photo',
+        // 'photo',
         'oauth_uid',
         'oauth_provider',
+        'profile_photo',
         'country_id',
+        'city_id',
         'shop_id',
         'referral_code',
-        'password'
+        'password',
+        'is_deleted',
+        'is_email_verified',
+        'is_mobile_verified',
+        'is_document_verified'
     ];
 
     /**
@@ -81,24 +95,35 @@ class User extends Authenticatable
 
         return Validator::make($data, [
             'name'                 => ['string', 'max:255'],
+            'surname'              => ['string', 'max:255'],
             'dob'                  => ['date'],
+            'country_id'           => ['integer', 'exists:' . Country::getTableName() . ',id'],
+            'city_id'              => ['integer', 'exists:' . City::getTableName() . ',id'],
             'gender'               => ['in:m,f'],
             'email'                => array_merge(['string', 'email', 'max:255'], $emailValidator),
+            'tel_number_code'      => ['string', 'max:20'],
             'tel_number'           => ['string', 'max:50'],
+            'emergency_tel_number_code' => ['string', 'max:20'],
+            'emergency_tel_number' => ['string', 'max:50'],
+            'nif'                  => ['string', 'max:255'],
+            'address'              => ['string', 'max:255'],
+            'id_passport'          => ['string', 'max:255'],
             'password'             => ['min:6', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[@$!%*#?&]/'],
-            'shop_id'              => ['integer'],
+            'shop_id'              => ['integer', 'exists:' . Shop::getTableName() . ',id'],
             // 'shop_id'           => ['required', 'integer'],
             'avatar'               => ['max:255'],
             'avatar_original'      => ['max:255'],
             'device_token'         => ['max:255'],
             'device_type'          => ['max:255'],
             'app_version'          => ['max:255'],
+            'profile_photo'        => ['max:255'],
             'oauth_uid'            => ['max:255'],
             'oauth_provider'       => [(!empty($data['oauth_uid']) ? 'required' : ''), (!empty($data['oauth_uid']) ? 'in:1,2,3,4' : '')],
             'is_email_verified'    => ['in:0,1'],
             'is_mobile_verified'   => ['in:0,1'],
             'is_document_verified' => ['in:0,1'],
             'referral_code'        => ['max:255'],
+            'is_deleted'           => ['integer', 'in:0,1'],
         ], [
             'password.regex'  => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
         ]);

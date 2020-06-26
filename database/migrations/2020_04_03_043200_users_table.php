@@ -16,12 +16,17 @@ class UsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('surname');
             $table->string('dob')->nullable();
             $table->enum('gender', ['m', 'f'])->comment('m: Male, f: Female');
             $table->string('email')->unique();
+            $table->string('tel_number_code', 20)->nullable();
             $table->string('tel_number', 50)->nullable();
+            $table->string('emergency_tel_number_code', 20)->nullable();
+            $table->string('emergency_tel_number', 50)->nullable();
             $table->string('nif')->nullable();
             $table->string('address')->nullable();
+            $table->string('id_passport')->nullable();
             // $table->string('photo');
             $table->string('avatar')->nullable();
             $table->string('avatar_original')->nullable();
@@ -40,6 +45,8 @@ class UsersTable extends Migration
             $table->enum('is_document_verified', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->bigInteger('country_id')->unsigned()->nullable();
             $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
+            $table->bigInteger('city_id')->unsigned()->nullable();
+            $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             $table->bigInteger('shop_id')->unsigned()->nullable();
             $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
             $table->timestamps();

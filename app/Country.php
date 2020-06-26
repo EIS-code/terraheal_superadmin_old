@@ -2,10 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 
-class Country extends Model
+class Country extends BaseModel
 {
     protected $fillable = [
         'name',
