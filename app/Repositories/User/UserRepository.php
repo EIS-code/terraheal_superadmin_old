@@ -402,7 +402,7 @@ class UserRepository extends BaseRepository
 
     public function getGlobalResponse(int $id, bool $isApi = false)
     {
-        $data = $this->user->where('id', $id)->first();
+        $data = $this->user->where('id', $id)->with(['country', 'city'])->first();
 
         if ($isApi === true) {
             return response()->json([

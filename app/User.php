@@ -134,6 +134,16 @@ class User extends Authenticatable
         return $this->hasOne('App\Shop', 'id', 'shop_id');
     }
 
+    public function country()
+    {
+        return $this->hasOne('App\Country', 'id', 'country_id');
+    }
+
+    public function city()
+    {
+        return $this->hasOne('App\City', 'id', 'city_id');
+    }
+
     public function validateProfilePhoto($request)
     {
         return Validator::make($request->all(), [
