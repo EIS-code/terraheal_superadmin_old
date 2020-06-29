@@ -192,11 +192,11 @@ class UserRepository extends BaseRepository
                 }
 
                 // Update is_email_verified flag if email got changed.
-                if ((empty($data['email'])) || ($getUser->email != $data['email'])) {
+                if (!empty($data['email']) && ($getUser->email != $data['email'])) {
                     $data['is_email_verified'] = '0';
                 }
                 // Update is_mobile_verified flag if email got changed.
-                if ((empty($data['tel_number']) || empty($data['tel_number_code'])) || ($getUser->tel_number != $data['tel_number'] || $getUser->tel_number_code != $data['tel_number_code'])) {
+                if ((!empty($data['tel_number']) && $getUser->tel_number != $data['tel_number']) || (!empty($data['tel_number_code']) && $getUser->tel_number_code != $data['tel_number_code'])) {
                     $data['is_mobile_verified'] = '0';
                 }
 
