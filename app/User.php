@@ -118,7 +118,7 @@ class User extends Authenticatable
             'device_token'         => ['max:255'],
             'device_type'          => ['max:255'],
             'app_version'          => ['max:255'],
-            'profile_photo'        => ['max:255'],
+            'profile_photo'        => ['max:10240'],
             'oauth_uid'            => ['max:255'],
             'oauth_provider'       => [(!empty($data['oauth_uid']) ? 'required' : ''), (!empty($data['oauth_uid']) ? 'in:1,2,3,4' : '')],
             'is_email_verified'    => ['in:0,1'],
