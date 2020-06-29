@@ -95,6 +95,8 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($request->is('api/*')) {
+            Log::error($exception);
+
             return response()->json([
                 'code'   => 500,
                 'msg'    => 'Exception occurred.',

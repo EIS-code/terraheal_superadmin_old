@@ -66,12 +66,12 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         });
 
         Route::group(['prefix' => 'verify'], function () {
-            Route::post('/mobile/{userId}', 'UserController@verifyMobile')->name('userVerifyMobile');
-            Route::post('/email/{userId}', 'UserController@verifyEmail')->name('userVerifyEmail');
+            Route::post('/mobile', 'UserController@verifyMobile')->name('userVerifyMobile');
+            Route::post('/email', 'UserController@verifyEmail')->name('userVerifyEmail');
         });
         Route::group(['prefix' => 'compare'], function () {
-            Route::post('/otp/email/{userId}', 'UserController@compareOtpEmail')->name('userCompareOtpEmail');
-            Route::post('/otp/mobile/{userId}', 'UserController@compareOtpSms')->name('userCompareOtpSms');
+            Route::post('/otp/email', 'UserController@compareOtpEmail')->name('userCompareOtpEmail');
+            Route::post('/otp/mobile', 'UserController@compareOtpSms')->name('userCompareOtpSms');
         });
 
         Route::get('/get/{userId}', 'UserController@getDetails')->name('userGetDetails');

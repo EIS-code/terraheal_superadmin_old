@@ -266,8 +266,9 @@ class UserRepository extends BaseRepository
         ]);
     }
 
-    public function verifyEmail(int $id, array $data)
+    public function verifyEmail(array $data)
     {
+        $id      = (!empty($data['user_id'])) ? $data['user_id'] : 0;
         $getUser = $this->getWhereFirst('id', $id);
 
         if (!empty($getUser)) {
@@ -322,7 +323,7 @@ class UserRepository extends BaseRepository
         return $this;
     }
 
-    public function verifyMobile(int $id, array $data)
+    public function verifyMobile(array $data)
     {
         /* TODO all things like email otp after get sms gateway. */
         $this->successMsg = "SMS sent successfully !";
@@ -330,9 +331,10 @@ class UserRepository extends BaseRepository
         return $this;
     }
 
-    public function compareOtpEmail(int $userId, array $data)
+    public function compareOtpEmail(array $data)
     {
-        $otp = (!empty($data['otp'])) ? $data['otp'] : NULL;
+        $userId = (!empty($data['user_id'])) ? $data['user_id'] : 0;
+        $otp    = (!empty($data['otp'])) ? $data['otp'] : NULL;
 
         if (empty($otp)) {
             $this->errorMsg[] = "Please provide OTP properly.";
@@ -362,12 +364,13 @@ class UserRepository extends BaseRepository
         return $this;
     }
 
-    public function compareOtpSms(int $userId, array $data)
+    public function compareOtpSms(array $data)
     {
         /* TODO all things like email otp compare after get sms gateway. */
-        $otp = (!empty($data['otp'])) ? $data['otp'] : NULL;
+        $userId = (!empty($data['user_id'])) ? $data['user_id'] : 0;
+        $otp    = (!empty($data['otp'])) ? $data['otp'] : NULL;
 
-        if ($otp == '1234') {
+        if (strtolower(env('APP_ENV') != 'live') && $otp == '1234') {
             $this->user->where(['id' => $userId])->update(['is_mobile_verified' => '1']);
             $this->successMsg = "OTP matched successfully !";
         } else {

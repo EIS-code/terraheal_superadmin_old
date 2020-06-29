@@ -97,24 +97,24 @@ class UserController extends BaseController
         return $this->user->updateProfile($userId, $this->httpRequest);
     }
 
-    public function verifyEmail($userId)
+    public function verifyEmail()
     {
-        return $this->response($this->user->verifyEmail($userId, $this->getRequest));
+        return $this->response($this->user->verifyEmail($this->getRequest));
     }
 
-    public function verifyMobile($userId)
+    public function verifyMobile()
     {
-        return $this->response($this->user->verifyMobile($userId, $this->getRequest));
+        return $this->response($this->user->verifyMobile($this->getRequest));
     }
 
-    public function compareOtpEmail($userId)
+    public function compareOtpEmail()
     {
-        return $this->response($this->user->compareOtpEmail($userId, $this->getRequest));
+        return $this->response($this->user->compareOtpEmail($this->getRequest));
     }
 
-    public function compareOtpSms($userId)
+    public function compareOtpSms()
     {
-        return $this->response($this->user->compareOtpSms($userId, $this->getRequest));
+        return $this->response($this->user->compareOtpSms($this->getRequest));
     }
 
     public function getDetails($userId)
