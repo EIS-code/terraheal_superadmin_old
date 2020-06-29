@@ -164,6 +164,7 @@ class User extends Authenticatable
 
     public function getDobAttribute($value)
     {
-        return Carbon::createFromTimestampMs($value)->format('Y-m-d H:i:s');
+        return $value;
+        // return Carbon::createFromTimestampMs($value)->format('Y-m-d H:i:s');
     }
 }
