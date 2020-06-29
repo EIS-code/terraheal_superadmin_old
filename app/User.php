@@ -12,6 +12,7 @@ use App\City;
 use App\Shop;
 // use App\BaseModel;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -99,7 +100,7 @@ class User extends Authenticatable
         return Validator::make($data, [
             'name'                 => ['string', 'max:255'],
             'surname'              => ['string', 'max:255'],
-            'dob'                  => ['date'],
+            'dob'                  => ['string'],
             'country_id'           => ['integer', 'exists:' . Country::getTableName() . ',id'],
             'city_id'              => ['integer', 'exists:' . City::getTableName() . ',id'],
             'gender'               => ['in:m,f'],
@@ -159,5 +160,10 @@ class User extends Authenticatable
     public function getProfilePhotoAttribute($value)
     {
         return Storage::disk($this->fileSystem)->url($this->profilePhotoPath . $value);
+    }
+
+    public function getDobAttribute($value)
+    {
+        return Carbon::createFromTimestampMs($value)->format('Y-m-d H:i:s');
     }
 }
