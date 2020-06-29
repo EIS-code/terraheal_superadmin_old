@@ -12,13 +12,14 @@ use DB;
 
 class UserRepository extends BaseRepository
 {
-    protected $user, $profilePhotoPath, $userEmailOtpRepo, $fileSystem = 'public';
+    protected $user, $profilePhotoPath, $userEmailOtpRepo, $fileSystem;
 
     public function __construct()
     {
         parent::__construct();
         $this->user = new User();
 
+        $this->fileSystem       = $this->user->fileSystem;
         $this->profilePhotoPath = $this->user->profilePhotoPath;
         $this->userEmailOtpRepo = new UserEmailOtpRepository();
     }

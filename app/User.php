@@ -64,6 +64,7 @@ class User extends Authenticatable
         'password',
     ];
 
+    public $fileSystem       = 'public';
     public $profilePhotoPath = 'user\profile\\';
 
     /**
@@ -157,6 +158,6 @@ class User extends Authenticatable
 
     public function getProfilePhotoAttribute($value)
     {
-        return Storage::url($value);
+        return Storage::disk($this->fileSystem)->url($this->profilePhotoPath . $value);
     }
 }
