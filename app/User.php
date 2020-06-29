@@ -10,6 +10,8 @@ use Illuminate\Validation\Rule;
 use App\Country;
 use App\City;
 use App\Shop;
+// use App\BaseModel;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -151,5 +153,10 @@ class User extends Authenticatable
         ], [
             'profile_photo' => 'Please select proper file. The file must be a file of type: jpeg, png, jpg.'
         ]);
+    }
+
+    public function getProfilePhotoAttribute($value)
+    {
+        return Storage::url($value);
     }
 }

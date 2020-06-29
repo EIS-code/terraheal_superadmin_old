@@ -12,7 +12,7 @@ use DB;
 
 class UserRepository extends BaseRepository
 {
-    protected $user, $profilePhotoPath, $userEmailOtpRepo;
+    protected $user, $profilePhotoPath, $userEmailOtpRepo, $fileSystem = 'public';
 
     public function __construct()
     {
@@ -184,8 +184,9 @@ class UserRepository extends BaseRepository
                 unset($data['profile_photo']);
 
                 if (!empty($request->profile_photo)) {
-                    $fileName               = $request->profile_photo->getClientOriginalName();
-                    $storeFile              = $request->profile_photo->storeAs($this->profilePhotoPath, $fileName);
+                    // $fileName               = $request->profile_photo->getClientOriginalName();
+                    $fileName               = time() . '_' . $userId . '.' . $request->profile_photo->getClientOriginalExtension();
+                    $storeFile              = $request->profile_photo->storeAs($this->profilePhotoPath, $fileName, $this->fileSystem);
                     $data['profile_photo']  = $fileName;
                 }
 
