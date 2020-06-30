@@ -25,6 +25,7 @@ use App\Repositories\Staff\StaffRepository;
 use App\Repositories\Staff\StaffAttendanceRepository;
 use App\Repositories\Massage\MassageRepository;
 use App\Repositories\Therapy\TherapyRepository;
+use App\Repositories\Massage\Preference\MassagePreferenceRepository;
 
 abstract class BaseController extends Controller
 {
@@ -32,7 +33,7 @@ abstract class BaseController extends Controller
     protected $userRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo,
               $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistLanguageRepo,
               $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo, $therapistDocumentRepo,
-              $therapyRepo;
+              $therapyRepo, $massagePreferenceRepo;
 
     public function __construct()
     {
@@ -57,6 +58,7 @@ abstract class BaseController extends Controller
         $this->staffAttendanceRepo     = new StaffAttendanceRepository();
         $this->massageRepo             = new MassageRepository();
         $this->therapyRepo             = new TherapyRepository();
+		$this->massagePreferenceRepo   = new MassagePreferenceRepository();
     }
 
     public function response($response = [])

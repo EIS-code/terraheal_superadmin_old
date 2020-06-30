@@ -15,13 +15,13 @@ class CityTableSeeder extends Seeder
         City::insert([
             'name'        => 'Rajkot',
             'province_id' => 1,
-            'country_id'  => 1
+            // 'country_id'  => 1
         ]);
 
         City::insert([
             'name'        => 'Baroda',
             'province_id' => 1,
-            'country_id'  => 1
+            // 'country_id'  => 1
         ]);
     }
 }
