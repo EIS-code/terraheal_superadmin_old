@@ -55,7 +55,8 @@ class MassagePreferenceRepository extends BaseRepository
 
     public function get(array $data, int $limit = 10)
     {
-        $limit = (!is_numeric($limit)) ? 10 : $limit;
+        $limit  = (!is_numeric($limit)) ? 10 : $limit;
+        $userId = (!empty($data['user_id'])) ? (int)$data['user_id'] : false;
 
         $getMassagePreferences = $this->massagePreference->with(['preferenceOptions' => function($qry) {
             $qry->with('selectedPreferences');

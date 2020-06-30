@@ -19,6 +19,8 @@ class SelectedMassagePreferencesTable extends Migration
             $table->enum('is_removed', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->bigInteger('mp_option_id')->unsigned();
             $table->foreign('mp_option_id')->references('id')->on('massage_preference_options')->onDelete('cascade');
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

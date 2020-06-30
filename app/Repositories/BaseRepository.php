@@ -11,8 +11,8 @@ class BaseRepository
 
     public function __construct()
     {
-        $this->emailRepo = new EmailRepository();
-        $this->smsRepo   = new SmsRepository();
+        $this->emailRepo   = new EmailRepository();
+        $this->smsRepo     = new SmsRepository();
     }
 
     public function getJsonResponseCode($response)

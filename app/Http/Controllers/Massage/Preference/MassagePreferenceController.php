@@ -12,7 +12,7 @@ class MassagePreferenceController extends BaseController
     {
         parent::__construct();
         $this->massagePreference = $this->massagePreferenceRepo;
-        $this->getRequest 		 = $this->httpRequest->all();
+        $this->getRequest        = $this->httpRequest->all();
     }
 
     public function get()

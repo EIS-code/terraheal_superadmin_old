@@ -11,7 +11,7 @@ class MassagePreference extends BaseModel
         'is_removed',
     ];
 
-	public function validator(array $data)
+    public function validator(array $data)
     {
         return Validator::make($data, [
             'name'       => ['required', 'integer'],

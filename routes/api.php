@@ -185,7 +185,7 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::post('get', 'MassageController@get')->name('massageGet');
 
         Route::group(['prefix' => 'preference', 'namespace' => 'Preference'], function () {
-            Route::get('/', 'MassagePreferenceController@get')->name('massagePreferenceGet');
+            Route::any('/', 'MassagePreferenceController@get')->name('massagePreferenceGet');
         });
     });
 
