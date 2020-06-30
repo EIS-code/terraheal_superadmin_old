@@ -159,7 +159,8 @@ class User extends Authenticatable
 
     public function getProfilePhotoAttribute($value)
     {
-        return Storage::disk($this->fileSystem)->url($this->profilePhotoPath . $value);
+        $profilePhotoPath = (str_ireplace("\\", "/", $this->profilePhotoPath));
+        return Storage::disk($this->fileSystem)->url($profilePhotoPath . $value);
     }
 
     public function getDobAttribute($value)
