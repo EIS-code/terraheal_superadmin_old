@@ -24,12 +24,12 @@ class SelectedMassagePreferenceRepository extends BaseRepository
     {
         $selectedMassagePreference = [];
         DB::beginTransaction();
-Log::info($data);
+
         try {
             $userId = (!empty($data['user_id'])) ? (int)$data['user_id'] : false;
             $data   = (!empty($data['data'])) ? (array)$data['data'] : [];
             $now    = Carbon::now();
-
+Log::info($data);
             if (!$userId) {
                 return response()->json([
                     'code' => 401,
