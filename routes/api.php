@@ -192,5 +192,9 @@ Route::group(['middleware' => ['web.auth.api']], function () {
 
     Route::group(['prefix' => 'therapy', 'namespace' => 'Therapy'], function () {
         Route::post('get', 'TherapyController@get')->name('therapyGet');
+
+        Route::group(['prefix' => 'questionnaire', 'namespace' => 'Questionnaire'], function () {
+            Route::any('/', 'TherapyQuestionnaireController@get')->name('therapyQuestionnaireGet');
+        });
     });
 });
