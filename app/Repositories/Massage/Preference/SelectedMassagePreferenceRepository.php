@@ -7,7 +7,6 @@ use App\SelectedMassagePreference;
 use App\MassagePreferenceOption;
 use Carbon\Carbon;
 use DB;
-use Log;
 
 class SelectedMassagePreferenceRepository extends BaseRepository
 {
@@ -22,14 +21,16 @@ class SelectedMassagePreferenceRepository extends BaseRepository
 
     public function create(array $data)
     {
+        $dataTemp  = $data;
         $selectedMassagePreference = [];
         DB::beginTransaction();
 
         try {
             $userId = (!empty($data['user_id'])) ? (int)$data['user_id'] : false;
             $data   = (!empty($data['data'])) ? (array)$data['data'] : [];
+            $data   = (!isMultidimentional($data)) ? [$data] : $data;
             $now    = Carbon::now();
-Log::info($data);
+
             if (!$userId) {
                 return response()->json([
                     'code' => 401,
@@ -67,7 +68,7 @@ Log::info($data);
                         'created_at'   => $now,
                         'updated_at'   => $now
                     ];
-Log::info($insertData);
+
                     $validator = $this->selectedMassagePreference->validator($insertData[$index]);
                     if ($validator->fails()) {
                         return response()->json([
@@ -77,7 +78,6 @@ Log::info($insertData);
                     }
 
                     $selectedMassagePreference = $this->selectedMassagePreference->updateOrCreate($matchIds[$index], $insertData[$index]);
-                    Log::info($selectedMassagePreference);
                 }
             }
 
@@ -93,7 +93,8 @@ Log::info($insertData);
 
         return response()->json([
             'code' => 200,
-            'msg'  => 'Massage preference created successfully !'
+            'msg'  => 'Massage preference created successfully !',
+            'request_body' => $dataTemp
         ]);
     }
 

@@ -17,3 +17,14 @@ function jsonDecode($string, $assoc = FALSE)
 
     return false;
 }
+
+function isMultidimentional(array $input)
+{
+    $check = array_filter($input, 'is_array');
+
+    if (count($check) > 0) {
+        return true;
+    }
+
+    return false;
+}
