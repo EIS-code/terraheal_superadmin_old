@@ -88,6 +88,11 @@ class User extends Authenticatable
         self::OAUTH_PROVIDER_LINKEDIN => 'LinkedIn'
     ];
 
+    public static function getTableName()
+    {
+        return with(new static)->getTable();
+    }
+
     public function validator(array $data, $id = false, $isUpdate = false)
     {
         $user = NULL;
