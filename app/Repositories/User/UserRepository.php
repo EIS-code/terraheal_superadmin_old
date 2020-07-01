@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use DB;
-use Log;
 
 class UserRepository extends BaseRepository
 {
@@ -231,7 +230,7 @@ class UserRepository extends BaseRepository
     {
         $email    = (!empty($data['email'])) ? $data['email'] : NULL;
         $password = (!empty($data['password'])) ? $data['password'] : NULL;
-Log::info($data);
+
         if (empty($email)) {
             return response()->json([
                 'code' => 401,

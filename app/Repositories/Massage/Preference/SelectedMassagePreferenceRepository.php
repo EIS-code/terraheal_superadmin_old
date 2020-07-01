@@ -77,6 +77,7 @@ Log::info($insertData);
                     }
 
                     $selectedMassagePreference = $this->selectedMassagePreference->updateOrCreate($matchIds[$index], $insertData[$index]);
+                    Log::info($selectedMassagePreference);
                 }
             }
 
