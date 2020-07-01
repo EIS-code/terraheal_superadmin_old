@@ -28,11 +28,7 @@ class MassagePreferenceOption extends BaseModel
         $request = Request();
         $userId  = $request->get('user_id', false);
 
-        $query   = $this->hasOne('App\SelectedMassagePreference', 'mp_option_id', 'id')->where('is_removed', '=', self::$notRemoved);
-
-        if ($userId) {
-            $query = $query->where('user_id', '=', $userId);
-        }
+        $query   = $this->hasOne('App\SelectedMassagePreference', 'mp_option_id', 'id')->where('is_removed', '=', self::$notRemoved)->where('user_id', '=', $userId);
 
         return $query;
     }
