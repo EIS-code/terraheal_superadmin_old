@@ -34,14 +34,16 @@ class SelectedMassagePreferenceRepository extends BaseRepository
             if (!$userId) {
                 return response()->json([
                     'code' => 401,
-                    'msg'  => 'Please provide valid user_id.'
+                    'msg'  => 'Please provide valid user_id.',
+                    'request_body' => $dataTemp
                 ]);
             }
 
             if (empty($data)) {
                 return response()->json([
                     'code' => 401,
-                    'msg'  => 'Data should not be empty and it should be valid.'
+                    'msg'  => 'Data should not be empty and it should be valid.',
+                    'request_body' => $dataTemp
                 ]);
             }
 
@@ -73,7 +75,8 @@ class SelectedMassagePreferenceRepository extends BaseRepository
                     if ($validator->fails()) {
                         return response()->json([
                             'code' => 401,
-                            'msg'  => $validator->errors()->first()
+                            'msg'  => $validator->errors()->first(),
+                            'request_body' => $dataTemp
                         ]);
                     }
 
