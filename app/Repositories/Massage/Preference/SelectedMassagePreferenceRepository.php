@@ -7,6 +7,7 @@ use App\SelectedMassagePreference;
 use App\MassagePreferenceOption;
 use Carbon\Carbon;
 use DB;
+use Log;
 
 class SelectedMassagePreferenceRepository extends BaseRepository
 {
@@ -23,7 +24,7 @@ class SelectedMassagePreferenceRepository extends BaseRepository
     {
         $selectedMassagePreference = [];
         DB::beginTransaction();
-
+Log::info($data);
         try {
             $userId = (!empty($data['user_id'])) ? (int)$data['user_id'] : false;
             $data   = (!empty($data['data'])) ? (array)$data['data'] : [];
@@ -66,7 +67,7 @@ class SelectedMassagePreferenceRepository extends BaseRepository
                         'created_at'   => $now,
                         'updated_at'   => $now
                     ];
-
+Log::info($insertData);
                     $validator = $this->selectedMassagePreference->validator($insertData[$index]);
                     if ($validator->fails()) {
                         return response()->json([
