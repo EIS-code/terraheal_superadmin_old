@@ -15,7 +15,7 @@ class SelectedMassagePreference extends BaseModel
         'user_id'
     ];
 
-    public $radioOptions = [1, 2];
+    public $radioOptions = [1, 2, 3, 4];
 
     public function validator(array $data)
     {
