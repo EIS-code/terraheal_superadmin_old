@@ -26,6 +26,7 @@ use App\Repositories\Staff\StaffAttendanceRepository;
 use App\Repositories\Massage\MassageRepository;
 use App\Repositories\Therapy\TherapyRepository;
 use App\Repositories\Therapy\Questionnaire\TherapyQuestionnaireRepository;
+use App\Repositories\Therapy\Questionnaire\TherapyQuestionnaireAnswerRepository;
 use App\Repositories\Massage\Preference\MassagePreferenceRepository;
 use App\Repositories\Massage\Preference\SelectedMassagePreferenceRepository;
 
@@ -35,7 +36,7 @@ abstract class BaseController extends Controller
     protected $userRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo,
               $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistLanguageRepo,
               $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo, $therapistDocumentRepo,
-              $therapyRepo, $massagePreferenceRepo, $selectedMassagePreferenceRepo, $therapyQuestionnaireRepo;
+              $therapyRepo, $massagePreferenceRepo, $selectedMassagePreferenceRepo, $therapyQuestionnaireRepo, $therapyQuestionnaireAnswerRepo;
 
     public function __construct()
     {
@@ -60,9 +61,10 @@ abstract class BaseController extends Controller
         $this->staffAttendanceRepo     = new StaffAttendanceRepository();
         $this->massageRepo             = new MassageRepository();
         $this->therapyRepo             = new TherapyRepository();
-		$this->therapyQuestionnaireRepo = new TherapyQuestionnaireRepository();
-		$this->massagePreferenceRepo   = new MassagePreferenceRepository();
-		$this->selectedMassagePreferenceRepo = new SelectedMassagePreferenceRepository();
+        $this->therapyQuestionnaireRepo = new TherapyQuestionnaireRepository();
+        $this->therapyQuestionnaireAnswerRepo = new TherapyQuestionnaireAnswerRepository();
+        $this->massagePreferenceRepo   = new MassagePreferenceRepository();
+        $this->selectedMassagePreferenceRepo = new SelectedMassagePreferenceRepository();
     }
 
     public function response($response = [])

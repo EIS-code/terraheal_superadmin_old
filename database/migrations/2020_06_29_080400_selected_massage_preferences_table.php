@@ -15,7 +15,7 @@ class SelectedMassagePreferencesTable extends Migration
     {
         Schema::create('selected_massage_preferences', function (Blueprint $table) {
             $table->id();
-            $table->string('value');
+            $table->string('value')->nullable();
             $table->enum('is_removed', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->bigInteger('mp_option_id')->unsigned();
             $table->foreign('mp_option_id')->references('id')->on('massage_preference_options')->onDelete('cascade');

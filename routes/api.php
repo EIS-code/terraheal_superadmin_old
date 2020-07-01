@@ -195,6 +195,7 @@ Route::group(['middleware' => ['web.auth.api']], function () {
 
         Route::group(['prefix' => 'questionnaire', 'namespace' => 'Questionnaire'], function () {
             Route::any('/', 'TherapyQuestionnaireController@get')->name('therapyQuestionnaireGet');
+            Route::post('save', 'TherapyQuestionnaireAnswerController@create')->name('therapyQuestionnaireCreate');
         });
     });
 });
