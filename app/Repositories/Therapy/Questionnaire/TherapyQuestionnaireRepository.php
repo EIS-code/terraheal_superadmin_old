@@ -61,7 +61,21 @@ class TherapyQuestionnaireRepository extends BaseRepository
         $getQuestions = $this->therapyQuestionnaire->where(function($sql) use($query) {
             $sql->where("title", "LIKE", "%{$query}%")
                 ->orWhere("placeholder", "LIKE", "%{$query}%");
-        })->limit($limit)->get();
+        })
+        ->with('questionnaireAnswer')
+        ->limit($limit)->get();
+
+        if (!empty($getQuestions) && !$getQuestions->isEmpty()) {
+            $getQuestions->map(function($question) {
+                $question->value = NULL;
+
+                if (!empty($question->questionnaireAnswer)) {
+                    $question->value = $question->questionnaireAnswer->value;
+                }
+
+                unset($question->questionnaireAnswer);
+            });
+        }
 
         return response()->json([
             'code' => 200,

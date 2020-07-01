@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class TherapyQuestionnaire extends BaseModel
 {
@@ -25,5 +26,19 @@ class TherapyQuestionnaire extends BaseModel
             'max'         => ['integer'],
             'is_removed'  => ['integer', 'in:0,1']
         ]);
+    }
+
+    public function questionnaireAnswer()
+    {
+        $request = Request();
+        $userId  = $request->get('user_id', false);
+
+        $query   = $this->hasOne('App\TherapyQuestionnaireAnswer', 'questionnaire_id', 'id')->where('is_removed', '=', self::$notRemoved);
+
+        if ($userId) {
+            $query = $query->where('user_id', '=', $userId);
+        }
+
+        return $query;
     }
 }
