@@ -15,12 +15,14 @@ class UserAddress extends BaseModel
         'address_line_2',
         'land_mark',
         'pin_code',
-        'home_work_office',
+        'name',
         'longitude',
         'latitude',
         'is_removed',
-        'province_id',
-        'city_id',
+        // 'province_id',
+        // 'city_id',
+        'province',
+        'city',
         'user_id'
     ];
 
@@ -56,12 +58,14 @@ class UserAddress extends BaseModel
             'address_line_2'    => ['required', 'string', 'max:255'],
             'land_mark'         => ['required', 'string', 'max:255'],
             'pin_code'          => ['required', 'string', 'max:255'],
-            'home_work_office'  => ['required', 'string', 'max:255'],
+            'name'              => ['required', 'string', 'max:255'],
             'longitude'         => ['required', 'string', 'max:255'],
             'latitude'          => ['required', 'string', 'max:255'],
             'is_removed'        => ['integer', 'in:0,1'],
-            'province_id'       => ['required', 'exists:' . Province::getTableName() . ',id'],
-            'city_id'           => ['required', 'exists:' . City::getTableName() . ',id'],
+            'province'          => ['required', 'string', 'max:255'],
+            'city'              => ['required', 'string', 'max:255'],
+            // 'province_id'       => ['required', 'exists:' . Province::getTableName() . ',id'],
+            // 'city_id'           => ['required', 'exists:' . City::getTableName() . ',id'],
             'user_id'           => $userId
         ]);
     }

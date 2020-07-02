@@ -19,14 +19,16 @@ class UserAddressesTable extends Migration
             $table->string('address_line_2');
             $table->string('land_mark');
             $table->string('pin_code');
-            $table->string('home_work_office');
+            $table->string('name');
             $table->decimal('longitude', 11, 8);
             $table->decimal('latitude', 11, 8);
             $table->enum('is_removed', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
-            $table->bigInteger('province_id')->unsigned();
+            $table->string('province');
+            $table->string('city');
+            /*$table->bigInteger('province_id')->unsigned();
             $table->foreign('province_id')->references('id')->on('provinces')->onDelete('cascade');
             $table->bigInteger('city_id')->unsigned();
-            $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
+            $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');*/
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
