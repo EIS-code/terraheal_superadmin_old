@@ -55,7 +55,7 @@ class UserAddress extends BaseModel
 
         return Validator::make($data, [
             'address_line_1'    => ['required', 'string', 'max:255'],
-            'address_line_2'    => ['required', 'string', 'max:255'],
+            'address_line_2'    => ['string', 'max:255'],
             'land_mark'         => ['required', 'string', 'max:255'],
             'pin_code'          => ['required', 'string', 'max:255'],
             'name'              => ['required', 'string', 'max:255'],
