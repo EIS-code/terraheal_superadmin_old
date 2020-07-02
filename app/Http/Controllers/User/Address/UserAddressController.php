@@ -18,7 +18,7 @@ class UserAddressController extends BaseController
     public function get()
     {
         $id = $this->httpRequest->get('user_id', false);
-        return $this->userAddress->get($id);
+        return $this->userAddress->get($id, true);
     }
 
     public function create()

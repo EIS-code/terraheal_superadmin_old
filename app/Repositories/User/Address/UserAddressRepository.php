@@ -105,7 +105,8 @@ class UserAddressRepository extends BaseRepository
                 DB::commit();
                 return response()->json([
                     'code' => 200,
-                    'msg'  => 'User address updated successfully !'
+                    'msg'  => 'User address updated successfully !',
+                    'data' => $this->getWhereFirst('id', $id)
                 ]);
             } else {
                 return response()->json([
@@ -131,7 +132,7 @@ class UserAddressRepository extends BaseRepository
 
                 if ($userAddress->save()) {
                     return response()->json([
-                        'code' => 401,
+                        'code' => 200,
                         'msg'  => 'User address removed successfully.'
                     ]);
                 }
@@ -152,23 +153,31 @@ class UserAddressRepository extends BaseRepository
     public function deleteWhere($column, $value)
     {}
 
-    public function get(int $id)
+    public function get(int $id, $isApi = false)
     {
         $userAddress = $this->userAddress->where('user_id', $id)->where('is_removed', $this->userAddress::$notRemoved)->get();
 
         if (!empty($userAddress) && !$userAddress->isEmpty()) {
+            if ($isApi === true) {
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'User address found successfully.',
+                    'data' => $userAddress
+                ]);
+            }
+
+            return $userAddress;
+        }
+
+        if ($isApi === true) {
             return response()->json([
-                'code' => 200,
-                'msg'  => 'User address found successfully.',
+                'code' => 401,
+                'msg'  => 'User address not found.',
                 'data' => $userAddress
             ]);
         }
 
-        return response()->json([
-            'code' => 401,
-            'msg'  => 'User address not found.',
-            'data' => $userAddress
-        ]);
+        return $userAddress;
     }
 
     public function errors()
