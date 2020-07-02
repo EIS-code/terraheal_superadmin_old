@@ -25,7 +25,7 @@ class UsersTable extends Migration
             $table->string('emergency_tel_number_code', 20)->nullable();
             $table->string('emergency_tel_number', 50)->nullable();
             $table->string('nif')->nullable();
-            $table->string('address')->nullable();
+            // $table->string('address')->nullable();
             $table->string('id_passport')->nullable();
             // $table->string('photo');
             $table->string('avatar')->nullable();

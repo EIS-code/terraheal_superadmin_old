@@ -75,6 +75,13 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         });
 
         Route::get('/get/{userId}', 'UserController@getDetails')->name('userGetDetails');
+
+        Route::group(['prefix' => 'address', 'namespace' => 'Address'], function () {
+            Route::post('/get', 'UserAddressController@get')->name('userAddressGet');
+            Route::post('/save', 'UserAddressController@create')->name('userAddressSave');
+            Route::post('/update', 'UserAddressController@update')->name('userAddressUpdate');
+            Route::post('/remove', 'UserAddressController@remove')->name('userAddressRemove');
+        });
     });
 
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {
