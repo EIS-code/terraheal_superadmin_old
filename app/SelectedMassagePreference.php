@@ -17,6 +17,16 @@ class SelectedMassagePreference extends BaseModel
 
     public $radioOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
+    public $optionGroups = [
+        1 => [1, 2, 3, 4],
+        2 => [5, 6, 7, 8, 9],
+        3 => [10],
+        4 => [11],
+        5 => [12],
+        6 => [13],
+        7 => [14]
+    ];
+
     public function validator(array $data)
     {
         return Validator::make($data, [

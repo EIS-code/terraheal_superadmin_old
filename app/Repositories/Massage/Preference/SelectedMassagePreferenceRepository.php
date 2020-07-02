@@ -21,7 +21,6 @@ class SelectedMassagePreferenceRepository extends BaseRepository
 
     public function create(array $data)
     {
-        $dataTemp  = $data;
         $selectedMassagePreference = [];
         DB::beginTransaction();
 
@@ -34,16 +33,14 @@ class SelectedMassagePreferenceRepository extends BaseRepository
             if (!$userId) {
                 return response()->json([
                     'code' => 401,
-                    'msg'  => 'Please provide valid user_id.',
-                    'request_body' => $dataTemp
+                    'msg'  => 'Please provide valid user_id.'
                 ]);
             }
 
             if (empty($data)) {
                 return response()->json([
                     'code' => 401,
-                    'msg'  => 'Data should not be empty and it should be valid.',
-                    'request_body' => $dataTemp
+                    'msg'  => 'Data should not be empty and it should be valid.'
                 ]);
             }
 
@@ -68,17 +65,20 @@ class SelectedMassagePreferenceRepository extends BaseRepository
                         'mp_option_id' => $optionId,
                         'user_id'      => $userId,
                         'created_at'   => $now,
-                        'updated_at'   => $now
+                        'updated_at'   => $now,
+                        'is_removed'   => $this->selectedMassagePreference::$notRemoved
                     ];
 
                     $validator = $this->selectedMassagePreference->validator($insertData[$index]);
                     if ($validator->fails()) {
                         return response()->json([
                             'code' => 401,
-                            'msg'  => $validator->errors()->first(),
-                            'request_body' => $dataTemp
+                            'msg'  => $validator->errors()->first()
                         ]);
                     }
+
+                    // Remove old selections.
+                    $this->removeOldSelections($userId, $optionId);
 
                     $selectedMassagePreference = $this->selectedMassagePreference->updateOrCreate($matchIds[$index], $insertData[$index]);
                 }
@@ -96,9 +96,19 @@ class SelectedMassagePreferenceRepository extends BaseRepository
 
         return response()->json([
             'code' => 200,
-            'msg'  => 'Massage preference created successfully !',
-            'request_body' => $dataTemp
+            'msg'  => 'Massage preference created successfully !'
         ]);
+    }
+
+    public function removeOldSelections(int $userId, int $optionId)
+    {
+        $optionGroups = inArrayRecursive($optionId, $this->selectedMassagePreference->optionGroups);
+
+        if (!empty($optionGroups)) {
+            return $this->selectedMassagePreference->where('user_id', '=', $userId)->whereIn('mp_option_id', $optionGroups)->update(['is_removed' => $this->selectedMassagePreference::$removed]);
+        }
+
+        return false;
     }
 
     public function update(int $id, array $data)

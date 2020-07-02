@@ -28,3 +28,21 @@ function isMultidimentional(array $input)
 
     return false;
 }
+
+function inArrayRecursive(string $needle, array $haystack, bool $strict = false, bool $returnKey = false)
+{
+    if (empty($haystack) || !is_array($haystack)) {
+        return false;
+    }
+
+    foreach ($haystack as $index => $item) {
+        if (
+            ($strict ? $item === $needle : $item == $needle) || 
+            (is_array($item) && inArrayRecursive($needle, $item, $strict))
+        ) {
+            return ($returnKey) ? [$index => $item] : $item;
+        }
+    }
+
+    return false;
+}

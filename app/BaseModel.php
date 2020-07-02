@@ -9,6 +9,8 @@ class BaseModel extends Model
 
     public static $notRemoved = '0';
 
+    public static $removed = '1';
+
     protected $hidden = ['is_removed', 'created_at', 'updated_at'];
 
     public static function getTableName()
