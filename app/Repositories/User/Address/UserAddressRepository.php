@@ -153,9 +153,36 @@ class UserAddressRepository extends BaseRepository
     public function deleteWhere($column, $value)
     {}
 
-    public function get(int $id, $isApi = false)
+    public function getByUserId(int $id, $isApi = false)
     {
         $userAddress = $this->userAddress->where('user_id', $id)->where('is_removed', $this->userAddress::$notRemoved)->get();
+
+        if (!empty($userAddress) && !$userAddress->isEmpty()) {
+            if ($isApi === true) {
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'User address found successfully.',
+                    'data' => $userAddress
+                ]);
+            }
+
+            return $userAddress;
+        }
+
+        if ($isApi === true) {
+            return response()->json([
+                'code' => 401,
+                'msg'  => 'User address not found.',
+                'data' => $userAddress
+            ]);
+        }
+
+        return $userAddress;
+    }
+
+    public function get(int $id, $isApi = false)
+    {
+        $userAddress = $this->userAddress->where('id', $id)->where('is_removed', $this->userAddress::$notRemoved)->get();
 
         if (!empty($userAddress) && !$userAddress->isEmpty()) {
             if ($isApi === true) {
