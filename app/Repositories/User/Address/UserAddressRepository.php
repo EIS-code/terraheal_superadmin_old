@@ -158,7 +158,7 @@ class UserAddressRepository extends BaseRepository
 
         if (!empty($userAddress) && !$userAddress->isEmpty()) {
             return response()->json([
-                'code' => 401,
+                'code' => 200,
                 'msg'  => 'User address found successfully.',
                 'data' => $userAddress
             ]);
