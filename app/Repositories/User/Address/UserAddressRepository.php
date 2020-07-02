@@ -154,13 +154,21 @@ class UserAddressRepository extends BaseRepository
 
     public function get(int $id)
     {
-        $userAddress = $this->userAddress->find($id);
+        $userAddress = $this->userAddress->where('user_id', $id)->where('is_removed', $this->userAddress::$notRemoved)->get();
 
-        if (!empty($userAddress)) {
-            return $userAddress->where('is_removed', $this->userAddress::$notRemoved)->get();
+        if (!empty($userAddress) && !$userAddress->isEmpty()) {
+            return response()->json([
+                'code' => 401,
+                'msg'  => 'User address found successfully.',
+                'data' => $userAddress
+            ]);
         }
 
-        return NULL;
+        return response()->json([
+            'code' => 401,
+            'msg'  => 'User address not found.',
+            'data' => $userAddress
+        ]);
     }
 
     public function errors()
