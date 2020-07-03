@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Support\Facades\Validator;
 use App\User;
+use App\UserGenderPreference;
 use Illuminate\Support\Facades\Storage;
 
 class UserPeople extends BaseModel
@@ -16,7 +17,8 @@ class UserPeople extends BaseModel
         'gender',
         'photo',
         'is_removed',
-        'user_id'
+        'user_id',
+        'user_gender_preference_id'
     ];
 
     public $fileSystem = 'public';
@@ -35,7 +37,8 @@ class UserPeople extends BaseModel
             'gender'     => ['required', 'in:m,f'],
             'photo'      => ['max:10240'],
             'is_removed' => ['integer', 'in:0,1'],
-            'user_id'    => $userId
+            'user_id'    => $userId,
+            'user_gender_preference_id' => ['required', 'exists:' . UserGenderPreference::getTableName() . ',id']
         ]);
     }
 

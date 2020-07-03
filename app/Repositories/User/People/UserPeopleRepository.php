@@ -4,19 +4,21 @@ namespace App\Repositories\User\People;
 
 use App\Repositories\BaseRepository;
 use App\UserPeople;
+use App\UserGenderPreference;
 use Illuminate\Http\Request;
 use DB;
 
 class UserPeopleRepository extends BaseRepository
 {
-    protected $userPeople;
+    protected $userPeople, $userGenderPreference;
 
     public function __construct()
     {
         parent::__construct();
-        $this->userPeople = new UserPeople();
-        $this->fileSystem = $this->userPeople->fileSystem;
-        $this->photoPath  = $this->userPeople->photoPath;
+        $this->userPeople           = new UserPeople();
+        $this->userGenderPreference = new UserGenderPreference();
+        $this->fileSystem           = $this->userPeople->fileSystem;
+        $this->photoPath            = $this->userPeople->photoPath;
     }
 
     public function create(Request $request)
@@ -225,12 +227,16 @@ class UserPeopleRepository extends BaseRepository
     {
         $userPeople = $this->userPeople->where('user_id', $id)->where('is_removed', $this->userPeople::$notRemoved)->get();
 
+        // Get user gender preference.
+        $userGenderPreference = $this->userGenderPreference->where('is_removed', $this->userGenderPreference::$notRemoved)->get();
+
         if (!empty($userPeople) && !$userPeople->isEmpty()) {
             if ($isApi === true) {
                 return response()->json([
-                    'code' => 200,
-                    'msg'  => 'User people found successfully.',
-                    'data' => $userPeople
+                    'code'               => 200,
+                    'msg'                => 'User people found successfully.',
+                    'data'               => $userPeople,
+                    'gender_preferences' => $userGenderPreference
                 ]);
             }
 
@@ -238,10 +244,16 @@ class UserPeopleRepository extends BaseRepository
         }
 
         if ($isApi === true) {
+            $code = 401;
+            if (!empty($userGenderPreference) && !$userGenderPreference->isEmpty()) {
+                $code = 200;
+            }
+
             return response()->json([
-                'code' => 401,
-                'msg'  => 'User people not found.',
-                'data' => $userPeople
+                'code'               => $code,
+                'msg'                => 'User people not found.',
+                'data'               => $userPeople,
+                'gender_preferences' => $userGenderPreference
             ]);
         }
 

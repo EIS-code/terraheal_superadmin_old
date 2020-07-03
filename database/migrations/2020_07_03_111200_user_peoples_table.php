@@ -19,9 +19,11 @@ class UserPeoplesTable extends Migration
             $table->integer('age');
 			$table->enum('gender', ['m', 'f'])->comment('m: Male, f: Female');
             $table->string('photo')->nullable();
-            $table->bigInteger('user_id')->unsigned();
 			$table->enum('is_removed', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
+            $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->bigInteger('user_gender_preference_id')->unsigned();
+            $table->foreign('user_gender_preference_id')->references('id')->on('user_gender_preferences')->onDelete('cascade');
             $table->timestamps();
         });
     }
