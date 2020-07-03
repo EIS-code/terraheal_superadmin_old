@@ -164,6 +164,10 @@ class User extends Authenticatable
 
     public function getProfilePhotoAttribute($value)
     {
+        if (empty($value)) {
+            return $value;
+        }
+
         $profilePhotoPath = (str_ireplace("\\", "/", $this->profilePhotoPath));
         return Storage::disk($this->fileSystem)->url($profilePhotoPath . $value);
     }

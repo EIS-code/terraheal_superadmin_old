@@ -16,7 +16,7 @@ class UserAddressesTable extends Migration
         Schema::create('user_addresses', function (Blueprint $table) {
             $table->id();
             $table->string('address_line_1');
-            $table->string('address_line_2');
+            $table->string('address_line_2')->nullable();
             $table->string('land_mark');
             $table->string('pin_code');
             $table->string('name');
