@@ -15,6 +15,7 @@ use App\Repositories\User\Payment\BookingPaymentRepository;
 use App\Repositories\User\Payment\UserCardDetailRepository;
 use App\Repositories\User\Address\UserAddressRepository;
 use App\Repositories\User\People\UserPeopleRepository;
+use App\Repositories\User\Setting\UserSettingRepository;
 use App\Repositories\Therapist\TherapistRepository;
 use App\Repositories\Therapist\Massage\TherapistMassageHistoryRepository;
 use App\Repositories\Therapist\TherapistCalendarRepository;
@@ -39,7 +40,7 @@ abstract class BaseController extends Controller
               $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistLanguageRepo,
               $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo, $therapistDocumentRepo,
               $therapyRepo, $massagePreferenceRepo, $selectedMassagePreferenceRepo, $therapyQuestionnaireRepo, $therapyQuestionnaireAnswerRepo,
-              $userAddressRepo, $userPeopleRepo;
+              $userAddressRepo, $userPeopleRepo, $userSettingRepo;
 
     public function __construct()
     {
@@ -54,6 +55,7 @@ abstract class BaseController extends Controller
         $this->userCardDetailRepo      = new UserCardDetailRepository();
         $this->userAddressRepo         = new UserAddressRepository();
         $this->userPeopleRepo          = new UserPeopleRepository();
+        $this->userSettingRepo         = new UserSettingRepository();
         $this->therapistRepo           = new therapistRepository();
         $this->therapistMassageHistoryRepo = new therapistMassageHistoryRepository();
         $this->receptionistRepo        = new ReceptionistRepository();

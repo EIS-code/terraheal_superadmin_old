@@ -50,10 +50,10 @@ class User extends Authenticatable
         'shop_id',
         'referral_code',
         'password',
-        'is_deleted',
+        'is_removed',
         'is_email_verified',
         'is_mobile_verified',
-        'is_document_verified'
+        'is_document_verified',
     ];
 
     /**
@@ -67,6 +67,9 @@ class User extends Authenticatable
 
     public $fileSystem       = 'public';
     public $profilePhotoPath = 'user\profile\\';
+
+    public static $notRemoved = '0';
+    public static $removed = '1';
 
     /**
      * The attributes that should be cast to native types.
@@ -132,7 +135,7 @@ class User extends Authenticatable
             'is_mobile_verified'   => ['in:0,1'],
             'is_document_verified' => ['in:0,1'],
             'referral_code'        => ['max:255'],
-            'is_deleted'           => ['integer', 'in:0,1'],
+            'is_removed'           => ['integer', 'in:0,1'],
         ], [
             'password.regex'  => 'Password should contains at least one [a-z, A-Z, 0-9, @, $, !, %, *, #, ?, &].'
         ]);
