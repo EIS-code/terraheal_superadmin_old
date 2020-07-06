@@ -92,9 +92,10 @@ class UserController extends BaseController
         return $this->booking->addRoom($bookingInfoId, $roomId);
     }
 
-    public function updateProfile($userId)
+    public function updateProfile()
     {
-        return $this->user->updateProfile($userId, $this->httpRequest);
+        $userId = $this->httpRequest->get('user_id', false);
+        return $this->response($this->user->updateProfile($userId, $this->httpRequest));
     }
 
     public function verifyEmail()
