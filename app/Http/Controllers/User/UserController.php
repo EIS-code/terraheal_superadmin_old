@@ -95,7 +95,7 @@ class UserController extends BaseController
     public function updateProfile()
     {
         $userId = $this->httpRequest->get('user_id', false);
-        return $this->response($this->user->updateProfile($userId, $this->httpRequest));
+        return $this->user->updateProfile($userId, $this->httpRequest);
     }
 
     public function verifyEmail()

@@ -161,24 +161,21 @@ class UserRepository extends BaseRepository
             $validator = $this->user->validator($data, $userId, true);
             if ($validator->fails()) {
                 $this->errorMsg[] = $validator->errors()->first();
-                return $this;
             }
 
             if (empty($userId)) {
                 $this->errorMsg[] = "Please provide valid user id.";
-                return $this;
             }
 
             $getUser = $this->getWhereFirst('id', $userId);
             if (empty($getUser)) {
                 $this->errorMsg[] = "Please provide valid user id.";
-                return $this;
             }
 
             if (!empty($request->profile_photo)) {
                 $validate = $this->user->validateProfilePhoto($request);
                 if ($validate->fails()) {
-                    $this->errorMsg = $validate->errors()->first();
+                    $this->errorMsg[] = $validate->errors()->first();
                 }
             }
 
@@ -214,12 +211,19 @@ class UserRepository extends BaseRepository
         DB::commit();
 
         if (!$this->isErrorFree()) {
-            return $this;
+            return response()->json([
+                'code' => 401,
+                'msg'  => reset($this->errorMsg)
+            ]);
         }
 
-        $this->successMsg = 'User profile updated successfully !';
+        // $this->successMsg = 'User profile updated successfully !';
 
-        return $this;
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'User profile updated successfully !',
+            'data' => $user
+        ]);
     }
 
     public function signIn(array $data)
