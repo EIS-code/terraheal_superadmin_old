@@ -219,20 +219,28 @@ class UserSettingRepository extends BaseRepository
         $data          = $this->userSetting->where('user_id', $id)->where('is_removed', '=', $this->userSetting::$notRemoved)->first();
         $userHtmlField = $this->userHtmlField->where('is_removed', '=', $this->userHtmlField::$notRemoved)->first();
 
+        $userSettings = $userHtmlFields = [];
+        if (!empty($data)) {
+            $userSettings = $data->toArray();
+        }
+        if (!empty($userHtmlField)) {
+            $userHtmlFields = $userHtmlField->toArray();
+        }
+
+        $data = array_merge($userSettings, $userHtmlFields);
+
         if ($isApi === true) {
             if (!empty($data)) {
                 return response()->json([
                     'code' => 200,
                     'msg'  => 'User setting found successfully !',
-                    'data' => $data,
-                    'html' => $userHtmlField
+                    'data' => $data
                 ]);
             } else {
                 return response()->json([
                     'code' => 200,
                     'msg'  => 'User setting not found.',
-                    'data' => [],
-                    'html' => $userHtmlField
+                    'data' => []
                 ]);
             }
         }
