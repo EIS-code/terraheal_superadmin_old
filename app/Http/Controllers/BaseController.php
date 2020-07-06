@@ -79,7 +79,7 @@ abstract class BaseController extends Controller
 
         if (!empty($response->errorMsg)) {
             $responseCode    = $this->errorCode;
-            $responseMessage = $response->errorMsg;
+            $responseMessage = (is_array($response->errorMsg)) ? reset($response->errorMsg) : $response->errorMsg;
         } elseif (!empty($response->successMsg)) {
             $responseCode    = $this->successCode;
             $responseMessage = $response->successMsg;
