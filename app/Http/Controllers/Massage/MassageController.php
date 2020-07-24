@@ -19,4 +19,9 @@ class MassageController extends BaseController
     {
         return $this->massage->get($this->getRequest);
     }
+
+    public function getMassageCenters()
+    {
+        return $this->massage->getMassageCenters($this->getRequest);
+    }
 }
