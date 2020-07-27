@@ -22,6 +22,6 @@ class MassageTiming extends Model
 
     public function pricing()
     {
-        return $this->hasMany('App\MassagePrice', 'massage_timing_id', 'id');
+        return $this->hasOne('App\MassagePrice', 'massage_timing_id', 'id');
     }
 }
