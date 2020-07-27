@@ -213,6 +213,10 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::group(['prefix' => 'center'], function () {
             Route::post('get', 'MassageController@getMassageCenters')->name('massageGetMassageCenters');
         });
+
+        Route::group(['prefix' => 'session'], function () {
+            Route::get('get', 'MassageController@getMassageSessions')->name('massageGetMassageSessions');
+        });
     });
 
     Route::group(['prefix' => 'therapy', 'namespace' => 'Therapy'], function () {

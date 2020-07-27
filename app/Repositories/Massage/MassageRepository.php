@@ -6,6 +6,7 @@ use App\Repositories\BaseRepository;
 use App\Massage;
 use App\Shop;
 use App\City;
+use App\SessionType;
 use DB;
 use GuzzleHttp\Client;
 
@@ -178,6 +179,17 @@ class MassageRepository extends BaseRepository
                 'data' => $query
             ]);
         }
+    }
+
+    public function getMassageSessions()
+    {
+        $getSessionTypes = SessionType::where('is_removed', SessionType::$notRemoved)->get();
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'Massage sessions found successfully !',
+            'data' => $getSessionTypes
+        ]);
     }
 
     public function errors()
