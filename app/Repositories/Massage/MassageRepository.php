@@ -58,21 +58,35 @@ class MassageRepository extends BaseRepository
 
     public function get(array $data, int $limit = 10)
     {
-        $query = (!empty($data['q'])) ? $data['q'] : NULL;
-        $limit = (!is_numeric($limit)) ? 10 : $limit;
+        $query  = (!empty($data['q'])) ? $data['q'] : NULL;
+        $limit  = (!is_numeric($limit)) ? 10 : $limit;
+        $shopId = (!empty($data['shop_id'])) ? (int)$data['shop_id'] : NULL;
 
         $getMassages = $this->massage->where("name", "LIKE", "%{$query}%")->with(['timing' => function($qry) {
             $qry->with('pricing');
         }])->limit($limit)->get();
 
+        // Get shop details.
+        $massageCenters = [];
+        if (!empty($shopId)) {
+            $shops = Shop::where('id', $shopId)->first();
+            if (!empty($shops)) {
+                $data['latitude']  = $shops->latitude;
+                $data['longitude'] = $shops->longitude;
+
+                $massageCenters = $this->getMassageCenters($data, false);
+            }
+        }
+
         return response()->json([
             'code' => 200,
             'msg'  => 'Massage found successfully !',
-            'data' => $getMassages
+            'data' => $getMassages,
+            'massage_centers' => $massageCenters
         ]);
     }
 
-    public function getMassageCenters(array $data, int $limit = 10)
+    public function getMassageCenters(array $data, $isApi = true, int $limit = 10)
     {
         $latitude  = (!empty($data['latitude'])) ? $data['latitude'] : NULL;
         $longitude = (!empty($data['longitude'])) ? $data['longitude'] : NULL;
@@ -142,12 +156,22 @@ class MassageRepository extends BaseRepository
                     ]
                 ];
             }
+
+            if (!$isApi) {
+                return $returnData;
+            }
+
             return response()->json([
                 'code' => 200,
                 'msg'  => 'Massage center found successfully !',
                 'data' => $returnData
             ]);
         } else {
+
+            if (!$isApi) {
+                return $returnData;
+            }
+
             return response()->json([
                 'code' => 200,
                 'msg'  => 'Massage center found successfully !',
