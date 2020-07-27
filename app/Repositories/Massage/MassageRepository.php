@@ -183,7 +183,7 @@ class MassageRepository extends BaseRepository
  
     public function getMassageSessions()
     {
-        $getSessionTypes = SessionType::where('is_removed', SessionType::$notRemoved)->get();
+        $getSessionTypes = SessionType::get();
 
         return response()->json([
             'code' => 200,
