@@ -57,15 +57,19 @@ class MassagePreferenceRepository extends BaseRepository
     {
         $limit  = (!is_numeric($limit)) ? 10 : $limit;
         $userId = (!empty($data['user_id'])) ? (int)$data['user_id'] : false;
+        $type   = (!empty($data['type'])) ? (int)$data['type'] : false;
 
-        $getMassagePreferences = $this->massagePreference->with(['preferenceOptions' => function($qry) {
-            $qry->with('selectedPreferences');
+        $getMassagePreferences = $this->massagePreference->with(['preferenceOptions' => function($qry) use($type) {
+            $qry->with('selectedPreferences')
+                ->when($type, function($query) use($type) {
+                    $query->where('massage_preference_id', $type);
+                });
         }])->where('is_removed', '=', $this->massagePreference::$notRemoved)->limit($limit)->get();
 
         if (!empty($getMassagePreferences) && !$getMassagePreferences->isEmpty()) {
-            $getMassagePreferences->map(function($preferences) {
+            $getMassagePreferences->map(function($preferences, $index) use($type, $getMassagePreferences) {
                 if (!empty($preferences->preferenceOptions) && !$preferences->preferenceOptions->isEmpty()) {
-                    $preferences->preferenceOptions->map(function($options) {
+                    $preferences->preferenceOptions->map(function($options) use($type) {
                         $options->selected = false;
                         $options->value    = NULL;
                         if (!empty($options->selectedPreferences)) {
@@ -75,6 +79,10 @@ class MassagePreferenceRepository extends BaseRepository
 
                         unset($options->selectedPreferences);
                     });
+                } else {
+                    if ($type) {
+                        unset($getMassagePreferences[$index]);
+                    }
                 }
             });
 

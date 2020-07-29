@@ -265,7 +265,8 @@ class CurrencyHelper
             && $engine !== self::USE_YAHOO 
             && $engine !== $this->useCurrencyTable 
             ) {
-                throw new CException ('ECurrencyHelper', 'Unsupported conversion engine');
+                // throw new CException ('ECurrencyHelper', 'Unsupported conversion engine');
+                return false;
         }
 
         $result = 0;
@@ -313,7 +314,8 @@ class CurrencyHelper
         }
 
         if (!array_key_exists($from, $this->currencies) || !array_key_exists($to, $this->currencies)) {
-            throw new CException('ECurrencyHelper','Unsupported currency type');
+            // throw new CException('ECurrencyHelper','Unsupported currency type');
+            return false;
         }
 
         if ($to === 'EUR') {
