@@ -43,7 +43,7 @@ class BookingRepository extends BaseRepository
             $booking                = $this->booking;
             $booking->booking_type  = $data['booking_type'];
             $booking->special_notes = (!empty($data['special_notes']) ? $data['special_notes'] : NULL);
-            $booking->total_persons = $data['total_persons'];
+            // $booking->total_persons = $data['total_persons'];
             $booking->user_id       = $data['user_id'];
 
             // $booking->fill($data);
