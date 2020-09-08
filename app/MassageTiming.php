@@ -2,10 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 
-class MassageTiming extends Model
+class MassageTiming extends BaseModel
 {
     protected $fillable = [
         'time',

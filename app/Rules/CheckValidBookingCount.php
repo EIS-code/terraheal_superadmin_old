@@ -37,6 +37,6 @@ class CheckValidBookingCount implements Rule
      */
     public function message()
     {
-        return 'Total persons doesn\'t match with provided booking info.';
+        return __('Total persons doesn\'t match with provided booking info.');
     }
 }

@@ -7,19 +7,21 @@ use App\Repositories\Massage\MassagePriceRepository;
 use App\Repositories\Massage\MassageTimingRepository;
 use App\Booking;
 use App\BookingInfo;
+use App\BookingMassage;
 use Carbon\Carbon;
 use CurrencyHelper;
 use DB;
 
 class BookingRepository extends BaseRepository
 {
-    protected $booking, $bookingInfo, $massagePrice, $massageTiming, $currencyHelper;
+    protected $booking, $bookingInfo, $bookingMassage, $massagePrice, $massageTiming, $currencyHelper;
 
     public function __construct()
     {
         parent::__construct();
         $this->booking        = new Booking();
         $this->bookingInfo    = new BookingInfo();
+        $this->bookingMassage = new BookingMassage();
         $this->massagePrice   = new MassagePriceRepository();
         $this->massageTiming  = new MassageTimingRepository();
         $this->currencyHelper = new CurrencyHelper();
@@ -40,79 +42,96 @@ class BookingRepository extends BaseRepository
                 ]);
             }
 
+            $bookingInfos = $data['booking_info'];
+            $validator    = $this->bookingInfo->validator($bookingInfos);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => $validator->errors()->first()
+                ]);
+            }
+
+            $validator = $this->bookingMassage->validator($bookingInfos, true);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => $validator->errors()->first()
+                ]);
+            }
+
+
             $booking                = $this->booking;
             $booking->booking_type  = $data['booking_type'];
             $booking->special_notes = (!empty($data['special_notes']) ? $data['special_notes'] : NULL);
-            // $booking->total_persons = $data['total_persons'];
             $booking->user_id       = $data['user_id'];
+            $booking->shop_id       = $data['shop_id'];
 
-            // $booking->fill($data);
+            $booking->fill($data);
             $booking->save();
 
-            $bookingInfo  = $this->bookingInfo;
-            $bookingInfos = [];
-            foreach ((array)$data['booking_info'] as $infos) {
-                $infos['booking_id'] = $booking->id;
+            $bookingId         = $booking->id;
+            $bookingInfo       = $this->bookingInfo;
+            $bookingMassage    = $this->bookingMassage;
+            $userId            = $data['user_id'];
+            $massageDate       = Carbon::createFromTimestamp($data['booking_date_time'])->toDate();
+            $massageTime       = Carbon::createFromTimestamp($data['booking_date_time'])->toDateTime();
+            $bookingInfos      = [];
+            $shopCurrencyId    = $this->currencyHelper->getDefaultShopCurrency($userId, true);
+            $shopCurrency      = $this->currencyHelper->getCodeFromId($shopCurrencyId);
+            $bookingCurrencyId = (!empty($data['currency_id'])) ? $data['currency_id'] : $shopCurrencyId;
+            $bookingCurrency   = (!empty($bookingCurrencyId)) ? $this->currencyHelper->getCodeFromId($bookingCurrencyId) : NULL;
+            $bookingCurrency   = (empty($bookingCurrency)) ? $shopCurrency : $bookingCurrency;
+            $exchangeRate      = $this->currencyHelper->getRate($bookingCurrencyId);
+            $bookingMassages   = [];
 
-                $validator = $this->bookingInfo->validator($infos);
-                if ($validator->fails()) {
-                    return response()->json([
-                        'code' => 401,
-                        'msg'  => $validator->errors()->first()
-                    ]);
+            foreach ((array)$data['booking_info'] as $index => $infos) {
+                if (empty($infos['massage_info'])) {
+                    continue;
                 }
 
-                // Get massage pricing.
-                $getMassagePrice = $this->massagePrice->getWhereFirst('id', $infos['massage_prices_id']);
-                if (empty($getMassagePrice)) {
-                    return response()->json([
-                        'code' => 401,
-                        'msg'  => 'Massage price doesn\'t found.'
-                    ]);
-                }
-
-                // Get massage timing.
-                $getMassageTiming = $this->massageTiming->getWhereFirst('id', $infos['massage_timing_id']);
-                if (empty($getMassageTiming)) {
-                    return response()->json([
-                        'code' => 401,
-                        'msg'  => 'Massage duration doesn\'t found.'
-                    ]);
-                }
-
-                $shopCurrencyId    = $this->currencyHelper->getDefaultShopCurrency($data['user_id'], true);
-                $bookingCurrencyId = (!empty($data['currency_id'])) ? $data['currency_id'] : $shopCurrencyId;
-                $exchangeRate      = $this->currencyHelper->getRate($bookingCurrencyId);
-                /* $bookingCurrency = (!empty($data['currency_id'])) ? $this->currencyHelper->getCodeFromId($data['currency_id']) : NULL;
-                $bookingCurrency = (empty($bookingCurrency)) ? $shopCurrency : $bookingCurrency;
-                $exchangeRate    = $this->currencyHelper->getRate($bookingCurrency); */
-
-                $bookingInfos[] = [
-                    'preference'            => $infos['preference'],
+                $bookingInfos[$index] = [
                     'location'              => $infos['location'],
-                    'massage_date'          => $infos['massage_date'],
-                    'massage_time'          => $infos['massage_time'],
-                    'notes_of_injuries'     => $infos['notes_of_injuries'],
+                    'massage_date'          => $massageDate,
+                    'massage_time'          => $massageTime,
                     'imc_type'              => $infos['imc_type'],
-                    'massage_timing'        => $getMassageTiming->time,
-                    'price'                 => $this->currencyHelper->convert($getMassagePrice->price, $exchangeRate, $bookingCurrencyId),
-                    'cost'                  => $this->currencyHelper->convert($getMassagePrice->cost, $exchangeRate, $bookingCurrencyId),
-                    'origional_price'       => $getMassagePrice->price,
-                    'origional_cost'        => $getMassagePrice->cost,
-                    'exchange_rate'         => $exchangeRate,
                     'booking_currency_id'   => $bookingCurrencyId,
                     'shop_currency_id'      => $shopCurrencyId,
-                    // 'massage_pricing'       => $getMassagePrice->price,
-                    // 'copy_with_id'          => $infos['copy_with_id'],
-                    'massage_timing_id'     => $infos['massage_timing_id'],
                     'therapist_id'          => $infos['therapist_id'],
-                    'massage_prices_id'     => $infos['massage_prices_id'],
-                    'booking_id'            => $infos['booking_id'],
+                    'booking_id'            => $bookingId,
                     'room_id'               => $infos['room_id'],
+                    'user_people_id'        => $infos['user_people_id'],
                     'created_at'            => $now
                 ];
+
+                $bookingInfo->fill($bookingInfos[$index]);
+                $bookingInfo->save();
+
+                if ($bookingInfo) {
+                    $bookingInfoId = $bookingInfo->id;
+                }
+
+                foreach ($infos['massage_info'] as $indexBookingMassage => $massageInfo) {
+                    $getMassagePrice = $this->massagePrice->getWhereFirst('id', $massageInfo['massage_prices_id']);
+
+                    $bookingMassages[$indexBookingMassage] = [
+                        'price'             => $this->currencyHelper->convert($getMassagePrice->price, $exchangeRate, $bookingCurrencyId),
+                        'cost'              => $this->currencyHelper->convert($getMassagePrice->cost, $exchangeRate, $bookingCurrencyId),
+                        'origional_price'   => $getMassagePrice->price,
+                        'origional_cost'    => $getMassagePrice->cost,
+                        'exchange_rate'     => $exchangeRate,
+                        'preference'        => $massageInfo['preference'],
+                        'notes_of_injuries' => $massageInfo['notes_of_injuries'],
+                        'massage_preference_option_id' => $massageInfo['massage_preference_option_id'],
+                        'massage_timing_id' => $getMassagePrice->massage_timing_id,
+                        'massage_prices_id' => $massageInfo['massage_prices_id'],
+                        'booking_info_id'   => $bookingInfoId,
+                        'created_at'        => $now
+                    ];
+                }
+
+                $bookingMassage->insert($bookingMassages);
             }
-            $bookingInfo->insert($bookingInfos);
+            
         } catch(Exception $e) {
             DB::rollBack();
             // throw $e;
@@ -121,9 +140,9 @@ class BookingRepository extends BaseRepository
         DB::commit();
 
         return response()->json([
-            'code' => 200,
-            'msg'  => 'Booking created successfully !',
-            'data' => $booking
+            'code'      => 200,
+            'msg'       => 'Booking created successfully !',
+            'bookingId' => $bookingId
         ]);
     }
 

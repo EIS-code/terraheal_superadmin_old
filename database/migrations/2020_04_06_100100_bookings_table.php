@@ -17,12 +17,14 @@ class BookingsTable extends Migration
             $table->id();
             $table->enum('booking_type', [1, 2])->comment('1: In Massage Center, 2: Home / Hotel Visit.');
             $table->string('special_notes')->nullable();
-            $table->integer('total_persons');
+            // $table->integer('total_persons')->nullable();
+            $table->integer('session_id')->nullable();
             $table->string('copy_with_id')->nullable();
             $table->bigInteger('user_id')->unsigned();
+            $table->timestamp('booking_date_time');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            // $table->bigInteger('shop_id')->unsigned();
-            // $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
+            $table->bigInteger('shop_id')->unsigned();
+            $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
             // $table->rememberToken();
             $table->timestamps();
         });

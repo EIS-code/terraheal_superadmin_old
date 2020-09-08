@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
+use App\User;
 
 class Booking extends Model
 {
@@ -28,14 +29,18 @@ class Booking extends Model
         $validatorExtended = [];
         if ($isUpdate === false) {
             $totalBookingInfos = (!empty($data['booking_info']) && is_array($data['booking_info']) ? count($data['booking_info']) : 0);
-            $validatorExtended = ['total_persons' => ['required', 'integer', new Rules\CheckValidBookingCount($totalBookingInfos)]];
+            $validatorExtended = ['total_persons' => [new Rules\CheckValidBookingCount($totalBookingInfos)]];
         }
 
         $validator = Validator::make($data, array_merge([
             'booking_type'  => ['required', 'in:1,2'],
             'special_notes' => ['max:255'],
             'copy_with_id'  => ['max:255'],
-            'user_id'       => ['required', 'integer']
+            'user_id'       => ['required', 'integer', 'exists:' . User::getTableName() . ',id'],
+            'shop_id'       => ['required', 'integer', 'exists:' . Shop::getTableName() . ',id'],
+            'total_persons' => ['required', 'integer'],
+            'booking_date_time' => ['required'],
+            'booking_info' => ['required', 'array']
         ], $validatorExtended));
 
         return $validator;

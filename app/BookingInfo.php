@@ -3,23 +3,22 @@
 namespace App;
 
 use Illuminate\Support\Facades\Validator;
+use App\UserPeople;
+use App\Therapist;
+use App\Room;
 
 class BookingInfo extends BaseModel
 {
     protected $fillable = [
-        'preference',
         'location',
         'massage_date',
         'massage_time',
-        'notes_of_injuries',
         'is_cancelled',
         'cancelled_reason',
         'imc_type',
-        'massage_timing',
-        'price',
-        'cost',
         'is_done',
-        'massage_timing_id',
+        'booking_currency_id',
+        'shop_currency_id',
         'therapist_id',
         'massage_prices_id',
         'booking_id'
@@ -56,18 +55,16 @@ class BookingInfo extends BaseModel
     public function validator(array $data)
     {
         return Validator::make($data, [
-            'preference'        => ['required', 'in:m,f'],
-            'location'          => ['required', 'max:255'],
-            'massage_date'      => ['required', 'date_format:Y-m-d'],
-            'massage_time'      => ['required', 'date_format:Y-m-d H:i:s'],
-            'notes_of_injuries' => ['max:255'],
-            'is_cancelled'      => ['in:0,1'],
-            'cancelled_reason'  => ['mas:255'],
-            'imc_type'          => ['required', 'in:1,2'],
-            'massage_timing_id' => ['required', 'integer'],
-            'therapist_id'      => ['required', 'integer'],
-            'massage_prices_id'  => ['required', 'integer'],
-            'booking_id'        => ['required', 'integer']
+            '*.user_people_id'    => ['required', 'integer', 'exists:' . UserPeople::getTableName() . ',id'],
+            '*.location'          => ['required', 'max:255'],
+            '*.massage_date'      => ['nullable'],
+            '*.massage_time'      => ['nullable'],
+            '*.is_cancelled'      => ['in:0,1'],
+            '*.cancelled_reason'  => ['mas:255'],
+            '*.imc_type'          => ['required', 'in:1,2'],
+            '*.therapist_id'      => ['required', 'integer', 'exists:' . Therapist::getTableName() . ',id'],
+            '*.room_id'           => ['required', 'integer', 'exists:' . Room::getTableName() . ',id'],
+            '*.massage_info'      => ['required', 'array']
         ]);
     }
 

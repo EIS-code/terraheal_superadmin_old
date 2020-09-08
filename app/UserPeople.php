@@ -47,7 +47,7 @@ class UserPeople extends BaseModel
         return Validator::make($request->all(), [
             'photo' => 'mimes:jpeg,png,jpg',
         ], [
-            'photo' => 'Please select proper file. The file must be a file of type: jpeg, png, jpg.'
+            'photo' => __('Please select proper file. The file must be a file of type: jpeg, png, jpg.')
         ]);
     }
 
