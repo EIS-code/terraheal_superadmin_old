@@ -21,6 +21,8 @@ class BookingInfosTable extends Migration
             $table->enum('is_cancelled', [0, 1])->default(0)->comment('0: Nope, 1: Yes');
             $table->string('cancelled_reason')->nullable();
             $table->enum('imc_type', [1, 2])->comment('1: ASAP, 2: Scheduled');
+            $table->enum('bring_table_futon', [0, 1, 2])->default(0)->comment('0: None, 1: Table, 2: Tatami/Futon');
+            $table->integer('table_futon_quantity')->default(0);
             // $table->string('massage_timing', 50);
             // $table->float('massage_pricing');
             /*$table->float('price');

@@ -44,8 +44,8 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::group(['prefix' => 'booking'], function () {
             Route::post('/create', 'UserController@bookingCreate')->name('userBooking');
             Route::post('/update/{bookingInfoId}', 'UserController@bookingUpdate')->name('userBookingUpdate');
-            Route::get('/list/past/{userId}', 'UserController@getPastBooking')->name('userGetPastBooking');
-            Route::get('/list/future/{userId}', 'UserController@getFutureBooking')->name('userGetFutureBooking');
+            Route::post('/list/past', 'UserController@getPastBooking')->name('userGetPastBooking');
+            Route::post('/list/future', 'UserController@getFutureBooking')->name('userGetFutureBooking');
         });
 
         Route::group(['prefix' => 'room'], function () {
@@ -95,6 +95,10 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             Route::post('/save', 'UserSettingController@save')->name('userSettingSave');
             Route::post('/update/password', 'UserSettingController@updatePassword')->name('userUpdatePassword');
             Route::post('/logout', 'UserSettingController@logout')->name('userSettingLogout');
+        });
+
+        Route::group(['prefix' => 'focus/area'], function () {
+            Route::get('/get', 'UserController@getFocusAreas')->name('userGetFocusAreas');
         });
     });
 

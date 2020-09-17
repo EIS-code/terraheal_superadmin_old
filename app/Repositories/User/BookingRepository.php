@@ -70,8 +70,6 @@ class BookingRepository extends BaseRepository
             $booking->save();
 
             $bookingId         = $booking->id;
-            $bookingInfo       = $this->bookingInfo;
-            $bookingMassage    = $this->bookingMassage;
             $userId            = $data['user_id'];
             $massageDate       = Carbon::createFromTimestamp($data['booking_date_time'])->toDate();
             $massageTime       = Carbon::createFromTimestamp($data['booking_date_time'])->toDateTime();
@@ -89,11 +87,15 @@ class BookingRepository extends BaseRepository
                     continue;
                 }
 
+                $bookingInfo = new $this->bookingInfo;
+
                 $bookingInfos[$index] = [
                     'location'              => $infos['location'],
                     'massage_date'          => $massageDate,
                     'massage_time'          => $massageTime,
                     'imc_type'              => $infos['imc_type'],
+                    'bring_table_futon'     => (isset($infos['bring_table_futon'])) ? (string)$infos['bring_table_futon'] : $this->bookingInfo::DEFAULT_BRING_TABLE_FUTON,
+                    'table_futon_quantity'  => (isset($infos['table_futon_quantity'])) ? $infos['table_futon_quantity'] : $this->bookingInfo::DEFAULT_TABLE_FUTON_QUANTITY,
                     'booking_currency_id'   => $bookingCurrencyId,
                     'shop_currency_id'      => $shopCurrencyId,
                     'therapist_id'          => $infos['therapist_id'],
@@ -111,6 +113,8 @@ class BookingRepository extends BaseRepository
                 }
 
                 foreach ($infos['massage_info'] as $indexBookingMassage => $massageInfo) {
+                    $bookingMassage  = new $this->bookingMassage;
+
                     $getMassagePrice = $this->massagePrice->getWhereFirst('id', $massageInfo['massage_prices_id']);
 
                     $bookingMassages[$indexBookingMassage] = [
@@ -156,14 +160,15 @@ class BookingRepository extends BaseRepository
         return $this->booking->where($column, $value)->get();
     }
 
-    public function getWherePastFuture(int $userId, $isPast = true, $isApi = false)
+    public function getWherePastFuture(int $userId, $isPast = false, $isUpcoming = true, $isPending = false, $isApi = false)
     {
         $now = Carbon::now();
 
         $bookings = $this->booking
                          ->where('user_id', $userId)
                          ->with(['bookingInfo' => function($query) use($now, $isPast) {
-                                $query->where('massage_date', ($isPast === true ? '<' : '>='), $now);
+                                $query->with('bookingMassages')
+                                      ->where('massage_date', ($isPast === true ? '<' : '>='), $now);
                          }])
                          ->get();
         /* $bookings = $this->booking
@@ -171,13 +176,22 @@ class BookingRepository extends BaseRepository
                          ->where('user_id', $userId)
                          ->get(); */
 
+        if (!empty($bookings) && !$bookings->isEmpty()) {
+            $bookings->map(function($data, $index) use($bookings) {
+                if (empty($data->bookingInfo) || $data->bookingInfo->isEmpty()) {
+                    unset($bookings[$index]);
+                }
+            });
+        }
+
         if ($isApi === true) {
             $messagePrefix = (($isPast) ? 'Past' : 'Future');
-            if (!empty($bookings)) {
+            if (!empty($bookings) && !$bookings->isEmpty()) {
                 $message = $messagePrefix . ' booking found successfully !';
             } else {
                 $message = $messagePrefix . ' booking not found !';
             }
+
             return response()->json([
                 'code' => 200,
                 'msg'  => $message,

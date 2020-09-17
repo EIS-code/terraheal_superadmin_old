@@ -24,10 +24,9 @@ class DatabaseSeeder extends Seeder
         $this->call(ShopTableSeeder::class);
         $this->call(RoomTableSeeder::class);
         $this->call(MassagePreferenceTableSeeder::class);
-        $this->call(TherapyQuestionnaireTableSeeder::class); */
-
-        $this->call(UserGenderPreferenceTableSeeder::class);
-
+        $this->call(TherapyQuestionnaireTableSeeder::class);
+        $this->call(UserGenderPreferenceTableSeeder::class); */
+        $this->call(FocusAreaTableSeeder::class);
         Model::reguard();
     }
 }

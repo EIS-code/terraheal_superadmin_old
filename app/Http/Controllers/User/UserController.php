@@ -6,7 +6,7 @@ use App\Http\Controllers\BaseController;
 
 class UserController extends BaseController
 {
-    protected $user, $booking, $review, $getRequest;
+    protected $user, $booking, $review, $focusArea, $getRequest;
 
     public function __construct()
     {
@@ -14,6 +14,7 @@ class UserController extends BaseController
         $this->user       = $this->userRepo;
         $this->booking    = $this->bookingRepo;
         $this->review     = $this->reviewRepo;
+        $this->focusArea  = $this->focusAreaRepo;
         $this->getRequest = $this->httpRequest->all();
     }
 
@@ -67,14 +68,25 @@ class UserController extends BaseController
         return $this->booking->update($bookingInfoId, $this->getRequest);
     }
 
-    public function getPastBooking($userId)
+    public function getPastBooking()
     {
-        return $this->booking->getWherePastFuture($userId, true, true);
+        $userId = $this->httpRequest->get('user_id', false);
+
+        return $this->booking->getWherePastFuture($userId, true, false, false, true);
     }
 
-    public function getFutureBooking($userId)
+    public function getFutureBooking()
     {
-        return $this->booking->getWherePastFuture($userId, false, true);
+        $userId = $this->httpRequest->get('user_id', false);
+
+        return $this->booking->getWherePastFuture($userId, false, true, false, true);
+    }
+
+    public function getPendingBooking()
+    {
+        $userId = $this->httpRequest->get('user_id', false);
+
+        return $this->booking->getWherePastFuture($userId, false, false, true, true);
     }
 
     public function reviewCreate($userId, $rating)
@@ -121,5 +133,10 @@ class UserController extends BaseController
     public function getDetails($userId)
     {
         return $this->user->getGlobalResponse($userId, true);
+    }
+
+    public function getFocusAreas()
+    {
+        return $this->focusArea->all(true);
     }
 }

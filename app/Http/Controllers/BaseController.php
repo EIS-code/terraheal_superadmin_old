@@ -32,6 +32,7 @@ use App\Repositories\Therapy\Questionnaire\TherapyQuestionnaireRepository;
 use App\Repositories\Therapy\Questionnaire\TherapyQuestionnaireAnswerRepository;
 use App\Repositories\Massage\Preference\MassagePreferenceRepository;
 use App\Repositories\Massage\Preference\SelectedMassagePreferenceRepository;
+use App\Repositories\User\FocusAreaRepository;
 
 abstract class BaseController extends Controller
 {
@@ -40,7 +41,7 @@ abstract class BaseController extends Controller
               $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistLanguageRepo,
               $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo, $therapistDocumentRepo,
               $therapyRepo, $massagePreferenceRepo, $selectedMassagePreferenceRepo, $therapyQuestionnaireRepo, $therapyQuestionnaireAnswerRepo,
-              $userAddressRepo, $userPeopleRepo, $userSettingRepo;
+              $userAddressRepo, $userPeopleRepo, $userSettingRepo, $focusAreaRepo;
 
     public function __construct()
     {
@@ -72,6 +73,7 @@ abstract class BaseController extends Controller
         $this->therapyQuestionnaireAnswerRepo = new TherapyQuestionnaireAnswerRepository();
         $this->massagePreferenceRepo   = new MassagePreferenceRepository();
         $this->selectedMassagePreferenceRepo = new SelectedMassagePreferenceRepository();
+        $this->focusAreaRepo           = new FocusAreaRepository();
     }
 
     public function response($response = [])
