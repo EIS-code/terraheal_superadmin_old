@@ -91,6 +91,34 @@ class TherapistRepository extends BaseRepository
         ]);
     }
 
+    public function setReviews(array $data)
+    {
+        if (!empty($data)) {
+            $validator = $this->therapistReview->validator($data);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => $validator->errors()->first()
+                ]);
+            }
+
+            $therapistReview = $this->therapistReview;
+
+            $therapistReview->fill($data);
+            if ($therapistReview->save()) {
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'Therapist review created successfully !'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'code' => 401,
+            'msg'  => 'Something went wrong.'
+        ]);
+    }
+
     public function all()
     {
         return $this->therapist->all();

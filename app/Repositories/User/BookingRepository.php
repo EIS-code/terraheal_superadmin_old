@@ -371,6 +371,70 @@ class BookingRepository extends BaseRepository
         ]);
     }
 
+    public function getBookingPlaces($userId)
+    {
+        if (!empty($userId)) {
+            $response = [];
+            $bookings = $this->booking->where('user_id', (int)$userId)->groupBy('shop_id')->get();
+
+            if (!empty($bookings) && !$bookings->isEmpty()) {
+                foreach ($bookings as $key => $booking) {
+                    if (!empty($booking->shop)) {
+                        $response[] = $booking->shop;
+                    }
+                }
+            }
+
+            if (!empty($response)) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Booking places found successfully !',
+                    'data' => $response
+                ]);
+            }
+        }
+
+        return response()->json([
+            'code' => 401,
+            'msg'  => 'Booking places not found.'
+        ]);
+    }
+
+    public function getBookingTherapists($userId)
+    {
+        if (!empty($userId)) {
+            $response = [];
+            $bookings = $this->booking->where('user_id', (int)$userId)->get();
+
+            if (!empty($bookings) && !$bookings->isEmpty()) {
+                foreach ($bookings as $key => $booking) {
+                    if (!empty($booking->bookingInfo)) {
+                        foreach ($booking->bookingInfo as $bookingInfo) {
+                            if (!empty($bookingInfo->therapist)) {
+                                $therapistId = $bookingInfo->therapist->id;
+
+                                $response[$therapistId] = $bookingInfo->therapist;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!empty($response)) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Booking therapists found successfully !',
+                    'data' => array_values($response)
+                ]);
+            }
+        }
+
+        return response()->json([
+            'code' => 401,
+            'msg'  => 'Booking therapists not found.'
+        ]);
+    }
+
     public function errors()
     {}
 }

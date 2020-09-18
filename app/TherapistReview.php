@@ -10,16 +10,16 @@ class TherapistReview extends BaseModel
         'therapist_id',
         'question_id',
         'rating',
-        'comment'
+        'message'
     ];
 
     public function validator(array $data, $id = false, $isUpdate = false)
     {
         return Validator::make($data, [
             'therapist_id' => ['required', 'integer'],
-            'question_id'  => ['required', 'integer'],
+            'question_id'  => ['nullable', 'integer'],
             'rating'       => ['required', 'in:1,2,3,4,5'],
-            'comment'      => ['max:255']
+            'message'      => ['nullable']
         ]);
     }
 }

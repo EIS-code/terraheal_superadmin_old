@@ -46,6 +46,8 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             Route::post('/update/{bookingInfoId}', 'UserController@bookingUpdate')->name('userBookingUpdate');
             Route::post('/list/past', 'UserController@getPastBooking')->name('userGetPastBooking');
             Route::post('/list/future', 'UserController@getFutureBooking')->name('userGetFutureBooking');
+            Route::post('/places', 'UserController@getBookingPlaces')->name('userGetBookingPlaces');
+            Route::post('/therapists', 'UserController@getBookingTherapists')->name('userGetBookingTherapists');
         });
 
         Route::group(['prefix' => 'room'], function () {
@@ -99,6 +101,12 @@ Route::group(['middleware' => ['web.auth.api']], function () {
 
         Route::group(['prefix' => 'focus/area'], function () {
             Route::get('/get', 'UserController@getFocusAreas')->name('userGetFocusAreas');
+        });
+
+        Route::group(['prefix' => 'therapist'], function () {
+            Route::group(['prefix' => 'review'], function () {
+                Route::post('/save', 'UserController@setTherapistReviews')->name('userSetTherapistReviews');
+            });
         });
     });
 

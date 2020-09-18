@@ -56,6 +56,11 @@ class Booking extends Model
         return $this->hasMany('App\BookingInfo', 'booking_id', 'id')->with('bookingMassages');
     }
 
+    public function shop()
+    {
+        return $this->hasOne('App\Shop', 'id', 'shop_id');
+    }
+
     public function user()
     {
         return $this->hasMany('App\User', 'id', 'user_id');

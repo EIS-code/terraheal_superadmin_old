@@ -31,6 +31,8 @@ class Therapist extends BaseModel
         'is_mobile_verified'
     ];
 
+    protected $hidden = ['is_deleted', 'created_at', 'updated_at'];
+
     public $profilePhotoPath = 'therapist\profile\\';
 
     const GENDER_MALE   = 'm';

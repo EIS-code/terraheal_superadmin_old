@@ -91,4 +91,9 @@ class BookingInfo extends BaseModel
     {
         return $this->belongsTo('App\MassagePrice', 'massage_prices_id', 'id');
     }
+
+    public function therapist()
+    {
+        return $this->hasOne('App\Therapist', 'id', 'therapist_id');
+    }
 }

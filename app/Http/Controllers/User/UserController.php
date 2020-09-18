@@ -15,6 +15,7 @@ class UserController extends BaseController
         $this->booking    = $this->bookingRepo;
         $this->review     = $this->reviewRepo;
         $this->focusArea  = $this->focusAreaRepo;
+        $this->therapist  = $this->therapistRepo;
         $this->getRequest = $this->httpRequest->all();
     }
 
@@ -107,6 +108,7 @@ class UserController extends BaseController
     public function updateProfile()
     {
         $userId = $this->httpRequest->get('user_id', false);
+
         return $this->user->updateProfile($userId, $this->httpRequest);
     }
 
@@ -138,5 +140,24 @@ class UserController extends BaseController
     public function getFocusAreas()
     {
         return $this->focusArea->all(true);
+    }
+
+    public function getBookingPlaces()
+    {
+        $userId = $this->httpRequest->get('user_id', false);
+
+        return $this->booking->getBookingPlaces($userId);
+    }
+
+    public function getBookingTherapists()
+    {
+        $userId = $this->httpRequest->get('user_id', false);
+
+        return $this->booking->getBookingTherapists($userId);
+    }
+
+    public function setTherapistReviews()
+    {
+        return $this->therapist->setReviews($this->getRequest);
     }
 }

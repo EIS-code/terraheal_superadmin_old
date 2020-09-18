@@ -24,6 +24,8 @@ class Shop extends BaseModel
         'currency_id'
     ];
 
+    protected $hidden = ['remember_token', 'created_at', 'updated_at'];
+
     public function validator(array $data, $id = false, $isUpdate = false)
     {
         $user = NULL;
