@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator;
 use App\MassagePrice;
 use App\BookingInfo;
 use App\MassagePreferenceOption;
+use App\UserGenderPreference;
 
 class BookingMassage extends BaseModel
 {
@@ -35,7 +36,7 @@ class BookingMassage extends BaseModel
             '*.massage_info.*.notes_of_injuries' => ['max:255'],
             '*.massage_info.*.massage_prices_id' => ['required', 'integer', 'exists:' . MassagePrice::getTableName() . ',id'],
             'booking_info_id'                    => ($excludeBookingInfoId) ? [] : ['required', 'integer', 'exists:' . BookingInfo::getTableName() . ',id'],
-            '*.massage_info.*.preference'        => ['required', 'in:m,f'],
+            '*.massage_info.*.gender_preference' => ['required', 'exists:' . UserGenderPreference::getTableName() . ',id'],
             '*.massage_info.*.massage_preference_option_id' => ['required', 'integer', 'exists:' . MassagePreferenceOption::getTableName() . ',id']
         ]);
 

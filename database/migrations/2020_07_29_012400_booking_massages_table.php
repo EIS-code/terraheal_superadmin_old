@@ -20,7 +20,9 @@ class BookingMassagesTable extends Migration
             $table->float('origional_price');
             $table->float('origional_cost');
 			$table->decimal('exchange_rate', 8, 4);
-            $table->enum('preference', ['m', 'f'])->comment('m: Male, f: Female');
+            // $table->enum('preference', ['m', 'f'])->comment('m: Male, f: Female');
+            $table->bigInteger('gender_preference')->unsigned();
+            $table->foreign('gender_preference')->references('id')->on('user_gender_preferences')->onDelete('cascade');
             $table->string('notes_of_injuries')->nullable();
 			$table->bigInteger('massage_timing_id')->unsigned();
             $table->foreign('massage_timing_id')->references('id')->on('massage_timings')->onDelete('cascade');

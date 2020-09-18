@@ -123,7 +123,7 @@ class BookingRepository extends BaseRepository
                         'origional_price'   => $getMassagePrice->price,
                         'origional_cost'    => $getMassagePrice->cost,
                         'exchange_rate'     => $exchangeRate,
-                        'preference'        => $massageInfo['preference'],
+                        'gender_preference' => $massageInfo['gender_preference'],
                         'notes_of_injuries' => $massageInfo['notes_of_injuries'],
                         'massage_preference_option_id' => $massageInfo['massage_preference_option_id'],
                         'massage_timing_id' => $getMassagePrice->massage_timing_id,
