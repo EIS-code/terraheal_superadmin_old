@@ -17,6 +17,7 @@ class ShopsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('address');
+            $table->text('description')->nullable();
             $table->decimal('longitude', 11, 8);
             $table->decimal('latitude', 11, 8);
             $table->string('owner_name');
@@ -25,6 +26,10 @@ class ShopsTable extends Migration
             $table->string('owner_email')->unique();
             $table->string('email')->unique();
             $table->string('time_zone');
+            $table->time('open_time');
+            $table->time('close_time');
+            $table->enum('open_day_from', [0, 1, 2, 3, 4, 5, 6])->comment('0: Monday, 1: Tuesday, 2: Wednesday, 3: Thursday, 4: Friday, 5: Saturday, 6: Sunday');
+            $table->enum('open_day_to', [0, 1, 2, 3, 4, 5, 6])->comment('0: Monday, 1: Tuesday, 2: Wednesday, 3: Thursday, 4: Friday, 5: Saturday, 6: Sunday');
             $table->string('user_name');
             $table->string('password')->nullable();
             $table->bigInteger('city_id')->unsigned();

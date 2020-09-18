@@ -380,6 +380,8 @@ class BookingRepository extends BaseRepository
             if (!empty($bookings) && !$bookings->isEmpty()) {
                 foreach ($bookings as $key => $booking) {
                     if (!empty($booking->shop)) {
+                        $booking->shop->total_services = $booking->shop->massages->count();
+
                         $response[] = $booking->shop;
                     }
                 }
