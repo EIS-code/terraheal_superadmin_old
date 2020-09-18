@@ -406,7 +406,13 @@ class BookingRepository extends BaseRepository
     {
         if (!empty($userId)) {
             $response = [];
-            $bookings = $this->booking->where('user_id', (int)$userId)->get();
+            $bookings = $this->booking;
+
+            if (env('APP_ENV', '') == 'dev') {
+                $bookings = $bookings->get();
+            } else {
+                $bookings = $bookings->where('user_id', (int)$userId)->get();
+            }
 
             if (!empty($bookings) && !$bookings->isEmpty()) {
                 foreach ($bookings as $key => $booking) {
