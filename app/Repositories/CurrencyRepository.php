@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Currency;
 use App\User;
+use App\Shop;
 
 class CurrencyRepository extends BaseRepository
 {
@@ -13,6 +14,7 @@ class CurrencyRepository extends BaseRepository
     {
         $this->currency = new Currency();
         $this->user     = new User;
+        $this->shop     = new Shop;
     }
 
     public function getDefultCurrency()
@@ -20,12 +22,12 @@ class CurrencyRepository extends BaseRepository
         return $this->currency::$defaultCurrency;
     }
 
-    public function getDefaultShopCurrency(int $userId, bool $isId = false)
+    public function getDefaultShopCurrency(int $shopId, bool $isId = false)
     {
-        $user = $this->user->find($userId);
+        $shop = $this->shop->find($shopId);
 
-        if (!empty($user)) {
-            $getCurrencyId = $user->shop->currency_id;
+        if (!empty($shop)) {
+            $getCurrencyId = $shop->currency_id;
 
             if (!empty($getCurrencyId)) {
                 return ($isId) ? $getCurrencyId : $this->getCodeFromId($getCurrencyId);

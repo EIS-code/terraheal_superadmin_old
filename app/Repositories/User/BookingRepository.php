@@ -80,10 +80,11 @@ class BookingRepository extends BaseRepository
 
             $bookingId         = $booking->id;
             $userId            = $data['user_id'];
+            $shopId            = $data['shop_id'];
             $massageDate       = Carbon::createFromTimestamp($data['booking_date_time'])->toDate();
             $massageTime       = Carbon::createFromTimestamp($data['booking_date_time'])->toDateTime();
             $bookingInfos      = [];
-            $shopCurrencyId    = $this->currencyHelper->getDefaultShopCurrency($userId, true);
+            $shopCurrencyId    = $this->currencyHelper->getDefaultShopCurrency($shopId, true);
             $shopCurrency      = $this->currencyHelper->getCodeFromId($shopCurrencyId);
             $bookingCurrencyId = (!empty($data['currency_id'])) ? $data['currency_id'] : $shopCurrencyId;
             $bookingCurrency   = (!empty($bookingCurrencyId)) ? $this->currencyHelper->getCodeFromId($bookingCurrencyId) : NULL;
