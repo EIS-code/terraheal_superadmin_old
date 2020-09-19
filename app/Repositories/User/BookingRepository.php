@@ -42,6 +42,8 @@ class BookingRepository extends BaseRepository
                 ]);
             }
 
+            $bookingType = $data['booking_type'];
+
             $bookingInfos = $data['booking_info'];
             $validator    = $this->bookingInfo->validator($bookingInfos);
             if ($validator->fails()) {
@@ -51,7 +53,7 @@ class BookingRepository extends BaseRepository
                 ]);
             }
 
-            $validator = $this->bookingMassage->validator($bookingInfos, true);
+            $validator = $this->bookingMassage->validator($bookingInfos, true, $bookingType);
             if ($validator->fails()) {
                 return response()->json([
                     'code' => 401,
@@ -59,6 +61,9 @@ class BookingRepository extends BaseRepository
                 ]);
             }
 
+            if (isset($data['booking_type'])) {
+                $data['booking_type'] = (string)$data['booking_type'];
+            }
             if (isset($data['bring_table_futon'])) {
                 $data['bring_table_futon'] = (string)$data['bring_table_futon'];
             }
