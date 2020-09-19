@@ -118,18 +118,19 @@ class BookingRepository extends BaseRepository
                     $getMassagePrice = $this->massagePrice->getWhereFirst('id', $massageInfo['massage_prices_id']);
 
                     $bookingMassages[$indexBookingMassage] = [
-                        'price'             => $this->currencyHelper->convert($getMassagePrice->price, $exchangeRate, $bookingCurrencyId),
-                        'cost'              => $this->currencyHelper->convert($getMassagePrice->cost, $exchangeRate, $bookingCurrencyId),
-                        'origional_price'   => $getMassagePrice->price,
-                        'origional_cost'    => $getMassagePrice->cost,
-                        'exchange_rate'     => $exchangeRate,
-                        'gender_preference' => $massageInfo['gender_preference'],
-                        'notes_of_injuries' => $massageInfo['notes_of_injuries'],
-                        'massage_preference_option_id' => $massageInfo['massage_preference_option_id'],
-                        'massage_timing_id' => $getMassagePrice->massage_timing_id,
-                        'massage_prices_id' => $massageInfo['massage_prices_id'],
-                        'booking_info_id'   => $bookingInfoId,
-                        'created_at'        => $now
+                        'price'                 => $this->currencyHelper->convert($getMassagePrice->price, $exchangeRate, $bookingCurrencyId),
+                        'cost'                  => $this->currencyHelper->convert($getMassagePrice->cost, $exchangeRate, $bookingCurrencyId),
+                        'origional_price'       => $getMassagePrice->price,
+                        'origional_cost'        => $getMassagePrice->cost,
+                        'exchange_rate'         => $exchangeRate,
+                        'notes_of_injuries'     => $massageInfo['notes_of_injuries'],
+                        'pressure_preference'   => $massageInfo['pressure_preference'],
+                        'gender_preference'     => $massageInfo['gender_preference'],
+                        'focus_area_preference' => $massageInfo['focus_area_preference'],
+                        'massage_timing_id'     => $getMassagePrice->massage_timing_id,
+                        'massage_prices_id'     => $massageInfo['massage_prices_id'],
+                        'booking_info_id'       => $bookingInfoId,
+                        'created_at'            => $now
                     ];
                 }
 

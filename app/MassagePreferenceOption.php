@@ -14,6 +14,24 @@ class MassagePreferenceOption extends BaseModel
         'massage_preference_id',
     ];
 
+    public static $massagePressures = [
+        1 => [
+            1, 2, 3, 4
+        ]
+    ];
+
+    public static $massageGenders = [
+        2 => [
+            5, 6, 7, 8, 9
+        ]
+    ];
+
+    public static $massageFocucAreas = [
+        8 => [
+            15, 16, 17, 18, 19, 20
+        ]
+    ];
+
     public function validator(array $data)
     {
         return Validator::make($data, [
