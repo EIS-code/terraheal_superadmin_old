@@ -227,7 +227,7 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         });
 
         Route::group(['prefix' => 'session'], function () {
-            Route::get('get', 'MassageController@getMassageSessions')->name('massageGetMassageSessions');
+            Route::post('get', 'MassageController@getMassageSessions')->name('massageGetMassageSessions');
         });
     });
 

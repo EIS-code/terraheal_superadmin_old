@@ -17,6 +17,7 @@ class SessionTypesTable extends Migration
             $table->id();
             $table->string('type');
             $table->string('descriptions')->nullable();
+            $table->enum('booking_type', ['0', '1'])->default('0')->comment('0: Massage Center, 1: Home');
 			$table->enum('is_removed', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->timestamps();
         });

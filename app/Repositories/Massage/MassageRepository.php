@@ -181,9 +181,14 @@ class MassageRepository extends BaseRepository
         }
     }
  
-    public function getMassageSessions()
+    public function getMassageSessions(array $data)
     {
-        $getSessionTypes = SessionType::get();
+        $bookingType = '0';
+        if (isset($data['booking_type']) && in_array((string)$data['booking_type'], SessionType::$bookingTypes)) {
+            $bookingType = (string)$data['booking_type'];
+        }
+
+        $getSessionTypes = SessionType::where('booking_type', $bookingType)->get();
 
         return response()->json([
             'code' => 200,
