@@ -59,12 +59,16 @@ class BookingRepository extends BaseRepository
                 ]);
             }
 
+            if (isset($data['bring_table_futon'])) {
+                $data['bring_table_futon'] = (string)$data['bring_table_futon'];
+            }
 
-            $booking                = $this->booking;
-            $booking->booking_type  = $data['booking_type'];
-            $booking->special_notes = (!empty($data['special_notes']) ? $data['special_notes'] : NULL);
-            $booking->user_id       = $data['user_id'];
-            $booking->shop_id       = $data['shop_id'];
+            $booking                    = $this->booking;
+            $booking->booking_type      = $data['booking_type'];
+            $booking->special_notes     = (!empty($data['special_notes']) ? $data['special_notes'] : NULL);
+            $booking->bring_table_futon = (isset($data['bring_table_futon']) ? (string)$data['bring_table_futon'] : $booking::$defaultTableFutons);
+            $booking->user_id           = $data['user_id'];
+            $booking->shop_id           = $data['shop_id'];
 
             $booking->fill($data);
             $booking->save();
@@ -94,8 +98,6 @@ class BookingRepository extends BaseRepository
                     'massage_date'          => $massageDate,
                     'massage_time'          => $massageTime,
                     'imc_type'              => $infos['imc_type'],
-                    'bring_table_futon'     => (isset($infos['bring_table_futon'])) ? (string)$infos['bring_table_futon'] : $this->bookingInfo::DEFAULT_BRING_TABLE_FUTON,
-                    'table_futon_quantity'  => (isset($infos['table_futon_quantity'])) ? $infos['table_futon_quantity'] : $this->bookingInfo::DEFAULT_TABLE_FUTON_QUANTITY,
                     'booking_currency_id'   => $bookingCurrencyId,
                     'shop_currency_id'      => $shopCurrencyId,
                     'therapist_id'          => $infos['therapist_id'],

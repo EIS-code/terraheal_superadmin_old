@@ -12,12 +12,17 @@ class Booking extends Model
         'booking_type',
         'special_notes',
         'total_persons',
+        'bring_table_futon',
+        'table_futon_quantity',
         'copy_with_id',
         'user_id'
     ];
 
     const BOOKING_TYPE_IMC = 1;
     const BOOKING_TYPE_HHV = 2;
+
+    public static $defaultTableFutons = ['0', '1', '2'];
+    public static $tableFutons = ['0', '1', '2'];
 
     public static $bookingTypes = [
         self::BOOKING_TYPE_IMC => 'In massage center',
@@ -33,14 +38,16 @@ class Booking extends Model
         }
 
         $validator = Validator::make($data, array_merge([
-            'booking_type'  => ['required', 'in:1,2'],
-            'special_notes' => ['max:255'],
-            'copy_with_id'  => ['max:255'],
-            'user_id'       => ['required', 'integer', 'exists:' . User::getTableName() . ',id'],
-            'shop_id'       => ['required', 'integer', 'exists:' . Shop::getTableName() . ',id'],
-            'total_persons' => ['required', 'integer'],
-            'booking_date_time' => ['required'],
-            'booking_info' => ['required', 'array']
+            'booking_type'         => ['required', 'in:1,2'],
+            'special_notes'        => ['max:255'],
+            'copy_with_id'         => ['max:255'],
+            'user_id'              => ['required', 'integer', 'exists:' . User::getTableName() . ',id'],
+            'shop_id'              => ['required', 'integer', 'exists:' . Shop::getTableName() . ',id'],
+            'total_persons'        => ['required', 'integer'],
+            'bring_table_futon'    => ['in:' . implode(",", self::$tableFutons)],
+            'table_futon_quantity' => ['integer'],
+            'booking_date_time'    => ['required'],
+            'booking_info'         => ['required', 'array']
         ], $validatorExtended));
 
         return $validator;

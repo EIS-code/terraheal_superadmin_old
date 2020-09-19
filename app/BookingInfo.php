@@ -16,8 +16,6 @@ class BookingInfo extends BaseModel
         'is_cancelled',
         'cancelled_reason',
         'imc_type',
-        'bring_table_futon',
-        'table_futon_quantity',
         'is_done',
         'booking_currency_id',
         'shop_currency_id',
@@ -69,8 +67,6 @@ class BookingInfo extends BaseModel
             '*.is_cancelled'         => ['in:0,1'],
             '*.cancelled_reason'     => ['mas:255'],
             '*.imc_type'             => ['required', 'in:1,2'],
-            '*.bring_table_futon'    => ['in:0,1,2'],
-            '*.table_futon_quantity' => ['integer'],
             '*.therapist_id'         => ['required', 'integer', 'exists:' . Therapist::getTableName() . ',id'],
             '*.room_id'              => ['required', 'integer', 'exists:' . Room::getTableName() . ',id'],
             '*.massage_info'         => ['required', 'array']

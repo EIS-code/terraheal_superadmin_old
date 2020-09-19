@@ -18,6 +18,8 @@ class BookingsTable extends Migration
             $table->enum('booking_type', [1, 2])->comment('1: In Massage Center, 2: Home / Hotel Visit.');
             $table->string('special_notes')->nullable();
             // $table->integer('total_persons')->nullable();
+            $table->enum('bring_table_futon', [0, 1, 2])->default(0)->comment('0: None, 1: Table, 2: Tatami/Futon');
+            $table->integer('table_futon_quantity')->default(0);
             $table->integer('session_id')->nullable();
             $table->string('copy_with_id')->nullable();
             $table->bigInteger('user_id')->unsigned();
