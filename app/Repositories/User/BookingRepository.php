@@ -397,7 +397,7 @@ class BookingRepository extends BaseRepository
 
             if (!empty($response)) {
                 return response()->json([
-                    'code' => 401,
+                    'code' => 200,
                     'msg'  => 'Booking places found successfully !',
                     'data' => $response
                 ]);
@@ -438,7 +438,7 @@ class BookingRepository extends BaseRepository
 
             if (!empty($response)) {
                 return response()->json([
-                    'code' => 401,
+                    'code' => 200,
                     'msg'  => 'Booking therapists found successfully !',
                     'data' => array_values($response)
                 ]);
