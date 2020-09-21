@@ -108,6 +108,14 @@ Route::group(['middleware' => ['web.auth.api']], function () {
                 Route::post('/save', 'UserController@setTherapistReviews')->name('userSetTherapistReviews');
             });
         });
+
+        Route::group(['prefix' => 'menu'], function () {
+            Route::get('/get', 'UserController@getMenus')->name('userGetMenus');
+
+            Route::group(['prefix' => 'item'], function () {
+                Route::post('/get', 'UserController@getMenuItem')->name('userGetMenuItem');
+            });
+        });
     });
 
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {

@@ -5,28 +5,28 @@ namespace App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
-class SessionType extends BaseModel
+class UserMenu extends BaseModel
 {
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
-        'type',
-        'descriptions',
-        'booking_type',
+        'name',
         'icon',
-		'is_removed'
+        'is_removed'
     ];
 
-    public static $bookingTypes = ['0', '1'];
-
     public $fileSystem = 'public';
-    public $iconPath   = 'user\massage\session\icons\\';
+    public $iconPath   = 'user\menu\icons\\';
 
     public function validator(array $data)
     {
         return Validator::make($data, [
-            'type'   	   => ['required', 'string'],
-            'descriptions' => ['nullable', 'string'],
-            'booking_type' => ['in:' . implode(",", self::$bookingTypes)],
-            'icon'         => ['nullable', 'string', 'max:255'],
+            'name'       => ['required', 'string', 'max:255'],
+            'icon'       => ['nullable', 'string', 'max:255'],
+            'is_removed' => ['integer', 'in:0,1']
         ]);
     }
 

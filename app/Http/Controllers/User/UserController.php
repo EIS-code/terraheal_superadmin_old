@@ -16,6 +16,7 @@ class UserController extends BaseController
         $this->review     = $this->reviewRepo;
         $this->focusArea  = $this->focusAreaRepo;
         $this->therapist  = $this->therapistRepo;
+        $this->userMenu   = $this->userMenuRepo;
         $this->getRequest = $this->httpRequest->all();
     }
 
@@ -159,5 +160,15 @@ class UserController extends BaseController
     public function setTherapistReviews()
     {
         return $this->therapist->setReviews($this->getRequest);
+    }
+
+    public function getMenus()
+    {
+        return $this->userMenu->all(true);
+    }
+
+    public function getMenuItem()
+    {
+        return $this->userMenu->getMenuItem($this->getRequest);
     }
 }
