@@ -23,7 +23,7 @@ class TherapistReview extends BaseModel
             'user_id'      => ['required', 'integer', 'exists:' . User::getTableName() . ',id'],
             'therapist_id' => ['required', 'integer', 'exists:' . Therapist::getTableName() . ',id'],
             'question_id'  => ['nullable', 'integer', 'exists:' . TherapistReviewQuestion::getTableName() . ',id'],
-            'rating'       => ['required', 'in:1,2,3,4,5'],
+            'rating'       => ['required', 'in:1,1.5,2,2.5,3,3.5,4,4.5,5'],
             'message'      => ['nullable']
         ]);
     }

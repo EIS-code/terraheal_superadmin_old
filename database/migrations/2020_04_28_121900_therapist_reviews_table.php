@@ -21,7 +21,7 @@ class TherapistReviewsTable extends Migration
             $table->foreign('therapist_id')->references('id')->on('therapists')->onDelete('cascade')->nullable();
             $table->bigInteger('question_id')->unsigned()->nullable();
             $table->foreign('question_id')->references('id')->on('therapist_review_questions')->onDelete('cascade');
-            $table->enum('rating', [1, 2, 3, 4, 5])->comment('1: Very Bad, 2: Bad, 3: Medium, 4: Good One, 5: Too Happy');
+            $table->enum('rating', [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5])->comment('1: Very Bad, 2: Bad, 3: Medium, 4: Good One, 5: Too Happy');
             $table->text('message')->nullable();
             $table->timestamps();
         });

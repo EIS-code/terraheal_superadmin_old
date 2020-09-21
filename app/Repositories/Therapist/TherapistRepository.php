@@ -104,6 +104,8 @@ class TherapistRepository extends BaseRepository
 
             $therapistReview = $this->therapistReview;
 
+            $data['rating'] = (float)$data['rating'];
+
             $therapistReview->fill($data);
             if ($therapistReview->save()) {
                 return response()->json([
