@@ -37,9 +37,9 @@ class UserGuide extends BaseModel
     public function validateIcon($request)
     {
         return Validator::make($request->all(), [
-            'icon' => 'mimes:svg',
+            'icon' => 'mimes:png',
         ], [
-            'icon' => 'Please select proper file. The file must be a file of type: svg.'
+            'icon' => 'Please select proper file. The file must be a file of type: png.'
         ]);
     }
 
