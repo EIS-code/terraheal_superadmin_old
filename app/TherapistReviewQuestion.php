@@ -2,10 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 
-class TherapistReviewQuestion extends Model
+class TherapistReviewQuestion extends BaseModel
 {
     protected $fillable = [
         'question',

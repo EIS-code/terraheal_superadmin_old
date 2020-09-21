@@ -15,9 +15,11 @@ class TherapistReviewsTable extends Migration
     {
         Schema::create('therapist_reviews', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('therapist_id')->unsigned();
             $table->foreign('therapist_id')->references('id')->on('therapists')->onDelete('cascade')->nullable();
-            $table->bigInteger('question_id')->unsigned();
+            $table->bigInteger('question_id')->unsigned()->nullable();
             $table->foreign('question_id')->references('id')->on('therapist_review_questions')->onDelete('cascade');
             $table->enum('rating', [1, 2, 3, 4, 5])->comment('1: Very Bad, 2: Bad, 3: Medium, 4: Good One, 5: Too Happy');
             $table->text('message')->nullable();
