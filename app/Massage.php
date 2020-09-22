@@ -2,11 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Scout\Searchable;
 
-class Massage extends Model
+class Massage extends BaseModel
 {
     use Searchable;
 

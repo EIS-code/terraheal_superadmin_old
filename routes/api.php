@@ -116,6 +116,20 @@ Route::group(['middleware' => ['web.auth.api']], function () {
                 Route::post('/get', 'UserController@getMenuItem')->name('userGetMenuItem');
             });
         });
+
+        Route::group(['prefix' => 'gift'], function () {
+            Route::group(['prefix' => 'voucher'], function () {
+                Route::post('/get', 'UserController@getGiftVouchers')->name('userGetGiftVouchers');
+
+                Route::get('/info', 'UserController@getGiftVoucherInfos')->name('userGetGiftVoucherInfos');
+
+                Route::group(['prefix' => 'design'], function () {
+                    Route::get('/get', 'UserController@getGiftVoucherDesigns')->name('userGetGiftVoucherDesigns');
+                });
+
+                Route::post('/save', 'UserController@saveGiftVouchers')->name('userSaveGiftVouchers');
+            });
+        });
     });
 
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {

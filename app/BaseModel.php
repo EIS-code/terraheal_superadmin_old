@@ -15,6 +15,15 @@ class BaseModel extends Model
 
     protected $hidden = ['is_removed', 'created_at', 'updated_at'];
 
+    public function addHidden($fields)
+    {
+        if (is_array($fields)) {
+            array_merge($fields, $this->hidden);
+        } elseif (is_string($fields)) {
+            array_push($this->hidden, $fields);
+        }
+    }
+
     public static function getTableName()
     {
         return with(new static)->getTable();
