@@ -40,6 +40,9 @@ class UserGiftVoucherRepository extends BaseRepository
             if (!empty($data['preference_email_date'])) {
                 $emailDate = $data['preference_email_date'] = date("Y-m-d", $data['preference_email_date']);
             }
+            if (!empty($data['amount'])) {
+                $data['amount'] = (float)$data['amount'];
+            }
 
             $validator = $this->userGiftVoucher->validator($data);
             if ($validator->fails()) {

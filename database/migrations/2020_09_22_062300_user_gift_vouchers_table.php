@@ -34,6 +34,7 @@ class UserGiftVouchersTable extends Migration
             $table->bigInteger('design_id')->unsigned();
             $table->foreign('design_id')->references('id')->on('user_gift_voucher_theme_designs')->onDelete('cascade');
             $table->integer('unique_id');
+            $table->enum('is_pack', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->enum('is_removed', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->timestamps();
         });

@@ -27,10 +27,12 @@ class UserGiftVoucher extends BaseModel
         'giver_message_to_recipient',
         'preference_email',
         'preference_email_date',
+        'amount',
         'user_id',
         'massage_id',
         'design_id',
         'unique_id',
+        'is_pack',
         'is_removed'
     ];
 
@@ -49,10 +51,12 @@ class UserGiftVoucher extends BaseModel
             'giver_message_to_recipient' => ['required', 'string'],
             'preference_email'           => ['required', 'email', 'max:255'],
             'preference_email_date'      => ['required', 'date', 'date_format:Y-m-d'],
+            'amount'                     => ['required', 'between:0,99.99'],
             'user_id'                    => ['required', 'integer', 'exists:' . User::getTableName() . ',id'],
             'massage_id'                 => ['required', 'integer', 'exists:' . Massage::getTableName() . ',id'],
             'design_id'                  => ['required', 'integer', 'exists:' . UserGiftVoucherThemeDesign::getTableName() . ',id'],
             'unique_id'                  => ['required', 'unique:' . self::getTableName() . ',unique_id'],
+            'is_pack'                    => ['integer', 'in:0,1'],
             'is_removed'                 => ['integer', 'in:0,1']
         ]);
     }
