@@ -134,6 +134,10 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::group(['prefix' => 'faq'], function () {
             Route::get('/get', 'UserController@getFaqs')->name('userGetFaqs');
         });
+
+        Route::group(['prefix' => 'pack'], function () {
+            Route::post('/get', 'UserController@getPacks')->name('userGetPacks');
+        });
     });
 
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {

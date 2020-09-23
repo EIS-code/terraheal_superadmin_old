@@ -34,6 +34,8 @@ class BookingRepository extends BaseRepository
         DB::beginTransaction();
 
         try {
+            $data = $this->buildPack($data);
+
             $validator = $this->booking->validator($data);
             if ($validator->fails()) {
                 return response()->json([
@@ -157,6 +159,30 @@ class BookingRepository extends BaseRepository
             'msg'       => 'Booking created successfully !',
             'bookingId' => $bookingId
         ]);
+    }
+
+    public function buildPack(array $data)
+    {
+        if (isset($data['is_pack']) && $data['is_pack'] == 1) {
+            $data['shop_id'] = "";
+
+            $datya['booking_info'] = [
+                "user_people_id" => 2,
+                "location"       => "Test Location",
+                "imc_type"       => 1,
+                "therapist_id"   => 2,
+                "room_id"        => 1,
+                "massage_info"   => [
+                    "pressure_preference"   => 3,
+                    "gender_preference"     => 5,
+                    "focus_area_preference" => 31,
+                    "notes_of_injuries"     => "No any injury.",
+                    "massage_prices_id"     => 1
+                ]
+            ];
+        }
+
+        return $data;
     }
 
     public function all()

@@ -19,6 +19,7 @@ use App\Repositories\User\Setting\UserSettingRepository;
 use App\Repositories\User\Menu\UserMenuRepository;
 use App\Repositories\User\Gift\Voucher\UserGiftVoucherRepository;
 use App\Repositories\User\Faq\UserFaqRepository;
+use App\Repositories\User\Pack\UserPackRepository;
 use App\Repositories\Therapist\TherapistRepository;
 use App\Repositories\Therapist\Massage\TherapistMassageHistoryRepository;
 use App\Repositories\Therapist\TherapistCalendarRepository;
@@ -44,7 +45,7 @@ abstract class BaseController extends Controller
               $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistLanguageRepo,
               $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo, $therapistDocumentRepo,
               $therapyRepo, $massagePreferenceRepo, $selectedMassagePreferenceRepo, $therapyQuestionnaireRepo, $therapyQuestionnaireAnswerRepo,
-              $userAddressRepo, $userPeopleRepo, $userSettingRepo, $focusAreaRepo, $userMenuRepo, $userGiftVoucherRepo, $userFaqRepo;
+              $userAddressRepo, $userPeopleRepo, $userSettingRepo, $focusAreaRepo, $userMenuRepo, $userGiftVoucherRepo, $userFaqRepo, $userPackRepo;
 
     public function __construct()
     {
@@ -80,6 +81,7 @@ abstract class BaseController extends Controller
         $this->userMenuRepo            = new UserMenuRepository();
         $this->userGiftVoucherRepo     = new UserGiftVoucherRepository();
         $this->userFaqRepo             = new UserFaqRepository();
+        $this->userPackRepo            = new UserPackRepository();
     }
 
     public function response($response = [])
