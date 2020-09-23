@@ -27,6 +27,20 @@ class UserGiftVoucherRepository extends BaseRepository
         DB::beginTransaction();
 
         try {
+            $uniqueId = mt_rand(10000000,99999999);
+
+            // Check exists.
+            $check = $this->getWhereFirst('unique_id', $uniqueId);
+            if (!empty($check)) {
+                $uniqueId = mt_rand(10000000,99999999);
+            }
+
+            $data['unique_id'] = $uniqueId;
+
+            if (!empty($data['preference_email_date'])) {
+                $data['preference_email_date'] = date("Y-m-d", $data['preference_email_date']);
+            }
+
             $validator = $this->userGiftVoucher->validator($data);
             if ($validator->fails()) {
                 return response()->json([

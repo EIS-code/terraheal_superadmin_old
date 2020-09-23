@@ -26,12 +26,14 @@ class UserGiftVouchersTable extends Migration
             $table->string('giver_email');
             $table->text('giver_message_to_recipient');
             $table->string('preference_email');
+            $table->timestamp('preference_email_date');
             $table->bigInteger('massage_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('massage_id')->references('id')->on('massages')->onDelete('cascade');
             $table->bigInteger('design_id')->unsigned();
             $table->foreign('design_id')->references('id')->on('user_gift_voucher_theme_designs')->onDelete('cascade');
+            $table->integer('unique_id');
             $table->enum('is_removed', ['0', '1'])->default('0')->comment('0: Nope, 1: Yes');
             $table->timestamps();
         });
