@@ -127,6 +127,11 @@ class UserGiftVoucherRepository extends BaseRepository
             $data = $this->getWhere('user_id', $userId);
 
             if (!empty($data) && !$data->isEmpty()) {
+                $data->map(function($value) {
+                    $value->start_from = $value->created_at;
+                    $value->last_date  = date("Y-m-d", strtotime(date("Y-m-d", strtotime($value->created_at)) . " + ".GIFT_VOUCHER_LIMIT." days"));
+                });
+
                 return response()->json([
                     'code' => 200,
                     'msg'  => 'User gift voucher found successfully !',

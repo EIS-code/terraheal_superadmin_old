@@ -130,6 +130,10 @@ Route::group(['middleware' => ['web.auth.api']], function () {
                 Route::post('/save', 'UserController@saveGiftVouchers')->name('userSaveGiftVouchers');
             });
         });
+
+        Route::group(['prefix' => 'faq'], function () {
+            Route::get('/get', 'UserController@getFaqs')->name('userGetFaqs');
+        });
     });
 
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {

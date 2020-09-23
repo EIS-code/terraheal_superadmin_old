@@ -6,7 +6,7 @@ use App\Http\Controllers\BaseController;
 
 class UserController extends BaseController
 {
-    protected $user, $booking, $review, $focusArea, $userGiftVoucher, $getRequest;
+    protected $user, $booking, $review, $focusArea, $userGiftVoucher, $userFaqRepo, $getRequest;
 
     public function __construct()
     {
@@ -18,6 +18,7 @@ class UserController extends BaseController
         $this->therapist  = $this->therapistRepo;
         $this->userMenu   = $this->userMenuRepo;
         $this->userGiftVoucher = $this->userGiftVoucherRepo;
+        $this->userFaq    = $this->userFaqRepo;
         $this->getRequest = $this->httpRequest->all();
     }
 
@@ -193,5 +194,10 @@ class UserController extends BaseController
     public function saveGiftVouchers()
     {
         return $this->userGiftVoucher->create($this->getRequest);
+    }
+
+    public function getFaqs()
+    {
+        return $this->userFaq->all(true);
     }
 }

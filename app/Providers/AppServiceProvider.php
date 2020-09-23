@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Constant;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +25,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         date_default_timezone_set('UTC');
+
+        // Load default constants.
+        $constants = Constant::all();
+
+        if (!empty($constants) && !$constants->isEmpty()) {
+            foreach ($constants as $constant) {
+                if (empty($constant->key) || empty($constant->value)) {
+                    continue;
+                }
+
+                define(strtoupper($constant->key), $constant->value);
+            }
+        }
     }
 }
