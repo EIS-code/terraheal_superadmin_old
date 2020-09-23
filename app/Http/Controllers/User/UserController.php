@@ -175,7 +175,9 @@ class UserController extends BaseController
 
     public function getGiftVouchers()
     {
-        return $this->userGiftVoucher->getGiftVouchers($this->getRequest);
+        $userId = $this->httpRequest->get('user_id', false);
+
+        return $this->userGiftVoucher->getGiftVouchers($userId);
     }
 
     public function getGiftVoucherInfos()

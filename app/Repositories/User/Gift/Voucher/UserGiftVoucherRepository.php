@@ -38,7 +38,7 @@ class UserGiftVoucherRepository extends BaseRepository
             $data['unique_id'] = $uniqueId;
 
             if (!empty($data['preference_email_date'])) {
-                $data['preference_email_date'] = date("Y-m-d", $data['preference_email_date']);
+                $emailDate = $data['preference_email_date'] = date("Y-m-d", $data['preference_email_date']);
             }
 
             $validator = $this->userGiftVoucher->validator($data);
@@ -52,7 +52,18 @@ class UserGiftVoucherRepository extends BaseRepository
             $userGiftVoucher = $this->userGiftVoucher;
 
             $userGiftVoucher->fill($data);
-            $userGiftVoucher->save();
+            $save = $userGiftVoucher->save();
+
+            if ($save) {
+                $today     = strtotime(date('Y-m-d'));
+                $emailDate = strtotime($emailDate);
+
+                if ($today == $emailDate) {
+                    // Send Email.
+                } else {
+                    // Set console command for send email for the future date.
+                }
+            }
         } catch(Exception $e) {
             DB::rollBack();
             // throw $e;
@@ -108,6 +119,27 @@ class UserGiftVoucherRepository extends BaseRepository
         }
 
         return $data;
+    }
+
+    public function getGiftVouchers(int $userId)
+    {
+        if (!empty($userId)) {
+            $data = $this->getWhere('user_id', $userId);
+
+            if (!empty($data) && !$data->isEmpty()) {
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'User gift voucher found successfully !',
+                    'data' => $data
+                ]);
+            }
+        }
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'User gift voucher not found !',
+            'data' => []
+        ]);
     }
 
     public function getGiftVoucherInfos()
