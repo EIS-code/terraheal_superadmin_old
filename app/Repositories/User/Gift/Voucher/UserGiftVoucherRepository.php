@@ -38,7 +38,7 @@ class UserGiftVoucherRepository extends BaseRepository
             $data['unique_id'] = $uniqueId;
 
             if (!empty($data['preference_email_date'])) {
-                $emailDate = $data['preference_email_date'] = date("Y-m-d", $data['preference_email_date']);
+                $emailDate = $data['preference_email_date'] = date("Y-m-d", ($data['preference_email_date'] / 1000));
             }
             if (!empty($data['amount'])) {
                 $data['amount'] = (float)$data['amount'];
