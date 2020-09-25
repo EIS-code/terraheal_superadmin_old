@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class Therapist extends BaseModel
 {
@@ -33,6 +34,7 @@ class Therapist extends BaseModel
 
     protected $hidden = ['is_deleted', 'created_at', 'updated_at', 'password'];
 
+    public $fileSystem = 'public';
     public $profilePhotoPath = 'therapist\profile\\';
 
     const GENDER_MALE   = 'm';
@@ -96,5 +98,15 @@ class Therapist extends BaseModel
     public function selectedTherapies()
     {
         return $this->hasMany('App\TherapistSelectedTherapy', 'therapist_id', 'id');
+    }
+
+    public function getProfilePhotoAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        $profilePhotoPath = (str_ireplace("\\", "/", $this->profilePhotoPath));
+        return Storage::disk($this->fileSystem)->url($profilePhotoPath . $value);
     }
 }
