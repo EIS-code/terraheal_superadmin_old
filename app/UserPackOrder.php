@@ -22,4 +22,9 @@ class UserPackOrder extends BaseModel
             'user_pack_id' => ['required', 'integer', 'exists:' . UserPack::getTableName() . ',id']
         ]);
     }
+
+    public function userPack()
+    {
+        return $this->hasOne('App\UserPack', 'id', 'user_pack_id');
+    }
 }

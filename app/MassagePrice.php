@@ -22,4 +22,14 @@ class MassagePrice extends BaseModel
             'cost'              => ['required']
         ]);
     }
+
+    public function massage()
+    {
+        return $this->hasOne('App\Massage', 'id', 'massage_id');
+    }
+
+    public function timing()
+    {
+        return $this->hasOne('App\MassageTiming', 'id', 'massage_timing_id');
+    }
 }

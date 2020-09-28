@@ -138,6 +138,8 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::group(['prefix' => 'pack'], function () {
             Route::post('/get', 'UserController@getPacks')->name('userGetPacks');
 
+            Route::post('/services/get', 'UserController@getPackServices')->name('userGetPackServices');
+
             Route::group(['prefix' => 'order'], function () {
                 Route::post('/save', 'UserController@savePackOrders')->name('userSavePackOrders');
             });

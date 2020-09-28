@@ -22,6 +22,7 @@ class UserController extends BaseController
         $this->userPack   = $this->userPackRepo;
         $this->userPackOrder = $this->userPackOrderRepo;
         $this->userPackGift  = $this->userPackGiftRepo;
+        $this->userPackService = $this->userPackServiceRepo;
         $this->getRequest = $this->httpRequest->all();
     }
 
@@ -206,9 +207,12 @@ class UserController extends BaseController
 
     public function getPacks()
     {
-        $shopId = $this->httpRequest->get('shop_id', false);
+        return $this->userPack->getPacks($this->getRequest);
+    }
 
-        return $this->userPack->getWhere('shop_id', $shopId, true);
+    public function getPackServices()
+    {
+        return $this->userPackService->getPackServices($this->getRequest);
     }
 
     public function savePackOrders()

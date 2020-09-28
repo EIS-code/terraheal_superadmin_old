@@ -4,16 +4,18 @@ namespace App\Repositories\User\Pack;
 
 use App\Repositories\BaseRepository;
 use App\UserPack;
+use App\UserPackOrder;
 use DB;
 
 class UserPackRepository extends BaseRepository
 {
-    protected $userPack;
+    protected $userPack, $userPackOrder;
 
     public function __construct()
     {
         parent::__construct();
-        $this->userPack = new UserPack();
+        $this->userPack      = new UserPack();
+        $this->userPackOrder = new UserPackOrder();
     }
 
     public function create(array $data)
@@ -45,6 +47,40 @@ class UserPackRepository extends BaseRepository
         }
 
         return $data;
+    }
+
+    public function getPacks(array $data)
+    {
+        if (!empty($data['shop_id'])) {
+            $shopId = (int)$data['shop_id'];
+
+            return $this->getWhere('shop_id', $shopId, true);
+        } elseif (!empty($data['user_id'])) {
+            $return = [];
+            $userId = (int)$data['user_id'];
+
+            $getPacks = $this->userPackOrder->with('userPack')->where('user_id', $userId)->get();
+
+            if (!empty($getPacks) && !$getPacks->isEmpty()) {
+                $getPacks->map(function($userPack) use(&$return) {
+                    $return[] = $userPack->userPack;
+                });
+            }
+
+            if (!empty($return)) {
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'User packs found successfully !',
+                    'data' => $return
+                ]);
+            }
+        }
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'User pack not found !',
+            'data' => []
+        ]);
     }
 
     public function delete(int $id)

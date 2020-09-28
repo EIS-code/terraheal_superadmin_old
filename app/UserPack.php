@@ -38,4 +38,9 @@ class UserPack extends BaseModel
     {
         return $this->hasMany('App\UserPackMassage', 'user_pack_id', 'id');
     }
+
+    public function getPurchasedPacks($userId)
+    {
+        return $this->hasMany('App\UserPackOrder', 'user_pack_id', 'id')->where('user_id', (int)$userId);
+    }
 }

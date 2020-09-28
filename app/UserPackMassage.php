@@ -23,4 +23,9 @@ class UserPackMassage extends BaseModel
             'user_pack_id' => ['required', 'exists:' . UserPack::getTableName() . ',id']
         ]);
     }
+
+    public function massagePrice()
+    {
+        return $this->hasOne('App\MassagePrice', 'id', 'massage_prices_id');
+    }
 }
