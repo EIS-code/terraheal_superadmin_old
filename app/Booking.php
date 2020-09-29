@@ -52,6 +52,15 @@ class Booking extends BaseModel
         return $validator;
     }
 
+    public function getBookingDateTimeAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        return strtotime($value) * 1000;
+    }
+
     public function bookingInfo()
     {
         return $this->hasMany('App\BookingInfo', 'booking_id', 'id');

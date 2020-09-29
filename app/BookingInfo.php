@@ -81,6 +81,24 @@ class BookingInfo extends BaseModel
         ]);
     }
 
+    public function getMassageTimeAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        return strtotime($value) * 1000;
+    }
+
+    public function getMassageDateAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        return strtotime($value) * 1000;
+    }
+
     public function booking()
     {
         return $this->belongsTo('App\Booking', 'booking_id', 'id');

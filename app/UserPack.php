@@ -43,4 +43,13 @@ class UserPack extends BaseModel
     {
         return $this->hasMany('App\UserPackOrder', 'user_pack_id', 'id')->where('user_id', (int)$userId);
     }
+
+    public function getExpireDateAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        return strtotime($value) * 1000;
+    }
 }
