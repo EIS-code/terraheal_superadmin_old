@@ -82,28 +82,33 @@
 
         <main class="py-0">
             <section class="home-section main-content">
-                <div class="d-flex main-flex">
-                    <div class="aside sidebar wow fadeInLeft" data-wow-duration="2s" data-wow-delay="0.1s">
-                        <div class="left-panel">
-                            <div class="leave wow fadeInDown" data-wow-duration="3s" data-wow-delay="0.1s"><img src="images/leave.png" alt="leave"/></div>
-                            <div class="panel-logo"> <a href="javascript:void(0);"><img src="images/logo.png" alt="logo"/></a> </div>
-                            <div class="navigation">
-                                <ul class="main-menu">
-                                    <li><a class="active" href="home.php"><span class="menu-icon"><img src="{{ asset('images/dashbord.png') }}" alt="dashboard"/></span>{{ __('Dashboard') }}</a></li>
-                                    <li><a href="centers.php"><span class="menu-icon"><img src="{{ asset('images/shop.png') }}" alt="clients"/></span>{{ __('Centers') }}</a></li>
-                                    <li><a href="clients.php"><span class="menu-icon"><img src="{{ asset('images/clients.png') }}" alt="clients"/></span>{{ __('Clients') }}</a></li>
-                                    <li><a href="therapists.php"><span class="menu-icon"><img src="{{ asset('images/therapist.png') }}" alt="therapist"/></span>{{ __('Therapists') }}</a></li>
-                                    <li><a href="booking.php"><span class="menu-icon"><img src="{{ asset('images/booking.png') }}" alt="booking"/></span>{{ __('Bookings') }}</a></li>
-                                    <li><a href="services.php"><span class="menu-icon"><img src="{{ asset('images/services.png') }}" alt="services"/></span>{{ __('Services') }}</a></li>
-                                    <li><a href="massage.php"><span class="menu-icon"><img src="{{ asset('images/message.png') }}" alt="message"/></span>{{ __('Messages') }}</a></li>
-                                    <li><a href="settings.php"><span class="menu-icon"><img src="{{ asset('images/setting.png') }}" alt="setting"/></span>{{ __('Settings') }}</a></li>
-                                </ul>
+                @auth
+                    <div class="d-flex main-flex">
+                        <div class="aside sidebar wow fadeInLeft" data-wow-duration="2s" data-wow-delay="0.1s">
+                            <div class="left-panel">
+                                <div class="leave wow fadeInDown" data-wow-duration="3s" data-wow-delay="0.1s"><img src="images/leave.png" alt="leave"/></div>
+                                <div class="panel-logo"> <a href="javascript:void(0);"><img src="images/logo.png" alt="logo"/></a> </div>
+                                <div class="navigation">
+                                    <ul class="main-menu">
+                                        <li><a class="active" href="home.php"><span class="menu-icon"><img src="{{ asset('images/dashbord.png') }}" alt="dashboard"/></span>{{ __('Dashboard') }}</a></li>
+                                        <li><a href="centers.php"><span class="menu-icon"><img src="{{ asset('images/shop.png') }}" alt="clients"/></span>{{ __('Centers') }}</a></li>
+                                        <li><a href="clients.php"><span class="menu-icon"><img src="{{ asset('images/clients.png') }}" alt="clients"/></span>{{ __('Clients') }}</a></li>
+                                        <li><a href="therapists.php"><span class="menu-icon"><img src="{{ asset('images/therapist.png') }}" alt="therapist"/></span>{{ __('Therapists') }}</a></li>
+                                        <li><a href="booking.php"><span class="menu-icon"><img src="{{ asset('images/booking.png') }}" alt="booking"/></span>{{ __('Bookings') }}</a></li>
+                                        <li><a href="services.php"><span class="menu-icon"><img src="{{ asset('images/services.png') }}" alt="services"/></span>{{ __('Services') }}</a></li>
+                                        <li><a href="massage.php"><span class="menu-icon"><img src="{{ asset('images/message.png') }}" alt="message"/></span>{{ __('Messages') }}</a></li>
+                                        <li><a href="settings.php"><span class="menu-icon"><img src="{{ asset('images/setting.png') }}" alt="setting"/></span>{{ __('Settings') }}</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                @endauth
 
-                    @yield('content')
-                </div>
+                @yield('content')
+
+                @auth
+                    </div>
+                @endauth
             </section>
         </main>
     </div>
