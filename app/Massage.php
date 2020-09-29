@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Support\Facades\Validator;
 use Laravel\Scout\Searchable;
+use Illuminate\Support\Facades\Storage;
 
 class Massage extends BaseModel
 {
@@ -12,14 +13,58 @@ class Massage extends BaseModel
     protected $fillable = [
         'name',
         'image',
+        'icon'
     ];
+
+    public $fileSystem = 'public';
+    public $imagePath  = 'massage\images\\';
+    public $iconPath   = 'massage\images\icons\\';
 
     public function validator(array $data)
     {
         return Validator::make($data, [
             'name'  => ['required', 'string', 'max:255'],
-            'image' => ['string', 'max:255']
+            'image' => ['string', 'max:255'],
+            'icon'  => ['nullable', 'string', 'max:255']
         ]);
+    }
+
+    public function validateImage($request)
+    {
+        return Validator::make($request->all(), [
+            'photo' => 'mimes:jpeg,png,jpg',
+        ], [
+            'photo' => __('Please select proper file. The file must be a file of type: jpeg, png, jpg.')
+        ]);
+    }
+
+    public function validateIcon($request)
+    {
+        return Validator::make($request->all(), [
+            'photo' => 'mimes:ico,png',
+        ], [
+            'photo' => __('Please select proper file. The file must be a file of type: ico, png.')
+        ]);
+    }
+
+    public function getImageAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        $imagePath = (str_ireplace("\\", "/", $this->imagePath));
+        return Storage::disk($this->fileSystem)->url($imagePath . $value);
+    }
+
+    public function getIconAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        $iconPath = (str_ireplace("\\", "/", $this->iconPath));
+        return Storage::disk($this->fileSystem)->url($iconPath . $value);
     }
 
     public function timing()

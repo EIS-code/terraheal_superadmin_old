@@ -16,6 +16,7 @@
         "laravel/scout": "^8.0",
         "laravel/socialite": "^4.3",
         "laravel/tinker": "^2.0",
+        "laravel/ui": "^2.4",
         "nesbot/carbon": "^2.35",
         "paypal/rest-api-sdk-php": "^1.14"
     },

@@ -25,3 +25,9 @@ Route::group(['prefix' => 'web'], function () {
         Route::get('/signup/google', 'UserController@signupGoogle')->name('signupGoogle');
     });
 });
+
+Route::group(['prefix' => 'superadmin', 'namespace' => 'Superadmin', 'middleware' => 'web'], function () {
+    Auth::routes(['register' => false, 'reset' => false]);
+
+    Route::get('/', 'SuperadminController@index')->name('dashboard');
+});

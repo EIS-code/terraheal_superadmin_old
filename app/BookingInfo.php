@@ -57,6 +57,14 @@ class BookingInfo extends BaseModel
     const DEFAULT_BRING_TABLE_FUTON    = '0';
     const DEFAULT_TABLE_FUTON_QUANTITY = '0';
 
+    const IS_CANCELLED     = '1';
+    const IS_NOT_CANCELLED = '0';
+
+    public static $isCancelled = [
+        self::IS_CANCELLED     => 'Canceled',
+        self::IS_NOT_CANCELLED => 'Not Canceled'
+    ];
+
     public function validator(array $data)
     {
         return Validator::make($data, [
@@ -64,7 +72,7 @@ class BookingInfo extends BaseModel
             '*.location'             => ['required', 'max:255'],
             '*.massage_date'         => ['nullable'],
             '*.massage_time'         => ['nullable'],
-            '*.is_cancelled'         => ['in:0,1'],
+            '*.is_cancelled'         => ['in:' . implode(",", array_keys(self::$isCancelled))],
             '*.cancelled_reason'     => ['mas:255'],
             '*.imc_type'             => ['required', 'in:1,2'],
             '*.therapist_id'         => ['required', 'integer', 'exists:' . Therapist::getTableName() . ',id'],

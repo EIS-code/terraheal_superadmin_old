@@ -18,6 +18,7 @@ class MassagesTable extends Migration
             $table->string('name');
             $table->text('description');
             $table->string('image');
+            $table->string('icon')->nullable();
             $table->bigInteger('shop_id')->unsigned();
             $table->foreign('shop_id')->references('id')->on('shops')->onDelete('cascade');
             $table->timestamps();

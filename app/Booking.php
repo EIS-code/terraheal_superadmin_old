@@ -2,11 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use App\User;
 
-class Booking extends Model
+class Booking extends BaseModel
 {
     protected $fillable = [
         'booking_type',
@@ -18,8 +17,8 @@ class Booking extends Model
         'user_id'
     ];
 
-    const BOOKING_TYPE_IMC = 1;
-    const BOOKING_TYPE_HHV = 2;
+    const BOOKING_TYPE_IMC = '1';
+    const BOOKING_TYPE_HHV = '0';
 
     public static $defaultTableFutons = ['0', '1', '2'];
     public static $tableFutons = ['0', '1', '2'];
@@ -38,7 +37,7 @@ class Booking extends Model
         }
 
         $validator = Validator::make($data, array_merge([
-            'booking_type'         => ['required', 'in:0,1'],
+            'booking_type'         => ['required', 'in:' . implode(",", array_keys(self::$bookingTypes))],
             'special_notes'        => ['max:255'],
             'copy_with_id'         => ['max:255'],
             'user_id'              => ['required', 'integer', 'exists:' . User::getTableName() . ',id'],

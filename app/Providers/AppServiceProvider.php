@@ -35,7 +35,9 @@ class AppServiceProvider extends ServiceProvider
                     continue;
                 }
 
-                define(strtoupper($constant->key), $constant->value);
+                if (!defined(strtoupper($constant->key))) {
+                    define(strtoupper($constant->key), $constant->value);
+                }
             }
         }
     }
