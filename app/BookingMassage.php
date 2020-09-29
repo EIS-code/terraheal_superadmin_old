@@ -50,4 +50,9 @@ class BookingMassage extends BaseModel
 
         return $validator;
     }
+
+    public function massagePrices()
+    {
+        return $this->hasOne('App\MassagePrice', 'id', 'massage_prices_id');
+    }
 }

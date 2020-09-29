@@ -118,4 +118,9 @@ class BookingInfo extends BaseModel
     {
         return $this->hasOne('App\Therapist', 'id', 'therapist_id');
     }
+
+    public function userPeople()
+    {
+        return $this->hasOne('App\UserPeople', 'id', 'user_people_id');
+    }
 }

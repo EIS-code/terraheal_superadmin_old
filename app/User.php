@@ -62,7 +62,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password',
+        'password', 'is_removed', 'created_at', 'updated_at'
     ];
 
     public $fileSystem       = 'public';
@@ -177,7 +177,11 @@ class User extends Authenticatable
 
     public function getDobAttribute($value)
     {
-        return $value;
+        if (empty($value)) {
+            return $value;
+        }
+
+        return strtotime($value) * 1000;
         // return Carbon::createFromTimestampMs($value)->format('Y-m-d H:i:s');
     }
 }

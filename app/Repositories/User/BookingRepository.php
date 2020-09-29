@@ -202,9 +202,13 @@ class BookingRepository extends BaseRepository
         $bookings = $this->booking
                          ->where('user_id', $userId)
                          ->with(['bookingInfo' => function($query) use($now, $isPast) {
-                                $query->with('bookingMassages')
-                                      ->where('massage_date', ($isPast === true ? '<' : '>='), $now);
-                         }])
+                                $query->with(['bookingMassages' => function($join) {
+                                    $join->with(['massagePrices' => function($j) {
+                                        $j->with('massage');
+                                    }]);
+                                }, 'userPeople'])
+                                ->where('massage_date', ($isPast === true ? '<' : '>='), $now);
+                         }, 'user'])
                          ->get();
         /* $bookings = $this->booking
                          ->join('booking_infos', 'bookings.id', '=', 'booking_infos.booking_id')
