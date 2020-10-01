@@ -223,7 +223,7 @@ class BookingRepository extends BaseRepository
                          }, 'user'])
                          ->get(); */
         $bookings = $this->booking
-                         ->select(DB::RAW($this->bookingInfo::getTableName() . '.id, massage_date, ' . $this->booking::getTableName() . '.booking_type, ' . $this->shop::getTableName() . '.name, ' . $this->shop::getTableName() . '.description, ' . $this->sessionType::getTableName() . '.type, user_people_id'))
+                         ->select(DB::RAW($this->bookingInfo::getTableName() . '.id, massage_date, ' . $this->booking::getTableName() . '.booking_type, ' . $this->shop::getTableName() . '.name as shop_name, ' . $this->shop::getTableName() . '.description, ' . $this->sessionType::getTableName() . '.type, user_people_id'))
                          ->join($this->bookingInfo::getTableName(), $this->booking::getTableName() . '.id', '=', $this->bookingInfo::getTableName() . '.booking_id')
                          ->leftJoin($this->shop::getTableName(), $this->booking::getTableName() . '.shop_id', '=', $this->shop::getTableName() . '.id')
                          ->leftJoin($this->sessionType::getTableName(), $this->booking::getTableName() . '.session_id', '=', $this->sessionType::getTableName() . '.id')
