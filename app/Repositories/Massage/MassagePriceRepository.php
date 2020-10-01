@@ -29,6 +29,11 @@ class MassagePriceRepository extends BaseRepository
         return $this->massagePrice->where($column, $value)->get();
     }
 
+    public function getWhereIn(string $column, array $values)
+    {
+        return $this->massagePrice->where($column, $values)->get();
+    }
+
     public function getWhereFirst($column, $value, $isApi = false)
     {
         $data = $this->massagePrice->where($column, $value)->first();

@@ -5,24 +5,36 @@ namespace App\Repositories\User;
 use App\Repositories\BaseRepository;
 use App\Repositories\Massage\MassagePriceRepository;
 use App\Repositories\Massage\MassageTimingRepository;
+use App\Shop;
+use App\SessionType;
+use App\UserPeople;
 use App\Booking;
 use App\BookingInfo;
 use App\BookingMassage;
+use App\Massage;
+use App\MassagePrice;
+use App\MassageTiming;
 use Carbon\Carbon;
 use CurrencyHelper;
 use DB;
 
 class BookingRepository extends BaseRepository
 {
-    protected $booking, $bookingInfo, $bookingMassage, $massagePrice, $massageTiming, $currencyHelper;
+    protected $shop, $sessionType, $userPeople, $booking, $bookingInfo, $bookingMassage, $massage, $massagePrice, $massageTimingModel, $massagePriceModel, $massageTiming, $currencyHelper;
 
     public function __construct()
     {
         parent::__construct();
+        $this->shop           = new Shop();
+        $this->sessionType    = new SessionType();
+        $this->userPeople     = new UserPeople();
         $this->booking        = new Booking();
         $this->bookingInfo    = new BookingInfo();
         $this->bookingMassage = new BookingMassage();
+        $this->massage        = new Massage();
         $this->massagePrice   = new MassagePriceRepository();
+        $this->massageTimingModel = new MassageTiming();
+        $this->massagePriceModel  = new MassagePrice();
         $this->massageTiming  = new MassageTimingRepository();
         $this->currencyHelper = new CurrencyHelper();
     }
@@ -199,7 +211,7 @@ class BookingRepository extends BaseRepository
     {
         $now = Carbon::now();
 
-        $bookings = $this->booking
+        /* $bookings = $this->booking
                          ->where('user_id', $userId)
                          ->with(['bookingInfo' => function($query) use($now, $isPast) {
                                 $query->with(['bookingMassages' => function($join) {
@@ -209,16 +221,60 @@ class BookingRepository extends BaseRepository
                                 }, 'userPeople'])
                                 ->where('massage_date', ($isPast === true ? '<' : '>='), $now);
                          }, 'user'])
-                         ->get();
-        /* $bookings = $this->booking
-                         ->join('booking_infos', 'bookings.id', '=', 'booking_infos.booking_id')
-                         ->where('user_id', $userId)
                          ->get(); */
+        $bookings = $this->booking
+                         ->select(DB::RAW($this->bookingInfo::getTableName() . '.id, massage_date, ' . $this->booking::getTableName() . '.booking_type, ' . $this->shop::getTableName() . '.name, ' . $this->shop::getTableName() . '.description, ' . $this->sessionType::getTableName() . '.type, user_people_id'))
+                         ->join($this->bookingInfo::getTableName(), $this->booking::getTableName() . '.id', '=', $this->bookingInfo::getTableName() . '.booking_id')
+                         ->leftJoin($this->shop::getTableName(), $this->booking::getTableName() . '.shop_id', '=', $this->shop::getTableName() . '.id')
+                         ->leftJoin($this->sessionType::getTableName(), $this->booking::getTableName() . '.session_id', '=', $this->sessionType::getTableName() . '.id')
+                         ->where($this->booking::getTableName() . '.user_id', $userId)
+                         ->where($this->bookingInfo::getTableName() . '.massage_date', ($isPast === true ? '<' : '>='), $now)
+                         ->get();
 
         if (!empty($bookings) && !$bookings->isEmpty()) {
-            $bookings->map(function($data, $index) use($bookings) {
+            /*$bookings->map(function($data, $index) use($bookings) {
                 if (empty($data->bookingInfo) || $data->bookingInfo->isEmpty()) {
                     unset($bookings[$index]);
+                }
+            });*/
+
+            $userPeopleIds  = $bookings->pluck('user_people_id');
+            $bookingInfoIds = $bookings->pluck('bookingInfoId');
+            $userPeoples    = $massagePrices = $bookingMassages = $massages = [];
+
+            if (!empty($userPeopleIds) && !$userPeopleIds->isEmpty()) {
+                $userPeoples = $this->userPeople->select('id', 'name', 'age', 'gender')->whereIn('id', array_unique($userPeopleIds->toArray()))->get();
+
+                if (!empty($userPeoples) && !$userPeoples->isEmpty()) {
+                    $userPeoples = $userPeoples->keyBy('id');
+                }
+            }
+
+            $bookings->map(function($data, $index) use($userPeoples) {
+                $userPeopleId = $data->user_people_id;
+
+                if (!empty($userPeoples[$userPeopleId])) {
+                    $data->user_people = $userPeoples[$userPeopleId];
+
+                    $bookingMassages = $this->bookingMassage
+                                            ->select($this->massage::getTableName() . '.name', $this->bookingMassage::getTableName() . '.price', $this->massageTimingModel::getTableName() . '.time')
+                                            ->join($this->massagePriceModel::getTableName(), $this->bookingMassage::getTableName() . '.massage_prices_id', '=', $this->massagePriceModel::getTableName() . '.id')
+                                            ->join($this->massageTimingModel::getTableName(), $this->massagePriceModel::getTableName() . '.massage_timing_id', '=', $this->massageTimingModel::getTableName() . '.id')
+                                            ->join($this->massage::getTableName(), $this->massagePriceModel::getTableName() . '.massage_id', '=', $this->massage::getTableName() . '.id')
+                                            ->where('booking_info_id', $data['id'])
+                                            ->get();
+
+                    if (!empty($bookingMassages) && !$bookingMassages->isEmpty()) {
+                        $data->booking_massages = $bookingMassages;
+
+                        $totalPrices       = $bookingMassages->sum('price');
+                        $data->total_price = $totalPrices;
+                    } else {
+                        $data->booking_massages = [];
+                        $data->total_price      = 0;
+                    }
+                } else {
+                    $data->user_people = [];
                 }
             });
         }

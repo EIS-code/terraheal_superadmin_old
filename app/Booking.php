@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Support\Facades\Validator;
 use App\User;
+use App\Shop;
+use App\SessionType;
 
 class Booking extends BaseModel
 {
@@ -13,6 +15,7 @@ class Booking extends BaseModel
         'total_persons',
         'bring_table_futon',
         'table_futon_quantity',
+        'session_id',
         'copy_with_id',
         'user_id'
     ];
@@ -42,6 +45,7 @@ class Booking extends BaseModel
             'copy_with_id'         => ['max:255'],
             'user_id'              => ['required', 'integer', 'exists:' . User::getTableName() . ',id'],
             'shop_id'              => ['required', 'integer', 'exists:' . Shop::getTableName() . ',id'],
+            'session_id'           => ['required', 'integer', 'exists:' . SessionType::getTableName() . ',id'],
             'total_persons'        => ['required', 'integer'],
             'bring_table_futon'    => ['in:' . implode(",", self::$tableFutons)],
             'table_futon_quantity' => ['integer'],
@@ -59,6 +63,15 @@ class Booking extends BaseModel
         }
 
         return strtotime($value) * 1000;
+    }
+
+    public function getBookingTypeAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        return (!empty(self::$bookingTypes[$value])) ? self::$bookingTypes[$value] : $value;
     }
 
     public function bookingInfo()
