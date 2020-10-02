@@ -211,35 +211,20 @@ class BookingRepository extends BaseRepository
     {
         $now = Carbon::now();
 
-        /* $bookings = $this->booking
-                         ->where('user_id', $userId)
-                         ->with(['bookingInfo' => function($query) use($now, $isPast) {
-                                $query->with(['bookingMassages' => function($join) {
-                                    $join->with(['massagePrices' => function($j) {
-                                        $j->with('massage');
-                                    }]);
-                                }, 'userPeople'])
-                                ->where('massage_date', ($isPast === true ? '<' : '>='), $now);
-                         }, 'user'])
-                         ->get(); */
         $bookings = $this->booking
-                         ->select(DB::RAW($this->bookingInfo::getTableName() . '.id, massage_date, ' . $this->booking::getTableName() . '.booking_type, ' . $this->shop::getTableName() . '.name as shop_name, ' . $this->shop::getTableName() . '.description, ' . $this->sessionType::getTableName() . '.type, user_people_id'))
+                         ->select(DB::RAW($this->booking::getTableName() . '.id, massage_date, massage_time, ' . $this->booking::getTableName() . '.booking_type, ' . $this->shop::getTableName() . '.name as shop_name, ' . $this->shop::getTableName() . '.description as shop_description, ' . $this->sessionType::getTableName() . '.type as session_type, user_people_id, ' . $this->bookingInfo::getTableName() . '.id as bookingInfoId, ' . $this->userPeople::getTableName() . '.name as user_people_name, ' . $this->userPeople::getTableName() . '.age as user_people_age, ' . $this->userPeople::getTableName() . '.gender as user_people_gender'))
                          ->join($this->bookingInfo::getTableName(), $this->booking::getTableName() . '.id', '=', $this->bookingInfo::getTableName() . '.booking_id')
+                         ->join($this->userPeople::getTableName(), $this->bookingInfo::getTableName() . '.user_people_id', '=', $this->userPeople::getTableName() . '.id')
                          ->leftJoin($this->shop::getTableName(), $this->booking::getTableName() . '.shop_id', '=', $this->shop::getTableName() . '.id')
                          ->leftJoin($this->sessionType::getTableName(), $this->booking::getTableName() . '.session_id', '=', $this->sessionType::getTableName() . '.id')
                          ->where($this->booking::getTableName() . '.user_id', $userId)
                          ->where($this->bookingInfo::getTableName() . '.massage_date', ($isPast === true ? '<' : '>='), $now)
                          ->get();
 
+        $returnBookings = [];
         if (!empty($bookings) && !$bookings->isEmpty()) {
-            /*$bookings->map(function($data, $index) use($bookings) {
-                if (empty($data->bookingInfo) || $data->bookingInfo->isEmpty()) {
-                    unset($bookings[$index]);
-                }
-            });*/
 
             $userPeopleIds  = $bookings->pluck('user_people_id');
-            $bookingInfoIds = $bookings->pluck('bookingInfoId');
             $userPeoples    = $massagePrices = $bookingMassages = $massages = [];
 
             if (!empty($userPeopleIds) && !$userPeopleIds->isEmpty()) {
@@ -250,38 +235,64 @@ class BookingRepository extends BaseRepository
                 }
             }
 
-            $bookings->map(function($data, $index) use($userPeoples) {
-                $userPeopleId = $data->user_people_id;
+            $return = [];
+            $bookings->map(function($data, $index) use(&$return) {
+                $return[$data->id][] = $data;
+            });
 
-                if (!empty($userPeoples[$userPeopleId])) {
-                    $data->user_people = $userPeoples[$userPeopleId];
+            foreach ($return as $bookingId => $datas) {
+                $returnUserPeoples = [];
+
+                foreach ($datas as $index => $data) {
+                    $bookingInfoId = $data->bookingInfoId;
+                    $userPeopleId  = $data->user_people_id;
+
+                    $returnUserPeoples[$bookingId][$index] = [
+                        'id'     => $userPeopleId,
+                        'name'   => $data->user_people_name,
+                        'age'    => $data->user_people_age,
+                        'gender' => $data->user_people_gender
+                    ];
 
                     $bookingMassages = $this->bookingMassage
                                             ->select($this->massage::getTableName() . '.name', $this->bookingMassage::getTableName() . '.price', $this->massageTimingModel::getTableName() . '.time')
                                             ->join($this->massagePriceModel::getTableName(), $this->bookingMassage::getTableName() . '.massage_prices_id', '=', $this->massagePriceModel::getTableName() . '.id')
                                             ->join($this->massageTimingModel::getTableName(), $this->massagePriceModel::getTableName() . '.massage_timing_id', '=', $this->massageTimingModel::getTableName() . '.id')
                                             ->join($this->massage::getTableName(), $this->massagePriceModel::getTableName() . '.massage_id', '=', $this->massage::getTableName() . '.id')
-                                            ->where('booking_info_id', $data['id'])
+                                            ->where('booking_info_id', $bookingInfoId)
                                             ->get();
 
                     if (!empty($bookingMassages) && !$bookingMassages->isEmpty()) {
-                        $data->booking_massages = $bookingMassages;
+                        $returnUserPeoples[$bookingId][$index]['booking_massages'] = $bookingMassages;
 
-                        $totalPrices       = $bookingMassages->sum('price');
-                        $data->total_price = $totalPrices;
-                    } else {
-                        $data->booking_massages = [];
-                        $data->total_price      = 0;
+                        if (isset($returnBookings[$bookingId]['total_price'])) {
+                            $returnBookings[$bookingId]['total_price'] += $bookingMassages->sum('price');
+                        } else {
+                            $returnBookings[$bookingId]['total_price'] = $bookingMassages->sum('price');
+                        }
                     }
-                } else {
-                    $data->user_people = [];
+
+                    $returnBookings[$bookingId] = [
+                        'id'               => $bookingId,
+                        'booking_type'     => $data->booking_type,
+                        'shop_name'        => $data->shop_name,
+                        'shop_description' => $data->shop_description,
+                        'session_type'     => $data->session_type,
+                        'massage_date'     => $data->massage_date,
+                        'massage_time'     => $data->massage_time,
+                        'total_price'      => number_format($returnBookings[$bookingId]['total_price'], 2)
+                    ];
                 }
-            });
+
+                $returnBookings[$bookingId]['user_people'] = $returnUserPeoples[$bookingId];
+            }
+
+            $returnBookings = array_values($returnBookings);
         }
 
         if ($isApi === true) {
             $messagePrefix = (($isPast) ? 'Past' : 'Future');
-            if (!empty($bookings) && !$bookings->isEmpty()) {
+            if (!empty($returnBookings)) {
                 $message = $messagePrefix . ' booking found successfully !';
             } else {
                 $message = $messagePrefix . ' booking not found !';
@@ -290,7 +301,7 @@ class BookingRepository extends BaseRepository
             return response()->json([
                 'code' => 200,
                 'msg'  => $message,
-                'data' => $bookings
+                'data' => $returnBookings
             ]);
         }
 

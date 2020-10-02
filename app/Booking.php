@@ -67,11 +67,7 @@ class Booking extends BaseModel
 
     public function getBookingTypeAttribute($value)
     {
-        if (empty($value)) {
-            return $value;
-        }
-
-        return (!empty(self::$bookingTypes[$value])) ? self::$bookingTypes[$value] : $value;
+        return (isset(self::$bookingTypes[$value])) ? self::$bookingTypes[$value] : $value;
     }
 
     public function bookingInfo()
