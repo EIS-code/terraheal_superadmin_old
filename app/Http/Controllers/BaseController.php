@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use File;
 use Response;
 use App\Repositories\User\UserRepository;
+use App\Repositories\Shop\ShopRepository;
 use App\Repositories\User\BookingRepository;
 use App\Repositories\User\ReviewRepository;
 use App\Repositories\Location\CountryRepository;
@@ -44,7 +45,7 @@ use App\Repositories\User\FocusAreaRepository;
 abstract class BaseController extends Controller
 {
     protected $httpRequest = null, $defaultCode = 0, $defaultMessage = "No any response found !", $errorCode = 401, $successCode = 200;
-    protected $userRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo,
+    protected $userRepo, $shopRepo, $bookingRepo, $reviewRepo, $countryRepo, $provinceRepo, $cityRepo, $bookingPaymentRepo, $userCardDetailRepo,
               $therapist, $therapistMassageHistoryRepo, $receptionistRepo, $therapistCalendarRepo, $therapistLanguageRepo,
               $therapistReviewQuestionRepo, $therapistReviewRepo, $staffRepo, $staffAttendanceRepo, $massageRepo, $therapistDocumentRepo,
               $therapyRepo, $massagePreferenceRepo, $selectedMassagePreferenceRepo, $therapyQuestionnaireRepo, $therapyQuestionnaireAnswerRepo,
@@ -54,6 +55,7 @@ abstract class BaseController extends Controller
     {
         $this->httpRequest             = Request();
         $this->userRepo                = new UserRepository();
+        $this->shopRepo                = new ShopRepository();
         $this->bookingRepo             = new BookingRepository();
         $this->reviewRepo              = new ReviewRepository();
         $this->countryRepo             = new CountryRepository();

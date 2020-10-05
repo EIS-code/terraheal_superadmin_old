@@ -76,7 +76,7 @@ var donutOptions = {
 
 var chDonutData3 = {
 
-	labels: ['Happy Clients'],
+  labels: ['Happy Clients'],
 
     datasets: [
 
@@ -641,36 +641,36 @@ $(document).ready(function() {
 
         $('.add-d').click(function() {
 
-			$(this).addClass('hide');
+      $(this).addClass('hide');
 
-			$(this).addClass('hide');
-			
+      $(this).addClass('hide');
+      
 
-			$(this).closest('.center-row').addClass('opened');
+      $(this).closest('.center-row').addClass('opened');
 
                $(this).parent().siblings('.center-bottom-sec').show();
 
         });
 
     });
-	
-	$(document).ready(function() {
+  
+  $(document).ready(function() {
 
         $('.edit-d').click(function() {
 
-			$(this).addClass('hide');
+      $(this).addClass('hide');
 
-			$(this).addClass('hide');
-			$(this).closest('.center-row').addClass('opened');
+      $(this).addClass('hide');
+      $(this).closest('.center-row').addClass('opened');
 
                $(this).parent().siblings('.center-bottom-sec').show();
 
         });
 
     });
-	
+  
 
-//active class for sidebar	
+//active class for sidebar  
 
 jQuery(function($) {
      var path = window.location.href; // because the 'href' property of the DOM element is the absolute path
@@ -691,31 +691,31 @@ $('.btn-toggle').click(function() {
 
     $(this).find('.btn').toggleClass('active');
 
-	$(this).find('.btn').toggleClass('inactive');  
+  $(this).find('.btn').toggleClass('inactive');  
 
     
 
     if ($(this).find('.btn-primary').length>0) {
 
-    	$(this).find('.btn').toggleClass('btn-primary');
+      $(this).find('.btn').toggleClass('btn-primary');
 
     }
 
     if ($(this).find('.btn-danger').length>0) {
 
-    	$(this).find('.btn').toggleClass('btn-danger');
+      $(this).find('.btn').toggleClass('btn-danger');
 
     }
 
     if ($(this).find('.btn-success').length>0) {
 
-    	$(this).find('.btn').toggleClass('btn-success');
+      $(this).find('.btn').toggleClass('btn-success');
 
     }
 
     if ($(this).find('.btn-info').length>0) {
 
-    	$(this).find('.btn').toggleClass('btn-info');
+      $(this).find('.btn').toggleClass('btn-info');
 
     }
 
@@ -791,5 +791,120 @@ var sampleEvents = [
 
 $('#dynamicContent').prepend($('#cnt-tab-cont'));
 
+// $('#element').donetyping(callback[, timeout=1000])
+// Fires callback when a user has finished typing. This is determined by the time elapsed
+// since the last keystroke and timeout parameter or the blur event--whichever comes first.
+//   @callback: function to be called when even triggers
+//   @timeout:  (default=1000) timeout, in ms, to to wait before triggering event if not
+//              caused by blur.
+// Requires jQuery 1.7+
+//
+;(function($){
+    $.fn.extend({
+        donetyping: function(callback,timeout){
+            timeout = timeout || 1e3; // 1 second default timeout
+            var timeoutReference,
+                doneTyping = function(el){
+                    if (!timeoutReference) return;
+                    timeoutReference = null;
+                    callback.call(el);
+                };
+            return this.each(function(i,el){
+                var $el = $(el);
+                // Chrome Fix (Use keyup over keypress to detect backspace)
+                // thank you @palerdot
+                $el.is(':input') && $el.on('keyup keypress paste',function(e){
+                    // This catches the backspace button in chrome, but also prevents
+                    // the event from triggering too preemptively. Without this line,
+                    // using tab/shift+tab will make the focused element fire the callback.
+                    if (e.type=='keyup' && e.keyCode!=8) return;
+                    
+                    // Check if timeout has been set. If it has, "reset" the clock and
+                    // start over again.
+                    if (timeoutReference) clearTimeout(timeoutReference);
+                    timeoutReference = setTimeout(function(){
+                        // if we made it here, our timeout has elapsed. Fire the
+                        // callback
+                        doneTyping(el);
+                    }, timeout);
+                }).on('blur',function(){
+                    // If we can, fire the event since we're leaving the field
+                    doneTyping(el);
+                });
+            });
+        }
+    });
+})(jQuery);
 
+// Read a page's GET URL variables and return them as an associative array.
+function getUrlVars()
+{
+    let vars   = [], hash;
+    let hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
 
+    for(var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+
+    return vars;
+}
+
+var searchFormRequest = null;
+function submitSearchForm(form)
+{
+    if (form && form.length > 0) {
+        let url  = form.attr('action'),
+            type = form.attr('method');
+
+        searchFormRequest = $.ajax(
+            {
+                url: url,
+                type: type,
+                data: form.serialize(),
+                // dataType: 'json',
+                beforeSend : function() {
+                    if (searchFormRequest != null) {
+                        searchFormRequest.abort();
+                    }
+                },
+                success: function(response, textStatus, jqXHR) {
+                    // console.log(response, textStatus, jqXHR);
+                    if (response) {
+                        let htmlElements = $(document).find("#list");
+
+                        htmlElements.empty();
+
+                        htmlElements.hide().html(response).fadeIn(200);
+
+                        let newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + this.url.slice(this.url.indexOf('?') + 1);
+
+                        window.history.pushState({path:newUrl}, '', newUrl);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    // console.log(errorThrown, textStatus, jqXHR);
+                }
+            }
+        );
+    }
+}
+
+let searchForm = $(document).find('#search-form');
+
+if (searchForm && searchForm.length > 0) {
+    let inputs = searchForm.find(':input');
+
+    if (inputs && inputs.length > 0) {
+        inputs.each(function() {
+            $(this).donetyping(function() {
+                submitSearchForm(searchForm);
+            });
+        });
+
+        inputs.filter("select").on('change', function() {
+            submitSearchForm(searchForm);
+        });
+    }
+}

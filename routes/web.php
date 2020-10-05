@@ -29,5 +29,7 @@ Route::group(['prefix' => 'web'], function () {
 Route::group(['prefix' => 'superadmin', 'namespace' => 'Superadmin', 'middleware' => 'web'], function () {
     Auth::routes(['register' => false, 'reset' => false]);
 
-    Route::get('/', 'SuperadminController@index')->name('dashboard');
+    Route::get('/', 'SuperadminController@index')->name('superadmin.dashboard');
+
+    Route::resources(['centers' => 'CenterController']);
 });

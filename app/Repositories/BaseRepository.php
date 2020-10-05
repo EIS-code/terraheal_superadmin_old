@@ -9,6 +9,8 @@ class BaseRepository
 {
     public $emailRepo, $smsRepo;
 
+    const PAGINATE_RECORDS = 20;
+
     public function __construct()
     {
         $this->emailRepo   = new EmailRepository();

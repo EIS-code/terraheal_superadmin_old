@@ -26,6 +26,7 @@
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/animate.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet" type="text/css">
 </head>
 <body>
     <div id="app">
@@ -86,12 +87,12 @@
                     <div class="d-flex main-flex">
                         <div class="aside sidebar wow fadeInLeft" data-wow-duration="2s" data-wow-delay="0.1s">
                             <div class="left-panel">
-                                <div class="leave wow fadeInDown" data-wow-duration="3s" data-wow-delay="0.1s"><img src="images/leave.png" alt="leave"/></div>
-                                <div class="panel-logo"> <a href="javascript:void(0);"><img src="images/logo.png" alt="logo"/></a> </div>
+                                <div class="leave wow fadeInDown" data-wow-duration="3s" data-wow-delay="0.1s"><img src="{{ asset('images/leave.png') }}" alt="leave"/></div>
+                                <div class="panel-logo"> <a href="javascript:void(0);"><img src="{{ asset('images/logo.png') }}" alt="logo"/></a> </div>
                                 <div class="navigation">
                                     <ul class="main-menu">
-                                        <li><a class="active" href="home.php"><span class="menu-icon"><img src="{{ asset('images/dashbord.png') }}" alt="dashboard"/></span>{{ __('Dashboard') }}</a></li>
-                                        <li><a href="centers.php"><span class="menu-icon"><img src="{{ asset('images/shop.png') }}" alt="clients"/></span>{{ __('Centers') }}</a></li>
+                                        <li><a class="{{ (request()->is('superadmin.dashboard/*') ? 'active' : '') }}" href="{{ route('superadmin.dashboard') }}"><span class="menu-icon"><img src="{{ asset('images/dashbord.png') }}" alt="dashboard"/></span>{{ __('Dashboard') }}</a></li>
+                                        <li><a class="{{ (request()->is('superadmin/centers/*') ? 'active' : '') }}" href="{{ route('centers.index') }}"><span class="menu-icon"><img src="{{ asset('images/shop.png') }}" alt="clients"/></span>{{ __('Centers') }}</a></li>
                                         <li><a href="clients.php"><span class="menu-icon"><img src="{{ asset('images/clients.png') }}" alt="clients"/></span>{{ __('Clients') }}</a></li>
                                         <li><a href="therapists.php"><span class="menu-icon"><img src="{{ asset('images/therapist.png') }}" alt="therapist"/></span>{{ __('Therapists') }}</a></li>
                                         <li><a href="booking.php"><span class="menu-icon"><img src="{{ asset('images/booking.png') }}" alt="booking"/></span>{{ __('Bookings') }}</a></li>
@@ -107,6 +108,147 @@
                 @yield('content')
 
                 @auth
+                        <div class="right-sidebar wow fadeInRight" data-wow-duration="2s" data-wow-delay="0.1s">
+                            <div class="right-panel">
+                                <div class="panel-top d-flex justify-content-between">
+                                    <div class="announce" data-toggle="modal" data-target="#announcemodel"><img src="{{ asset('images/announce.png') }}" alt="announce"/><span class="counts">12</span></div>
+                                    <div class="profile"><img src="{{ asset('images/profile.png') }}" alt="profile"/></div>
+                                    <div class="notification" data-toggle="modal" data-target="#notifymodel"><img src="{{ asset('images/notification.png') }}" alt="notification"/><span class="counts">12</span></div>
+                                </div>
+                                @yield('right_content')
+
+                                @sectionMissing('right_content')
+                                    <div class="right-counts d-flex">
+                                        <div class="info d-flex">
+                                            <span class="info-img"><img src="{{ asset('images/app.png') }}" alt="app"/></span>
+                                            <div class="info-right"> <span class="info-title">{{ __('App Users') }}</span> <span class="info-count">{{ $totalUsers }}</span> </div>
+                                        </div>
+                                        <div class="info d-flex">
+                                            <span class="info-img"><img src="{{ asset('images/booking-b.png') }}" alt="booking"/></span>
+                                            <div class="info-right"> <span class="info-title">{{ __('Home Booking') }}</span> <span class="info-count">{{ $totalBookings }}</span> </div>
+                                        </div>
+                                        <div class="info d-flex">
+                                            <span class="info-img"><img src="{{ asset('images/sales.png') }}" alt="sales"/></span>
+                                            <div class="info-right"> <span class="info-title">{{ __('Total Sales') }}</span> <span class="info-count">{{ $totalSales }}</span> </div>
+                                        </div>
+                                        <div class="info d-flex">
+                                            <span class="info-img"><img src="{{ asset('images/percent.png') }}" alt="percent"/></span>
+                                            <div class="info-right"> <span class="info-title">{{ __('Earnings') }}(%)</span> <span class="info-count">85</span> </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-list-main">
+                                        <div class="item-top d-flex justify-content-between">
+                                            <label>Top Items</label>
+                                            <select>
+                                                <option>Massages</option>
+                                                <option>Massages 1</option>
+                                                <option>Massages 2</option>
+                                            </select>
+                                        </div>
+                                        <div class="list-items">
+                                            <ul>
+                                                @if(!empty($topItems) && !$topItems->isEmpty())
+                                                    @foreach($topItems as $topItem)
+                                                        <li>
+                                                            <div class="item-img"><img src="{{ $topItem->icon }}" alt="icon1"/></div>
+                                                            <div class="item-texts">
+                                                                <strong>{{ $topItem->name }}</strong>
+                                                                <p>{{ $topItem->description }}</p>
+                                                            </div>
+                                                            <div class="item-price"> $122.00 </div>
+                                                        </li>
+                                                    @endforeach
+                                                @else
+                                                    <li>
+                                                        <div class="item-texts">
+                                                            <strong>{{ __('No Items') }}</strong>
+                                                        </div>
+                                                    </li>
+                                                @endif
+                                            </ul>
+                                            @if(!empty($topItems) && !$topItems->isEmpty())
+                                                <div class="text-center viewall"><a href="javascript:void(0);">View All</a></div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="notifymodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Notifications</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="model-inner">
+                                            <div class="notify-list">
+                                                <ul>
+                                                    <li>
+                                                        <figure> <img src="{{ asset('images/placeholder.png') }}" alt="notify"/> </figure>
+                                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took</p>
+                                                        <span class="note-date">Today:3.15PM</span> 
+                                                    </li>
+                                                    <li>
+                                                        <figure> <img src="{{ asset('images/placeholder.png') }}" alt="notify"/> </figure>
+                                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took </p>
+                                                        <span class="note-date">Today:3.15PM</span> 
+                                                    </li>
+                                                    <li>
+                                                        <figure> <img src="{{ asset('images/placeholder.png') }}" alt="notify"/> </figure>
+                                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took</p>
+                                                        <span class="note-date">Today:3.15PM</span> 
+                                                    </li>
+                                                    <li>
+                                                        <figure> <img src="{{ asset('images/placeholder.png') }}" alt="notify"/> </figure>
+                                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took</p>
+                                                        <span class="note-date">Today:3.15PM</span> 
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="announcemodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Announcement</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="model-inner">
+                                            <div class="model-field">
+                                                <label>Topic:</label>
+                                                <div class="model-para"> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</div>
+                                            </div>
+                                            <div class="model-field">
+                                                <label>Notes:</label>
+                                                <div class="model-para"> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+                                            </div>
+                                            <div class="model-field">
+                                                <label>Send To:</label>
+                                                <div class="model-para none">
+                                                    <select>
+                                                        <option>All Therapists</option>
+                                                        <option>All Therapists 1</option>
+                                                        <option>All Therapists 2</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 @endauth
             </section>
