@@ -41,6 +41,13 @@ class CenterController extends BaseController
 
     public function create()
     {
-        return view('superadmin.create');
+        $countries = $this->countryRepo->all();
+
+        return view('superadmin.create', compact('countries'));
+    }
+
+    public function store()
+    {
+
     }
 }

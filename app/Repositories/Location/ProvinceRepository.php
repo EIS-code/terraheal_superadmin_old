@@ -72,9 +72,27 @@ class ProvinceRepository extends BaseRepository
         return $data;
     }
 
-    public function getWhere($column, $value)
+    public function getWhere($column, $value, $isApi = false)
     {
-        return $this->province->where($column, $value)->get();
+        $data = $this->province->where($column, $value)->get();
+
+        if ($isApi === true) {
+            if (!empty($data) && !$data->isEmpty()) {
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'Provinces get successfully !',
+                    'data' => $data
+                ]);
+            }
+
+            return response()->json([
+                'code' => 200,
+                'msg'  => 'Didn\'t found any province.',
+                'data' => []
+            ]);
+        }
+
+        return $data;
     }
 
     public function getWhereFirst($column, $value, $isApi = false)

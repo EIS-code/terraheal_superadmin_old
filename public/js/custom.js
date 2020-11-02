@@ -908,3 +908,142 @@ if (searchForm && searchForm.length > 0) {
         });
     }
 }
+
+var getProvinceRequest = null;
+$(document).find("#countries").on("change", function() {
+    let self = $(this);
+    if (self.data('is-get-provinces')) {
+        let value         = self.val(),
+            selectBox     = $(self.data("selectbox-province-id")),
+            defaultoption = selectBox.find("[data-is-default='true']").clone();
+
+        let setEmpty = function() {
+            selectBox.empty();
+
+            selectBox.html(defaultoption);
+        };
+
+        if (value == "" || Number.isNaN(parseInt(value))) {
+            if (selectBox) {
+                setEmpty();
+            }
+        } else {
+          getProvinceRequest = $.ajax(
+              {
+                  url: routeProvince,
+                  type: "POST",
+                  data: {"country_id": value},
+                  beforeSend : function() {
+                      if (getProvinceRequest != null) {
+                          getProvinceRequest.abort();
+                      }
+                  },
+                  success: function(response, textStatus, jqXHR) {
+                      if (response) {
+                          if (selectBox) {
+                              setEmpty();
+
+                              if (Object.keys(response.data).length > 0) {
+                                  $.each(response.data, function(index, province) {
+                                      selectBox.append($('<option value="' + province.id + '">' + province.name + '</option>'));
+                                  });
+                              }
+                          }
+                      }
+                  },
+                  error: function(jqXHR, textStatus, errorThrown) {
+                      // console.log(errorThrown, textStatus, jqXHR);
+                  }
+              }
+          );
+        }
+    }
+});
+
+// Blur lat/long.
+var customLabel = {
+    restaurant: {
+        label: 'R'
+    },
+    bar: {
+        label: 'B'
+    }
+};
+function setMap(latitude, longitude, zoom)
+{
+    zoom = parseInt(zoom) || 15;
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+        center  : new google.maps.LatLng(latitude, longitude),
+        zoom    : zoom
+    });
+
+    var infowindow = new google.maps.InfoWindow();
+
+    // Change this depending on the name of your PHP or XML file
+    downloadUrl('https://storage.googleapis.com/mapsdevsite/json/mapmarkers2.xml', function(data) {
+        var xml     = data.responseXML;
+        var markers = xml.documentElement.getElementsByTagName('marker');
+
+        Array.prototype.forEach.call(markers, function(markerElem) {
+            var id      = markerElem.getAttribute('id');
+            var name    = markerElem.getAttribute('name');
+            var address = markerElem.getAttribute('address');
+            var type    = markerElem.getAttribute('type');
+            var point   = new google.maps.LatLng(
+                parseFloat(markerElem.getAttribute('lat')),
+                parseFloat(markerElem.getAttribute('lng'))
+            );
+
+            var infowincontent  = document.createElement('div');
+            var strong          = document.createElement('strong');
+            strong.textContent  = name;
+            infowincontent.appendChild(strong);
+            infowincontent.appendChild(document.createElement('br'));
+
+            var text          = document.createElement('text');
+            text.textContent  = address
+            infowincontent.appendChild(text);
+
+            var icon    = customLabel[type] || {};
+            var marker  = new google.maps.Marker({
+                map: map,
+                position: point,
+                label: icon.label
+            });
+
+            marker.addListener('click', function() {
+                infoWindow.setContent(infowincontent);
+                infoWindow.open(map, marker);
+            });
+        });
+    });
+}
+
+function downloadUrl(url, callback) {
+    var request = window.ActiveXObject ?
+                  new ActiveXObject('Microsoft.XMLHTTP') :
+                  new XMLHttpRequest;
+
+    request.onreadystatechange = function() {
+        if (request.readyState == 4) {
+            request.onreadystatechange = doNothing;
+            callback(request, request.status);
+        }
+    };
+
+    request.open('GET', url, true);
+    request.send(null);
+}
+
+function doNothing() {}
+
+$(document).find("#latitude, #longitude, #zoom").on("blur", function() {
+    let latitude  = $("#latitude"),
+        longitude = $("#longitude"),
+        zoom      = $("#zoom");
+
+    if (latitude.val().length > 0 && longitude.val().length > 0) {
+        setMap(latitude.val(), longitude.val(), zoom.val());
+    }
+});

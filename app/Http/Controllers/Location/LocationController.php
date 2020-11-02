@@ -118,6 +118,12 @@ class LocationController extends BaseController
 
     public function getProvince()
     {
-        return $this->province->all(true);
+        $countryId = $this->httpRequest->get('country_id', false);
+
+        if (!empty($countryId)) {
+            return $this->province->getWhere('country_id', (int)$countryId, true);
+        } else {
+            return $this->province->all(true);
+        }
     }
 }

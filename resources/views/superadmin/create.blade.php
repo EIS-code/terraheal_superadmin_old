@@ -2,51 +2,54 @@
 
 @section('content')
 
+@push('scripts')
+    <script difer src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_STATIC_MAP_API_KEY') }}" defer></script>
+@endpush
 <div class="content-sec wow fadeInUp" data-wow-duration="2s" data-wow-delay="0.1s">
     <div class="center-top d-flex justify-content-between">
-        <div class="title">Add New Center</div>
+        <div class="title">{{ __('Add New Center') }}</div>
     </div>
     <div class="add-center-main">
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">1</span>
-                <div class="center-ttl">Details of the center</div>
+                <div class="center-ttl">{{ __('Details of the center') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Address</label>
+                            <label>{{ __('Address') }}</label>
                             <div class="grp-right">
-                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#locationmodel">Add Address</a>
+                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#locationmodel">{{ __('Add Address') }}</a>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Telephone</label>
+                            <label>{{ __('Telephone') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="telephone" placeholder="+351 58548754784"/>
+                                <input type="text" name="telephone" placeholder="{{ __('+351 58548754784') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Manager Username:</label>
+                            <label>{{ __('Manager Username') }}:</label>
                             <div class="grp-right">
-                                <input type="text" name="uname" placeholder="@manager"/>
+                                <input type="text" name="uname" placeholder="{{ __('@manager') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Center Username:</label>
+                            <label>{{ __('Center Username') }} : </label>
                             <div class="grp-right">
                                 <input type="text" name="center-uname" placeholder="@center"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Featured Image:</label>
+                            <label>{{ __('Featured Image') }} : </label>
                             <div class="grp-right img-box upload-box">
                                 <!--To give the control a modern look, I have applied a stylesheet in the parent span.-->
                                 <output id="Filelist"></output>
                                 <span class="btn btn-success fileinput-button">
-                                <span>Upload</span>
+                                <span>{{ __('Upload') }} : </span>
                                 <input type="file" name="files[]" id="files" multiple accept="image/jpeg, image/png, image/gif,"><br />
                                 </span>
                             </div>
@@ -54,31 +57,31 @@
                     </div>
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Time table:</label>
+                            <label>{{ __('Time table') }} : </label>
                             <div class="grp-right">
-                                <a href="javascript:void(0);" class="add-link add-time" data-toggle="modal" data-target="#centerhours">Add Time table</a>
+                                <a href="javascript:void(0);" class="add-link add-time" data-toggle="modal" data-target="#centerhours">{{ __('Add Time table') }} : </a>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Email</label>
+                            <label>{{ __('Email') }} : </label>
                             <div class="grp-right">
-                                <input type="email" name="email" placeholder="youremail@14.com"/>
+                                <input type="email" name="email" placeholder="{{ __('youremail@14.com') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Manager password:</label>
+                            <label>{{ __('Manager password') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="uname" placeholder="123456789"/>
+                                <input type="text" name="uname" placeholder="{{ __('123456789') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Center password:</label>
+                            <label>{{ __('Center password') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="center-uname" placeholder="123456789"/>
+                                <input type="text" name="center-uname" placeholder="{{ __('123456789') }}"/>
                             </div>
                         </div>
                         <div class="grp-field txtarea">
-                            <label>Description:</label>
+                            <label>{{ __('Description') }} : </label>
                             <div class="grp-right img-box upload-box">
                                 <textarea name="desc"></textarea>
                             </div>
@@ -87,10 +90,10 @@
                     <div class="col-md-8 last-col">
                         <div class="gal-bottom">
                             <div class="grp-field">
-                                <label>Gallery</label>
+                                <label>{{ __('Gallery') }} : </label>
                                 <div class="grp-right">
                                     <output id="Filelist"></output><span class="btn btn-success fileinput-button">
-                                    <span>Upload</span>
+                                    <span>{{ __('Upload') }} : </span>
                                     <input type="file" name="" id="files1" multiple accept="image/jpeg, image/png, image/gif,"><br />
                                     </span>
                                 </div>
@@ -98,7 +101,7 @@
                         </div>
                     </div>
                     <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }} : </a>
                     </div>
                 </div>
             </div>
@@ -106,35 +109,35 @@
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">2</span>
-                <div class="center-ttl">Company Details</div>
+                <div class="center-ttl">{{ __('Company Details') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Company Name:</label>
+                            <label>{{ __('Company Name') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="comp-name" placeholder="Terra Heal Massage Center"/>
+                                <input type="text" name="comp-name" placeholder="{{ __('Terra Heal Massage Center') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Address:</label>
+                            <label>{{ __('Address') }} : </label>
                             <div class="grp-right">
-                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#companyaddress">Add Address</a>
+                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#companyaddress">{{ __('Add Address') }} : </a>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>NIF Company:</label>
+                            <label>{{ __('NIF Company') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="telephone" placeholder="125478416554"/>
+                                <input type="text" name="telephone" placeholder="{{ __('125478416554') }}"/>
                             </div>
                         </div>
                     </div>
                     <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
                     </div>
                 </div>
             </div>
@@ -142,26 +145,26 @@
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">3</span>
-                <div class="center-ttl">Owner Details</div>
+                <div class="center-ttl">{{ __('Owner Details') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Name:</label>
+                            <label>{{ __('Name') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="name" placeholder="Rohit"/>
+                                <input type="text" name="name" placeholder="{{ __('Rohit') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Email:</label>
+                            <label>{{ __('Email') }} : </label>
                             <div class="grp-right">
-                                <input type="email" name="email" placeholder="youremail@14.com"/>
+                                <input type="email" name="email" placeholder="{{ __('youremail@14.com') }}"/>
                             </div>
                         </div>
                         <div class="grp-field txtarea">
-                            <label>Financial situation:</label>
+                            <label>{{ __('Financial situation') }} : </label>
                             <div class="grp-right">
                                 <textarea name="financial"></textarea>
                             </div>
@@ -169,26 +172,26 @@
                     </div>
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Surname:</label>
+                            <label>{{ __('Surname') }} : </label>
                             <div class="grp-right">
                                 <input type="text" name="Surname" placeholder="yadav"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Telephone:</label>
+                            <label>{{ __('Telephone') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="tel" placeholder="+351 2545458745"/>
+                                <input type="text" name="tel" placeholder="{{ __('+351 2545458745') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Alternative Tel:</label>
+                            <label>{{ __('Alternative Tel') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="a-tel" placeholder="+351 2548745414"/>
+                                <input type="text" name="a-tel" placeholder="{{ __('+351 2548745414') }}"/>
                             </div>
                         </div>
                     </div>
                     <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
                     </div>
                 </div>
             </div>
@@ -196,56 +199,56 @@
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">4</span>
-                <div class="center-ttl">payments and payouts accounts</div>
+                <div class="center-ttl">{{ __('payments and payouts accounts') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>IBAN:</label>
+                            <label>{{ __('IBAN') }} : </label>
                             <div class="grp-right">
                                 <input type="text" name="iban" placeholder="youremail@14.com"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Google pay:</label>
+                            <label>{{ __('Google pay') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="gpay" placeholder="youremail@14.com"/>
+                                <input type="text" name="gpay" placeholder="{{ __('youremail@14.com') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Hipay:</label>
+                            <label>{{ __('Hipay') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="Hipay" placeholder="youremail@14.com"/>
+                                <input type="text" name="Hipay" placeholder="{{ __('youremail@14.com') }}"/>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>PayPal:</label>
+                            <label>{{ __('PayPal') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="paypal" placeholder="youremail@14.com"/>
+                                <input type="text" name="paypal" placeholder="{{ __('youremail@14.com') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Apple Pay:</label>
+                            <label>{{ __('Apple Pay') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="a-pay" placeholder="youremail@14.com"/>
+                                <input type="text" name="a-pay" placeholder="{{ __('youremail@14.com') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Other:</label>
+                            <label>{{ __('Other') }} : </label>
                             <div class="grp-right">
                                 <select>
-                                    <option>Select</option>
+                                    <option>{{ __('Select') }}</option>
                                     <option>Select 1</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
                     </div>
                 </div>
             </div>
@@ -253,35 +256,35 @@
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">5</span>
-                <div class="center-ttl">Agrements for Payments</div>
+                <div class="center-ttl">{{ __('Agrements for Payments') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>% of sales:</label>
+                            <label>{{ __('% of sales') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="sales" placeholder="80"/>
+                                <input type="text" name="sales" placeholder="{{ __('80') }}"/>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Initial amount to pay:</label>
+                            <label>{{ __('Initial amount to pay') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="init-pay" placeholder="8000$"/>
+                                <input type="text" name="init-pay" placeholder="{{ __('8000$') }}"/>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Fixed Amount P.M.:</label>
+                            <label>{{ __('Fixed Amount P.M.') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="amount" placeholder="54150$"/>
+                                <input type="text" name="amount" placeholder="{{ __('54150$') }}"/>
                             </div>
                         </div>
                     </div>
                     <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
                     </div>
                 </div>
             </div>
@@ -289,33 +292,33 @@
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">6</span>
-                <div class="center-ttl">Upload documents</div>
+                <div class="center-ttl">{{ __('Upload documents') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Franchise Contact:</label>
+                            <label>{{ __('Franchise Contact') }} : </label>
                             <div class="grp-right">
                                 <div class="file">
                                     <label class="file-label">
                                     <input class="file-input" type="file" name="resume">
                                     <span class="file-cta">
-                                    <span class="file-label">Add New Documents</span>
+                                    <span class="file-label">{{ __('Add New Documents') }}</span>
                                     </span>
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div class="grp-field">
-                            <label>Registration:</label>
+                            <label>{{ __('Registration') }} : </label>
                             <div class="grp-right">
                                 <div class="file">
                                     <label class="file-label">
                                     <input class="file-input" type="file" name="resume">
                                     <span class="file-cta">
-                                    <span class="file-label">Add New Documents</span>
+                                    <span class="file-label">{{ __('Add New Documents') }}</span>
                                     </span>
                                     </label>
                                 </div>
@@ -324,13 +327,13 @@
                     </div>
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>ID/Passport:</label>
+                            <label>{{ __('ID/Passport') }} : </label>
                             <div class="grp-right">
                                 <div class="file">
                                     <label class="file-label">
                                     <input class="file-input" type="file" name="resume">
                                     <span class="file-cta">
-                                    <span class="file-label">Add New Documents</span>
+                                    <span class="file-label">{{ __('Add New Documents') }}</span>
                                     </span>
                                     </label>
                                 </div>
@@ -338,7 +341,7 @@
                         </div>
                     </div>
                     <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
                     </div>
                 </div>
             </div>
@@ -346,29 +349,29 @@
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">7</span>
-                <div class="center-ttl">Consulting Franchise services For this Center</div>
+                <div class="center-ttl">{{ __('Consulting Franchise services For this Center') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Investment Budget:</label>
+                            <label>{{ __('Investment Budget') }} : </label>
                             <div class="grp-right">
-                                <input type="text" name="budget" placeholder="8000$"/>
+                                <input type="text" name="budget" placeholder="{{ __('8000$') }}"/>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Services:</label>
+                            <label>{{ __('Services') }} : </label>
                             <div class="grp-right">
-                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#listservices">List of services</a>
+                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#listservices">{{ __('List of services') }}</a>
                             </div>
                         </div>
                     </div>
                     <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
                     </div>
                 </div>
             </div>
@@ -376,77 +379,77 @@
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">8</span>
-                <div class="center-ttl">massages and therapies</div>
+                <div class="center-ttl">{{ __('massages and therapies') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Massages:</label>
+                            <label>{{ __('Massages') }} : </label>
                             <div class="grp-right">
-                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#listmassages">List of Massages</a>
+                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#listmassages">{{ __('List of Massages') }}</a>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Therapies:</label>
+                            <label>{{ __('Therapies') }} : </label>
                             <div class="grp-right">
-                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#listtherapies">List of Therapies</a>
+                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#listtherapies">{{ __('List of Therapies') }}</a>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <h4>Home/Hotel Visits</h4>
+                        <h4>{{ __('Home/Hotel Visits') }}</h4>
                     </div>
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Massages:</label>
+                            <label>{{ __('Massages') }} : </label>
                             <div class="grp-right">
-                                <a href="javascript:void(0);" class="add-link">List of Massages</a>
+                                <a href="javascript:void(0);" class="add-link">{{ __('List of Massages') }}</a>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Therapies:</label>
+                            <label>{{ __('Therapies') }} : </label>
                             <div class="grp-right">
-                                <a href="javascript:void(0);" class="add-link">List of Therapies</a>
+                                <a href="javascript:void(0);" class="add-link">{{ __('List of Therapies') }}</a>
                             </div>
                         </div>
                     </div>
                     <div class="row d-flex justify-content-center add-section">
                         <div class="col-md-3">
-                            <span>10 km</span>
+                            <span>{{ __('10 km') }}</span>
                             <div class="add-col d-flex align-items-center">
                                 <input type="text"/><i class="fas fa-euro-sign"></i>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <span>15 km</span>
+                            <span>{{ __('15 km') }}</span>
                             <div class="add-col d-flex align-items-center">
                                 <input type="text"/><i class="fas fa-euro-sign"></i>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <span>20 km</span>
+                            <span>{{ __('20 km') }}</span>
                             <div class="add-col d-flex align-items-center">
                                 <input type="text"/><i class="fas fa-euro-sign"></i>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <span>25 km</span>
+                            <span>{{ __('25 km') }}</span>
                             <div class="add-col d-flex align-items-center">
                                 <input type="text"/><i class="fas fa-euro-sign"></i>
                             </div>
                         </div>
                         <div class="col-md-12 text-center">
-                            <a href="javascript:void(0);" class="add-more">Add More</a>
+                            <a href="javascript:void(0);" class="add-more">{{ __('Add More') }}</a>
                         </div>
                     </div>
                     <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
                     </div>
                 </div>
             </div>
@@ -454,21 +457,21 @@
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">9</span>
-                <div class="center-ttl">Vouchers</div>
+                <div class="center-ttl">{{ __('Vouchers') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Vouchers:</label>
+                            <label>{{ __('Vouchers') }} : </label>
                             <div class="grp-right">
-                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#vouchers">List of Vouchers</a>
+                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#vouchers">{{ __('List of Vouchers') }}</a>
                             </div>
                         </div>
                     </div>
                     <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
                     </div>
                 </div>
             </div>
@@ -476,21 +479,21 @@
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">10</span>
-                <div class="center-ttl">Packs</div>
+                <div class="center-ttl">{{ __('Packs') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="grp-field">
-                            <label>Packs:</label>
+                            <label>{{ __('Packs') }} : </label>
                             <div class="grp-right">
-                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#packs">List of Packs</a>
+                                <a href="javascript:void(0);" class="add-link" data-toggle="modal" data-target="#packs">{{ __('List of Packs') }}</a>
                             </div>
                         </div>
                     </div>
                     <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
                     </div>
                 </div>
             </div>
@@ -498,9 +501,9 @@
         <div class="center-row d-flex justify-content-between">
             <div class="center-left">
                 <span class="number">11</span>
-                <div class="center-ttl">Variable functions for this center</div>
+                <div class="center-ttl">{{ __('Variable functions for this center') }}</div>
             </div>
-            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">Add</a> </div>
+            <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
                 <ul class="switch-sec">
                     <li>
@@ -509,7 +512,7 @@
                         </div>
                         <div class="class-switch">
                             <div class="btn-group btn-toggle"> 
-                                <button class="btn btn-sm btn-default">Deactivate</button>
+                                <button class="btn btn-sm btn-default">{{ __('Deactivate') }}</button>
                                 <button class="btn btn-sm btn-primary active">Activate</button>
                             </div>
                         </div>
@@ -520,8 +523,8 @@
                         </div>
                         <div class="class-switch">
                             <div class="btn-group btn-toggle"> 
-                                <button class="btn btn-sm btn-default active">Deactivate</button>
-                                <button class="btn btn-sm btn-primary">Activate</button>
+                                <button class="btn btn-sm btn-default active">{{ __('Deactivate') }}</button>
+                                <button class="btn btn-sm btn-primary">{{ __('Activate') }}</button>
                             </div>
                         </div>
                     </li>
@@ -531,8 +534,8 @@
                         </div>
                         <div class="class-switch">
                             <div class="btn-group btn-toggle"> 
-                                <button class="btn btn-sm btn-default">Deactivate</button>
-                                <button class="btn btn-sm btn-primary active">Activate</button>
+                                <button class="btn btn-sm btn-default">{{ __('Deactivate') }}</button>
+                                <button class="btn btn-sm btn-primary active">{{ __('Activate') }}</button>
                             </div>
                         </div>
                     </li>
@@ -542,8 +545,8 @@
                         </div>
                         <div class="class-switch">
                             <div class="btn-group btn-toggle"> 
-                                <button class="btn btn-sm btn-default">Deactivate</button>
-                                <button class="btn btn-sm btn-primary active">Activate</button>
+                                <button class="btn btn-sm btn-default">{{ __('Deactivate') }}</button>
+                                <button class="btn btn-sm btn-primary active">{{ __('Activate') }}</button>
                             </div>
                         </div>
                     </li>
@@ -553,8 +556,8 @@
                         </div>
                         <div class="class-switch">
                             <div class="btn-group btn-toggle"> 
-                                <button class="btn btn-sm btn-default active">Deactivate</button>
-                                <button class="btn btn-sm btn-primary">Activate</button>
+                                <button class="btn btn-sm btn-default active">{{ __('Deactivate') }}</button>
+                                <button class="btn btn-sm btn-primary">{{ __('Activate') }}</button>
                             </div>
                         </div>
                     </li>
@@ -564,8 +567,8 @@
                         </div>
                         <div class="class-switch">
                             <div class="btn-group btn-toggle"> 
-                                <button class="btn btn-sm btn-default">Deactivate</button>
-                                <button class="btn btn-sm btn-primary active">Activate</button>
+                                <button class="btn btn-sm btn-default">{{ __('Deactivate') }}</button>
+                                <button class="btn btn-sm btn-primary active">{{ __('Activate') }}</button>
                             </div>
                         </div>
                     </li>
@@ -575,15 +578,103 @@
                         </div>
                         <div class="class-switch">
                             <div class="btn-group btn-toggle"> 
-                                <button class="btn btn-sm btn-default">Deactivate</button>
-                                <button class="btn btn-sm btn-primary active">Activate</button>
+                                <button class="btn btn-sm btn-default">{{ __('Deactivate') }}</button>
+                                <button class="btn btn-sm btn-primary active">{{ __('Activate') }}</button>
                             </div>
                         </div>
                     </li>
                 </ul>
                 <div class="last-colmn">
-                    <a href="javascript:void(0);" class="btn-custom save">Save</a>
+                    <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="locationmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Center Location') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+            </div>
+            <div class="modal-body">
+                <div class="model-inner">
+                    <div class="mode-field half">
+                        <div class="field-grp">
+                            <label>{{ __('Center Country') }}</label>
+                            <select name="country_id" id="countries" data-is-get-provinces="true" data-selectbox-province-id="#provinces">
+                                <option value="">{{ __('Select...') }}</option>
+
+                                @foreach ($countries as $country)
+                                    <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="field-grp">
+                            <label>{{ __('Center State') }}</label>
+                            <select name="province_id" id="provinces">
+                                <option data-is-default="true">{{ __('Select...') }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mode-field">
+                        <div class="field-grp">
+                            <label>{{ __('Center Address') }}</label>
+                            <input type="text" name="Center"/>
+                        </div>
+                        <div class="field-grp">
+                            <label>{{ __('Center Address Line 2') }}</label>
+                            <input type="text" name="Center"/>
+                        </div>
+                    </div>
+                    <div class="mode-field half">
+                        <div class="field-grp">
+                            <label>{{ __('Center City') }}</label>
+                            <select>
+                                <option>{{ __('Select...') }}</option>
+                                <option>option 1</option>
+                                <option>option 1</option>
+                            </select>
+                        </div>
+                        <div class="field-grp">
+                            <label>{{ __('Pincode') }}</label>
+                            <select>
+                                <option>{{ __('Select...') }}</option>
+                                <option>option 1</option>
+                                <option>option 1</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="custom-row row">
+                        <div class="col-md-8">
+                            <div class="model-map">
+                                <!-- <img src="images/map.png"/> -->
+                                <div id="map"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mode-field">
+                                <div class="field-grp">
+                                    <label>{{ __('Latitude') }}</label>
+                                    <input type="text" name="latitude" id="latitude" />
+                                </div>
+                                <div class="field-grp">
+                                    <label>{{ __('Longitude') }}</label>
+                                    <input type="text" name="longitude" id="longitude" />
+                                </div>
+                                <div class="field-grp">
+                                    <label>{{ __('Zoom Level') }}</label>
+                                    <input type="text" name="zoom" id="zoom" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="apply">{{ __('Apply') }}</a>
             </div>
         </div>
     </div>

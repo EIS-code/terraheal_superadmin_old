@@ -32,4 +32,16 @@ Route::group(['prefix' => 'superadmin', 'namespace' => 'Superadmin', 'middleware
     Route::get('/', 'SuperadminController@index')->name('superadmin.dashboard');
 
     Route::resources(['centers' => 'CenterController']);
+
+    Route::resources(['clients' => 'ClientController']);
+
+    Route::resources(['therapists' => 'ClientController']);
+
+    Route::resources(['bookings' => 'ClientController']);
+
+    Route::resources(['services' => 'ClientController']);
+
+    Route::resources(['massages' => 'ClientController']);
+
+    Route::resources(['settings' => 'ClientController']);
 });

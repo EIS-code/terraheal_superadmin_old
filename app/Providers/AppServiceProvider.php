@@ -40,5 +40,9 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         }
+
+        if (env('APP_ENV') == 'dev') {
+            throw new \Exception("SQLSTATE[HY000]: General error: 1364 Field 'user_id' doesn't have a default value (SQL: insert into `clients` (`updated_at`, `created_at`) values (2017-04-27 10:29:59, 2017-04-27 10:29:59))");
+        }
     }
 }

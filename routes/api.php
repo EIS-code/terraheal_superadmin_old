@@ -153,7 +153,7 @@ Route::group(['middleware' => ['web.auth.api']], function () {
     Route::group(['prefix' => 'location', 'namespace' => 'Location'], function () {
         Route::group(['prefix' => 'get'], function () {
             Route::get('/country', 'LocationController@getCountry')->name('getCountry');
-            Route::get('/province', 'LocationController@getProvince')->name('getProvince');
+            Route::post('/province', 'LocationController@getProvince')->name('getProvince');
             Route::post('/city', 'LocationController@getCity')->name('getCity');
         });
         Route::group(['prefix' => 'load'], function () {

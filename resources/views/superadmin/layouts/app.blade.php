@@ -16,6 +16,14 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.js" defer></script> 
     <script type="text/javascript" src="{{ asset('js/custom.js') }}" defer></script>
 
+    @stack('scripts')
+
+    @once
+        <script type="text/javascript">
+            var routeProvince = '{{ route("getProvince") }}';
+        </script>
+    @endonce
+
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <!-- <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet"> -->
@@ -93,12 +101,12 @@
                                     <ul class="main-menu">
                                         <li><a class="{{ (request()->is('superadmin.dashboard/*') ? 'active' : '') }}" href="{{ route('superadmin.dashboard') }}"><span class="menu-icon"><img src="{{ asset('images/dashbord.png') }}" alt="dashboard"/></span>{{ __('Dashboard') }}</a></li>
                                         <li><a class="{{ (request()->is('superadmin/centers/*') ? 'active' : '') }}" href="{{ route('centers.index') }}"><span class="menu-icon"><img src="{{ asset('images/shop.png') }}" alt="clients"/></span>{{ __('Centers') }}</a></li>
-                                        <li><a href="clients.php"><span class="menu-icon"><img src="{{ asset('images/clients.png') }}" alt="clients"/></span>{{ __('Clients') }}</a></li>
-                                        <li><a href="therapists.php"><span class="menu-icon"><img src="{{ asset('images/therapist.png') }}" alt="therapist"/></span>{{ __('Therapists') }}</a></li>
-                                        <li><a href="booking.php"><span class="menu-icon"><img src="{{ asset('images/booking.png') }}" alt="booking"/></span>{{ __('Bookings') }}</a></li>
-                                        <li><a href="services.php"><span class="menu-icon"><img src="{{ asset('images/services.png') }}" alt="services"/></span>{{ __('Services') }}</a></li>
-                                        <li><a href="massage.php"><span class="menu-icon"><img src="{{ asset('images/message.png') }}" alt="message"/></span>{{ __('Messages') }}</a></li>
-                                        <li><a href="settings.php"><span class="menu-icon"><img src="{{ asset('images/setting.png') }}" alt="setting"/></span>{{ __('Settings') }}</a></li>
+                                        <li><a class="{{ (request()->is('superadmin/clients/*') ? 'active' : '') }}" href="{{ route('clients.index') }}"><span class="menu-icon"><img src="{{ asset('images/clients.png') }}" alt="clients"/></span>{{ __('Clients') }}</a></li>
+                                        <li><a class="{{ (request()->is('superadmin/therapists/*') ? 'active' : '') }}" href="{{ route('therapists.index') }}"><span class="menu-icon"><img src="{{ asset('images/therapist.png') }}" alt="therapist"/></span>{{ __('Therapists') }}</a></li>
+                                        <li><a class="{{ (request()->is('superadmin/bookings/*') ? 'active' : '') }}" href="{{ route('bookings.index') }}"><span class="menu-icon"><img src="{{ asset('images/booking.png') }}" alt="booking"/></span>{{ __('Bookings') }}</a></li>
+                                        <li><a class="{{ (request()->is('superadmin/services/*') ? 'active' : '') }}" href="{{ route('services.index') }}"><span class="menu-icon"><img src="{{ asset('images/services.png') }}" alt="services"/></span>{{ __('Services') }}</a></li>
+                                        <li><a class="{{ (request()->is('superadmin/massages/*') ? 'active' : '') }}" href="{{ route('massages.index') }}"><span class="menu-icon"><img src="{{ asset('images/message.png') }}" alt="message"/></span>{{ __('Messages') }}</a></li>
+                                        <li><a class="{{ (request()->is('superadmin/settings/*') ? 'active' : '') }}" href="{{ route('settings.index') }}"><span class="menu-icon"><img src="{{ asset('images/setting.png') }}" alt="setting"/></span>{{ __('Settings') }}</a></li>
                                     </ul>
                                 </div>
                             </div>
