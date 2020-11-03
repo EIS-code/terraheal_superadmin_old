@@ -47,7 +47,7 @@
                     </div>
                     <p>
                         <label>{{ __('Last Week') }}</label>
-                        <span>72.1%</span>
+                        <span>0%</span>
                     </p>
                 </div>
             </div>

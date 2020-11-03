@@ -86,7 +86,7 @@ var chDonutData3 = {
 
         borderWidth: 0,
 
-        data: [60, 40]
+        data: [10, 5]
 
       }
 
@@ -136,7 +136,7 @@ if (chBar) {
 
     datasets: [{
 
-      data: [0, 100, 200, 300, 400, 500, 600, 700],
+      data: [0, 0, 0, 0, 0, 0, 0, 0],
 
       backgroundColor: colors[0]
 
