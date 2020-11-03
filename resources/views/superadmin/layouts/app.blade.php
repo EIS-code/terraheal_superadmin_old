@@ -21,6 +21,7 @@
     @once
         <script type="text/javascript">
             var routeProvince = '{{ route("getProvince") }}';
+            var routeCity = '{{ route("getCity") }}';
         </script>
     @endonce
 
@@ -105,7 +106,7 @@
                                         <li><a class="{{ (request()->is('superadmin/therapists/*') ? 'active' : '') }}" href="{{ route('therapists.index') }}"><span class="menu-icon"><img src="{{ asset('images/therapist.png') }}" alt="therapist"/></span>{{ __('Therapists') }}</a></li>
                                         <li><a class="{{ (request()->is('superadmin/bookings/*') ? 'active' : '') }}" href="{{ route('bookings.index') }}"><span class="menu-icon"><img src="{{ asset('images/booking.png') }}" alt="booking"/></span>{{ __('Bookings') }}</a></li>
                                         <li><a class="{{ (request()->is('superadmin/services/*') ? 'active' : '') }}" href="{{ route('services.index') }}"><span class="menu-icon"><img src="{{ asset('images/services.png') }}" alt="services"/></span>{{ __('Services') }}</a></li>
-                                        <li><a class="{{ (request()->is('superadmin/massages/*') ? 'active' : '') }}" href="{{ route('massages.index') }}"><span class="menu-icon"><img src="{{ asset('images/message.png') }}" alt="message"/></span>{{ __('Messages') }}</a></li>
+                                        <li><a class="{{ (request()->is('superadmin/messages/*') ? 'active' : '') }}" href="{{ route('messages.index') }}"><span class="menu-icon"><img src="{{ asset('images/message.png') }}" alt="message"/></span>{{ __('Messages') }}</a></li>
                                         <li><a class="{{ (request()->is('superadmin/settings/*') ? 'active' : '') }}" href="{{ route('settings.index') }}"><span class="menu-icon"><img src="{{ asset('images/setting.png') }}" alt="setting"/></span>{{ __('Settings') }}</a></li>
                                     </ul>
                                 </div>

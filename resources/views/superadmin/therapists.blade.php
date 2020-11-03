@@ -8,17 +8,18 @@
         <div class="top-right">
         </div>
     </div>
-    <div class="clients-list">
-        @if (!empty($users) && !$users->isEmpty())
-            @foreach ($users as $user)
-                <div class="client-col" onclick="location.href='';">
-                    <div class="cnt-img">
-                        <img src="{{ $user->profile_photo }}" alt=""/>
+    <div class="therapists-list">
+        @if (!empty($therapists) && !$therapists->isEmpty())
+            @foreach ($therapists as $therapist)
+                <div class="therapy-col" onclick="location.href='';">
+                    <div class="therapy-img">
+                        <img src="{{ $therapist->profile_photo }}" alt=""/>
                     </div>
-                    <div class="cnt-name">{{ $user->fullName }}</div>
-                    <div class="city-name">{{ !empty($user->city) ? $user->city->name : '' }}</div>
-                    <div class="cnt-email">yourmail@gmail.com</div>
-                    <div class="cnt-phone">2548784754</div>
+                    <div class="ratings">
+                        <img src="{{ asset('images/star.png') }}" alt="rating"/>
+                    </div>
+                    <div class="therapy-name">{{ $therapist->name }}</div>
+                    <div class="country">-, -</div>
                     <div class="center-bottom"> <a href="#"><i class="fas fa-eye"></i></a> <a href="#"><i class="far fa-envelope"></i></a> </div>
                 </div>
             @endforeach
@@ -27,7 +28,7 @@
 </div>
 
 @section('right_content')
-    <form action="{{ route('clients.index') }}" method="GET" id="search-form">
+    <form action="{{ route('therapists.index') }}" method="GET" id="search-form">
         <div class="search-top center-search">
             <input type="text" placeholder="Search by Name, Email, Tel, DOB, NIF, QR code">
             <button type="submit"><img src="{{ asset('images/search.png') }}" alt="search"></button>
@@ -50,14 +51,6 @@
                 </select>
             </div>
             <div class="form-field">
-                <label>Last Visit</label>
-                <select class="select-bg">
-                    <option>Select...</option>
-                    <option>Select 1</option>
-                    <option>Select 2</option>
-                </select>
-            </div>
-            <div class="form-field">
                 <label>Residence</label>
                 <select class="select-bg">
                     <option>Select...</option>
@@ -66,7 +59,7 @@
                 </select>
             </div>
             <div class="form-field">
-                <label>Packs Active</label>
+                <label>Ratings</label>
                 <select class="select-bg">
                     <option>Select...</option>
                     <option>Select 1</option>
@@ -74,15 +67,7 @@
                 </select>
             </div>
             <div class="form-field">
-                <label>Expiring Vouchers</label>
-                <select class="select-bg">
-                    <option>Select...</option>
-                    <option>Select 1</option>
-                    <option>Select 2</option>
-                </select>
-            </div>
-            <div class="form-field">
-                <label>Expiring Vouchers</label>
+                <label>Type of service</label>
                 <select class="select-bg">
                     <option>Select...</option>
                     <option>Select 1</option>
@@ -106,7 +91,15 @@
                 </select>
             </div>
             <div class="form-field">
-                <label>Specific Center</label>
+                <label>Home/Hotel Service</label>
+                <select class="select-bg">
+                    <option>Select...</option>
+                    <option>Select 1</option>
+                    <option>Select 2</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label>Type of Account</label>
                 <select class="select-bg">
                     <option>Select...</option>
                     <option>Select 1</option>

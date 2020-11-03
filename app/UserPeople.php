@@ -53,11 +53,17 @@ class UserPeople extends BaseModel
 
     public function getPhotoAttribute($value)
     {
+        $default = asset('images/user-people.png');
+
         if (empty($value)) {
-            return $value;
+            return $default;
         }
 
         $photoPath = (str_ireplace("\\", "/", $this->photoPath));
-        return Storage::disk($this->fileSystem)->url($photoPath . $value);
+        if (Storage::disk($this->fileSystem)->exists($photoPath . $value)) {
+            return Storage::disk($this->fileSystem)->url($photoPath . $value);
+        }
+
+        return $default;
     }
 }

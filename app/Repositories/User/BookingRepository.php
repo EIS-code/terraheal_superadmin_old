@@ -207,19 +207,23 @@ class BookingRepository extends BaseRepository
         return $this->booking->where($column, $value)->get();
     }
 
-    public function getWherePastFuture(int $userId, $isPast = false, $isUpcoming = true, $isPending = false, $isApi = false)
+    public function getWherePastFuture($userId, $isPast = false, $isUpcoming = true, $isPending = false, $isApi = false)
     {
         $now = Carbon::now();
 
         $bookings = $this->booking
-                         ->select(DB::RAW($this->booking::getTableName() . '.id, massage_date, massage_time, ' . $this->booking::getTableName() . '.booking_type, ' . $this->shop::getTableName() . '.name as shop_name, ' . $this->shop::getTableName() . '.description as shop_description, ' . $this->sessionType::getTableName() . '.type as session_type, user_people_id, ' . $this->bookingInfo::getTableName() . '.id as bookingInfoId, ' . $this->userPeople::getTableName() . '.name as user_people_name, ' . $this->userPeople::getTableName() . '.age as user_people_age, ' . $this->userPeople::getTableName() . '.gender as user_people_gender'))
+                         ->select(DB::RAW($this->booking::getTableName() . '.id, massage_date, massage_time, ' . $this->booking::getTableName() . '.booking_type, ' . $this->shop::getTableName() . '.name as shop_name, ' . $this->shop::getTableName() . '.description as shop_description, ' . $this->sessionType::getTableName() . '.type as session_type, user_people_id, ' . $this->bookingInfo::getTableName() . '.id as bookingInfoId, ' . $this->userPeople::getTableName() . '.name as user_people_name, ' . $this->userPeople::getTableName() . '.age as user_people_age, ' . $this->userPeople::getTableName() . '.gender as user_people_gender, ' . $this->userPeople::getTableName() . '.photo as user_prople_photo'))
                          ->join($this->bookingInfo::getTableName(), $this->booking::getTableName() . '.id', '=', $this->bookingInfo::getTableName() . '.booking_id')
                          ->join($this->userPeople::getTableName(), $this->bookingInfo::getTableName() . '.user_people_id', '=', $this->userPeople::getTableName() . '.id')
                          ->leftJoin($this->shop::getTableName(), $this->booking::getTableName() . '.shop_id', '=', $this->shop::getTableName() . '.id')
                          ->leftJoin($this->sessionType::getTableName(), $this->booking::getTableName() . '.session_id', '=', $this->sessionType::getTableName() . '.id')
-                         ->where($this->booking::getTableName() . '.user_id', $userId)
-                         ->where($this->bookingInfo::getTableName() . '.massage_date', ($isPast === true ? '<' : '>='), $now)
-                         ->get();
+                         ->where($this->bookingInfo::getTableName() . '.massage_date', ($isPast === true ? '<' : '>='), $now);
+
+        if (!empty($userId) && is_numeric($userId)) {
+            $bookings->where($this->booking::getTableName() . '.user_id', $userId);
+        }
+
+        $bookings = $bookings->get();
 
         $returnBookings = [];
         if (!empty($bookings) && !$bookings->isEmpty()) {
@@ -251,7 +255,8 @@ class BookingRepository extends BaseRepository
                         'id'     => $userPeopleId,
                         'name'   => $data->user_people_name,
                         'age'    => $data->user_people_age,
-                        'gender' => $data->user_people_gender
+                        'gender' => $data->user_people_gender,
+                        'photo'  => $data->user_prople_photo
                     ];
 
                     $bookingMassages = $this->bookingMassage

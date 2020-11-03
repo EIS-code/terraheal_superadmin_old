@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Superadmin;
 
 use App\Http\Controllers\BaseController;
 
-class ClientController extends BaseController
+class MessageController extends BaseController
 {
     /**
      * Create a new controller instance.
@@ -24,10 +24,7 @@ class ClientController extends BaseController
      */
     public function index()
     {
-        $request = $this->httpRequest;
-        $users   = $this->userRepo->filter($request->all());
-
-        return view('superadmin.clients', compact('users', 'request'));
+        return view('superadmin.messages');
     }
 
     public function create()

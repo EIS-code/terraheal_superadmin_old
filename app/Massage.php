@@ -59,12 +59,18 @@ class Massage extends BaseModel
 
     public function getIconAttribute($value)
     {
+        $default = asset('images/services.png');
+
         if (empty($value)) {
-            return $value;
+            return $default;
         }
 
         $iconPath = (str_ireplace("\\", "/", $this->iconPath));
-        return Storage::disk($this->fileSystem)->url($iconPath . $value);
+        if (Storage::disk($this->fileSystem)->exists($iconPath . $value)) {
+            return Storage::disk($this->fileSystem)->url($iconPath . $value);
+        }
+
+        return $default;
     }
 
     public function timing()

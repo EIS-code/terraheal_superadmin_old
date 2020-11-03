@@ -41,6 +41,14 @@ class CenterController extends BaseController
 
     public function create()
     {
+        $request = $this->httpRequest;
+
+        if (empty($request->get('id'))) {
+            $request->session()->forget('shopId');
+        } else {
+            $request->session()->put('shopId', $request->get('id'));
+        }
+
         $countries = $this->countryRepo->all();
 
         return view('superadmin.create', compact('countries'));
@@ -48,6 +56,49 @@ class CenterController extends BaseController
 
     public function store()
     {
+        $request = $this->httpRequest;
 
+        $create = $this->shopRepo->create($request->all())->getData();
+
+        return $this->redirectResponse('superadmin/centers/create', $create);
+    }
+
+    public function locationCreate()
+    {
+        $request = $this->httpRequest;
+
+        $create = $this->shopRepo->createLocation($request->all())->getData();
+
+        if ($create->code == $this->errorCode) {
+            return redirect('superadmin/centers/create')->with('error', $create->msg);
+        }
+
+        return redirect('superadmin/centers/create')->with('success', $create->msg);
+    }
+
+    public function companyCreate()
+    {
+        $request = $this->httpRequest;
+
+        $create = $this->shopRepo->companyCreate($request->all())->getData();
+
+        return $this->redirectResponse('superadmin/centers/create', $create);
+    }
+
+    public function redirectResponse($url, $jsonObject)
+    {
+        if ($jsonObject->code == $this->errorCode) {
+            if (!empty($this->httpRequest->session()->get('shopId'))) {
+                return redirect($url . '?id=' . $this->httpRequest->session()->get('shopId'))->with('error', $jsonObject->msg)->withInput();
+            } else {
+                return redirect($url)->with('error', $jsonObject->msg)->withInput();
+            }
+        }
+
+        if (!empty($jsonObject->data->id)) {
+            return redirect($url . '?id=' . $jsonObject->data->id)->with('success', $jsonObject->msg);
+        } else {
+            return redirect($url)->with('error', $this->defaultMessage)->withInput();
+        }
     }
 }

@@ -910,11 +910,12 @@ if (searchForm && searchForm.length > 0) {
 }
 
 var getProvinceRequest = null;
-$(document).find("#countries").on("change", function() {
+$(document).find("select[id^='countries']").on("change", function() {
     let self = $(this);
     if (self.data('is-get-provinces')) {
         let value         = self.val(),
             selectBox     = $(self.data("selectbox-province-id")),
+            selectedId    = selectBox.data("selected-id"),
             defaultoption = selectBox.find("[data-is-default='true']").clone();
 
         let setEmpty = function() {
@@ -945,7 +946,9 @@ $(document).find("#countries").on("change", function() {
 
                               if (Object.keys(response.data).length > 0) {
                                   $.each(response.data, function(index, province) {
-                                      selectBox.append($('<option value="' + province.id + '">' + province.name + '</option>'));
+                                      let selected = (parseInt(selectedId) == province.id) ? "selected" : "";
+
+                                      selectBox.append($('<option value="' + province.id + '" ' + selected + '>' + province.name + '</option>'));
                                   });
                               }
                           }
@@ -957,6 +960,76 @@ $(document).find("#countries").on("change", function() {
               }
           );
         }
+    }
+});
+
+var getCityRequest = null;
+$(document).find("select[id^='provinces']").on("change", function() {
+    let self = $(this);
+    if (self.data('is-get-cities')) {
+        let value         = self.val(),
+            selectBox     = $(self.data("selectbox-city-id")),
+            selectedId    = selectBox.data("selected-id"),
+            defaultoption = selectBox.find("[data-is-default='true']").clone();
+
+        let setEmpty = function() {
+            selectBox.empty();
+
+            selectBox.html(defaultoption);
+        };
+
+        if (value == "" || Number.isNaN(parseInt(value))) {
+            if (selectBox) {
+                setEmpty();
+            }
+        } else {
+          getCityRequest = $.ajax(
+              {
+                  url: routeCity,
+                  type: "POST",
+                  data: {"province_id": value},
+                  beforeSend : function() {
+                      if (getCityRequest != null) {
+                          getCityRequest.abort();
+                      }
+                  },
+                  success: function(response, textStatus, jqXHR) {
+                      if (response) {
+                          if (selectBox) {
+                              setEmpty();
+
+                              if (Object.keys(response.data).length > 0) {
+                                  $.each(response.data, function(index, city) {
+                                      let selected = (parseInt(selectedId) == city.id) ? "selected" : "";
+
+                                      selectBox.append($('<option value="' + city.id + '" ' + selected + '>' + city.name + '</option>'));
+                                  });
+                              }
+                          }
+                      }
+                  },
+                  error: function(jqXHR, textStatus, errorThrown) {
+                      // console.log(errorThrown, textStatus, jqXHR);
+                  }
+              }
+          );
+        }
+    }
+});
+
+$(document).find(".radioToggle").on("click", function() {
+    let self      = $(this),
+        dataClass = self.data('class'),
+        dataValue = self.data('value');
+
+    if ($("." + dataClass)) {
+        $("." + dataClass).each(function(e) {
+            $(this).prop("checked", false);
+
+            if (dataValue == $(this).val()) {
+                $(this).prop("checked", true);
+            }
+        });
     }
 });
 

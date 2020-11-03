@@ -167,12 +167,18 @@ class User extends Authenticatable
 
     public function getProfilePhotoAttribute($value)
     {
+        $default = asset('images/clients.png');
+
         if (empty($value)) {
-            return $value;
+            return $default;
         }
 
         $profilePhotoPath = (str_ireplace("\\", "/", $this->profilePhotoPath));
-        return Storage::disk($this->fileSystem)->url($profilePhotoPath . $value);
+        if (Storage::disk($this->fileSystem)->exists($profilePhotoPath . $value)) {
+            return Storage::disk($this->fileSystem)->url($profilePhotoPath . $value);
+        }
+
+        return $default;
     }
 
     public function getDobAttribute($value)
@@ -183,5 +189,10 @@ class User extends Authenticatable
 
         return strtotime($value) * 1000;
         // return Carbon::createFromTimestampMs($value)->format('Y-m-d H:i:s');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return $this->name . ' ' . $this->surname;
     }
 }

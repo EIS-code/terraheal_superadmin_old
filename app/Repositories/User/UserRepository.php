@@ -78,6 +78,23 @@ class UserRepository extends BaseRepository
         return $this->user->all();
     }
 
+    public function filter(array $data)
+    {
+        $isFiltered  = false;
+
+        if (count($data) > 0) {
+            $isFiltered = (!empty(array_filter($data)));
+        }
+
+        $users = $this->user::query();
+
+        if ($isFiltered) {}
+
+        $users = $users->paginate($this::PAGINATE_RECORDS);
+
+        return $users;
+    }
+
     public function getWhere($column, $value)
     {
         return $this->user->where($column, $value)->get();

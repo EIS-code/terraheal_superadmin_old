@@ -9,3 +9,11 @@
 .font-white {
 	color: #fff;
 }
+
+.w100 {
+	width: 100%;
+}
+
+.disp-none {
+	display: none;
+}

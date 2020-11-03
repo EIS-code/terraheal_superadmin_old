@@ -87,6 +87,23 @@ class MassageRepository extends BaseRepository
         ]);
     }
 
+    public function filter(array $data)
+    {
+        $isFiltered  = false;
+
+        if (count($data) > 0) {
+            $isFiltered = (!empty(array_filter($data)));
+        }
+
+        $massages = $this->massage::query();
+
+        if ($isFiltered) {}
+
+        $massages = $massages->paginate($this::PAGINATE_RECORDS);
+
+        return $massages;
+    }
+
     public function getMassageCenters(array $data, $isApi = true, int $limit = 10)
     {
         $latitude  = (!empty($data['latitude'])) ? $data['latitude'] : NULL;

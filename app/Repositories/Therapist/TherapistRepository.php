@@ -136,6 +136,23 @@ class TherapistRepository extends BaseRepository
         return $this->therapist->where($where)->get();
     }
 
+    public function filter(array $data)
+    {
+        $isFiltered  = false;
+
+        if (count($data) > 0) {
+            $isFiltered = (!empty(array_filter($data)));
+        }
+
+        $therapists = $this->therapist::query();
+
+        if ($isFiltered) {}
+
+        $therapists = $therapists->paginate($this::PAGINATE_RECORDS);
+
+        return $therapists;
+    }
+
     public function getWherePastFuture(int $therapistId, $isPast = true, $isApi = false)
     {
         $now = Carbon::now();

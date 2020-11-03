@@ -32,16 +32,19 @@ Route::group(['prefix' => 'superadmin', 'namespace' => 'Superadmin', 'middleware
     Route::get('/', 'SuperadminController@index')->name('superadmin.dashboard');
 
     Route::resources(['centers' => 'CenterController']);
+    Route::post('centers/location/create', 'CenterController@locationCreate')->name('centers.location.create');
+    Route::post('centers/timing/create', 'CenterController@locationCreate')->name('centers.timing.create');
+    Route::post('centers/company/create', 'CenterController@companyCreate')->name('centers.company.create');
 
     Route::resources(['clients' => 'ClientController']);
 
-    Route::resources(['therapists' => 'ClientController']);
+    Route::resources(['therapists' => 'TherapistController']);
 
-    Route::resources(['bookings' => 'ClientController']);
+    Route::resources(['bookings' => 'BookingController']);
 
-    Route::resources(['services' => 'ClientController']);
+    Route::resources(['services' => 'ServiceController']);
 
-    Route::resources(['massages' => 'ClientController']);
+    Route::resources(['messages' => 'MessageController']);
 
-    Route::resources(['settings' => 'ClientController']);
+    Route::resources(['settings' => 'SettingController']);
 });
