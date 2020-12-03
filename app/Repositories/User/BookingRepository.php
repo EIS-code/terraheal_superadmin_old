@@ -554,6 +554,34 @@ class BookingRepository extends BaseRepository
         ]);
     }
 
+    public function getGlobalResponse(int $bookingInfoId, $isApi = false)
+    {
+        $bookings = $this->booking
+                         ->join($this->bookingInfo::getTableName(), $this->booking::getTableName() . '.id', '=', $this->bookingInfo::getTableName() . '.booking_id')
+                         ->join($this->userPeople::getTableName(), $this->bookingInfo::getTableName() . '.user_people_id', '=', $this->userPeople::getTableName() . '.id')
+                         ->leftJoin($this->sessionType::getTableName(), $this->booking::getTableName() . '.session_id', '=', $this->sessionType::getTableName() . '.id')
+                         ->where($this->bookingInfo::getTableName() . '.id', $bookingInfoId)
+                         ->get();
+
+        if ($isApi) {
+            if (!empty($bookings) && !$bookings->isEmpty()) {
+                return response()->json([
+                    'code' => 200,
+                    'msg'  => 'Booking found successfully !',
+                    'data' => $bookings
+                ]);
+            }
+
+            return response()->json([
+                'code' => 200,
+                'msg'  => 'Booking doesn\'t found.',
+                'data' => []
+            ]);
+        }
+
+        return $bookings;
+    }
+
     public function errors()
     {}
 }
