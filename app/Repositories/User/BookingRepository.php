@@ -14,13 +14,14 @@ use App\BookingMassage;
 use App\Massage;
 use App\MassagePrice;
 use App\MassageTiming;
+use App\MassagePreferenceOption;
 use Carbon\Carbon;
 use CurrencyHelper;
 use DB;
 
 class BookingRepository extends BaseRepository
 {
-    protected $shop, $sessionType, $userPeople, $booking, $bookingInfo, $bookingMassage, $massage, $massagePrice, $massageTimingModel, $massagePriceModel, $massageTiming, $currencyHelper;
+    protected $shop, $sessionType, $userPeople, $booking, $bookingInfo, $bookingMassage, $massage, $massagePrice, $massageTimingModel, $massagePriceModel, $massageTiming, $massagePreferenceOption, $currencyHelper;
 
     public function __construct()
     {
@@ -36,6 +37,7 @@ class BookingRepository extends BaseRepository
         $this->massageTimingModel = new MassageTiming();
         $this->massagePriceModel  = new MassagePrice();
         $this->massageTiming  = new MassageTimingRepository();
+        $this->massagePreferenceOption = new MassagePreferenceOption();
         $this->currencyHelper = new CurrencyHelper();
     }
 
@@ -557,9 +559,30 @@ class BookingRepository extends BaseRepository
     public function getGlobalResponse(int $bookingInfoId, $isApi = false)
     {
         $bookings = $this->booking
+                         ->select(
+                                DB::RAW(
+                                    $this->bookingInfo::getTableName() . '.id as booking_info_id, '. 
+                                    $this->sessionType::getTableName() . '.type as session_type, ' . 
+                                    $this->massage::getTableName() . '.name as service_name, UNIX_TIMESTAMP(' . 
+                                    $this->bookingInfo::getTableName() . '.massage_date) * 1000 as massage_date, UNIX_TIMESTAMP(' . 
+                                    $this->bookingInfo::getTableName() . '.massage_time) * 1000 as massage_time, ' . 
+                                    'gender.name as gender_preference, ' . 
+                                    'pressure.name as pressure_preference, ' . 
+                                    $this->booking::getTableName() . '.special_notes as notes, ' . 
+                                    $this->bookingMassage::getTableName() . '.notes_of_injuries as injuries, ' . 
+                                    'focus_area.name as focus_area, ' . 
+                                    $this->booking::getTableName() . '.table_futon_quantity'
+                                )
+                         )
                          ->join($this->bookingInfo::getTableName(), $this->booking::getTableName() . '.id', '=', $this->bookingInfo::getTableName() . '.booking_id')
                          ->join($this->userPeople::getTableName(), $this->bookingInfo::getTableName() . '.user_people_id', '=', $this->userPeople::getTableName() . '.id')
                          ->leftJoin($this->sessionType::getTableName(), $this->booking::getTableName() . '.session_id', '=', $this->sessionType::getTableName() . '.id')
+                         ->leftJoin($this->bookingMassage::getTableName(), $this->bookingInfo::getTableName() . '.id', '=', $this->bookingMassage::getTableName() . '.booking_info_id')
+                         ->leftJoin($this->massagePriceModel::getTableName(), $this->bookingMassage::getTableName() . '.massage_prices_id', '=', $this->massagePriceModel::getTableName() . '.id')
+                         ->leftJoin($this->massage::getTableName(), $this->massagePriceModel::getTableName() . '.massage_id', '=', $this->massage::getTableName() . '.id')
+                         ->leftJoin($this->massagePreferenceOption::getTableName() . ' as gender', $this->bookingMassage::getTableName() . '.gender_preference', '=', 'gender.id')
+                         ->leftJoin($this->massagePreferenceOption::getTableName() . ' as pressure', $this->bookingMassage::getTableName() . '.pressure_preference', '=', 'pressure.id')
+                         ->leftJoin($this->massagePreferenceOption::getTableName() . ' as focus_area', $this->bookingMassage::getTableName() . '.focus_area_preference', '=', 'focus_area.id')
                          ->where($this->bookingInfo::getTableName() . '.id', $bookingInfoId)
                          ->get();
 
