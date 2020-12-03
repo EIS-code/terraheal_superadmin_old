@@ -234,6 +234,14 @@ class TherapistRepository extends BaseRepository
                     } elseif (!empty($clientName) && empty($data->bookingInfo[0]->userPeople)) {
                         unset($bookings[$index]);
                     }
+
+                    if (!empty($data->bookingInfo) && !$data->bookingInfo->isEmpty()) {
+                        $data->bookingInfo->map(function($bookingInfo, $key) {
+                            if (!empty($bookingInfo->userPeople)) {
+                                unset($bookingInfo->userPeople);
+                            }
+                        });
+                    }
                 });
 
                 $message = $messagePrefix . ' booking found successfully !';
