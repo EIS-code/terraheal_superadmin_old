@@ -14,6 +14,7 @@ class TherapistController extends BaseController
         $this->getRequest        = $this->httpRequest->all();
         $this->therapist         = $this->therapistRepo;
         $this->therapistCalendar = $this->therapistCalendarRepo;
+        $this->booking           = $this->bookingRepo;
 
         $getPrifix = $this->httpRequest->route()->getPrefix();
         if (strpos($getPrifix, 'freelancer') !== false) {
@@ -86,5 +87,12 @@ class TherapistController extends BaseController
         $therapistId = $this->httpRequest->get('therapist_id', false);
 
         return $this->therapist->getGlobalResponse($therapistId, true);
+    }
+
+    public function getBooking()
+    {
+        $bookingInfoId = $this->httpRequest->get('booking_info_id', false);
+
+        return $this->booking->getGlobalResponse($bookingInfoId, true);
     }
 }

@@ -200,6 +200,7 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::post('/signin', 'TherapistController@signIn')->name('therapistSignIn');
         Route::post('/update/{therapistId}', 'TherapistController@update')->name('therapistUpdate');
         Route::group(['prefix' => 'booking'], function () {
+            Route::post('/', 'TherapistController@getBooking')->name('therapistGetTodayBooking');
             Route::post('/list/today', 'TherapistController@getTodayBooking')->name('therapistGetTodayBooking');
             Route::post('/list/past', 'TherapistController@getPastBooking')->name('therapistGetPastBooking');
             Route::post('/list/future', 'TherapistController@getFutureBooking')->name('therapistGetFutureBooking');

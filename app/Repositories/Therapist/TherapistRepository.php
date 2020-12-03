@@ -228,7 +228,10 @@ class TherapistRepository extends BaseRepository
         if ($isApi === true) {
             $messagePrefix = $isToday ? 'Today' : (($isPast) ? 'Past' : 'Future');
             if (!empty($bookings)) {
-                $bookings->map(function($data, $index) use($bookings, $clientName) {
+                $return     = [];
+                $increments = 0;
+
+                $bookings->map(function($data, $index) use($bookings, $clientName, &$return, &$increments) {
                     if (empty($data->bookingInfo) || $data->bookingInfo->isEmpty()) {
                         unset($bookings[$index]);
                     } elseif (!empty($clientName) && empty($data->bookingInfo[0]->userPeople)) {
@@ -236,13 +239,21 @@ class TherapistRepository extends BaseRepository
                     }
 
                     if (!empty($data->bookingInfo) && !$data->bookingInfo->isEmpty()) {
-                        $data->bookingInfo->map(function($bookingInfo, $key) {
+                        $data->bookingInfo->map(function($bookingInfo, $key) use(&$return, &$increments) {
                             if (!empty($bookingInfo->userPeople)) {
                                 unset($bookingInfo->userPeople);
                             }
+
+                            $return[$increments]['booking_info_id'] = $bookingInfo->id;
+                            $return[$increments]['massage_date']    = $bookingInfo->massage_date;
+                            $return[$increments]['massage_time']    = $bookingInfo->massage_time;
+
+                            $increments++;
                         });
                     }
                 });
+
+                $bookings = $return;
 
                 $message = $messagePrefix . ' booking found successfully !';
             } else {
