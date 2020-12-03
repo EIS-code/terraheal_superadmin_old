@@ -195,7 +195,7 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             });
         });
 
-        Route::get('/get/{therapistId}', 'TherapistController@getDetails')->name('therapistGetDetails');
+        Route::post('/get', 'TherapistController@getDetails')->name('therapistGetDetails');
         Route::post('/signup', 'TherapistController@signup')->name('therapistSignUp');
         Route::post('/signin', 'TherapistController@signIn')->name('therapistSignIn');
         Route::post('/update/{therapistId}', 'TherapistController@update')->name('therapistUpdate');
