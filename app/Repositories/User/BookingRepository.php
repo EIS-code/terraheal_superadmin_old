@@ -561,9 +561,10 @@ class BookingRepository extends BaseRepository
         $bookings = $this->booking
                          ->select(
                                 DB::RAW(
+                                    $this->userPeople::getTableName() . '.name as client_name, '. 
                                     $this->bookingInfo::getTableName() . '.id as booking_info_id, '. 
-                                    $this->sessionType::getTableName() . '.type as session_type, ' . 
-                                    $this->massage::getTableName() . '.name as service_name, UNIX_TIMESTAMP(' . 
+                                    $this->sessionType::getTableName() . '.type as session_type, CONCAT(' . 
+                                    $this->massage::getTableName() . '.name, " ", ' . $this->massageTimingModel::getTableName() . '.time, " ", "Mins") as service_name, UNIX_TIMESTAMP(' . 
                                     $this->bookingInfo::getTableName() . '.massage_date) * 1000 as massage_date, UNIX_TIMESTAMP(' . 
                                     $this->bookingInfo::getTableName() . '.massage_time) * 1000 as massage_time, ' . 
                                     'gender.name as gender_preference, ' . 
@@ -571,7 +572,8 @@ class BookingRepository extends BaseRepository
                                     $this->booking::getTableName() . '.special_notes as notes, ' . 
                                     $this->bookingMassage::getTableName() . '.notes_of_injuries as injuries, ' . 
                                     'focus_area.name as focus_area, ' . 
-                                    $this->booking::getTableName() . '.table_futon_quantity'
+                                    $this->booking::getTableName() . '.table_futon_quantity, ' . 
+                                    $this->booking::getTableName() . '.booking_type'
                                 )
                          )
                          ->join($this->bookingInfo::getTableName(), $this->booking::getTableName() . '.id', '=', $this->bookingInfo::getTableName() . '.booking_id')
@@ -580,6 +582,7 @@ class BookingRepository extends BaseRepository
                          ->leftJoin($this->bookingMassage::getTableName(), $this->bookingInfo::getTableName() . '.id', '=', $this->bookingMassage::getTableName() . '.booking_info_id')
                          ->leftJoin($this->massagePriceModel::getTableName(), $this->bookingMassage::getTableName() . '.massage_prices_id', '=', $this->massagePriceModel::getTableName() . '.id')
                          ->leftJoin($this->massage::getTableName(), $this->massagePriceModel::getTableName() . '.massage_id', '=', $this->massage::getTableName() . '.id')
+                         ->leftJoin($this->massageTimingModel::getTableName(), $this->massagePriceModel::getTableName() . '.massage_timing_id', '=', $this->massageTimingModel::getTableName() . '.id')
                          ->leftJoin($this->massagePreferenceOption::getTableName() . ' as gender', $this->bookingMassage::getTableName() . '.gender_preference', '=', 'gender.id')
                          ->leftJoin($this->massagePreferenceOption::getTableName() . ' as pressure', $this->bookingMassage::getTableName() . '.pressure_preference', '=', 'pressure.id')
                          ->leftJoin($this->massagePreferenceOption::getTableName() . ' as focus_area', $this->bookingMassage::getTableName() . '.focus_area_preference', '=', 'focus_area.id')

@@ -236,9 +236,7 @@ class TherapistRepository extends BaseRepository
                         unset($bookings[$index]);
                     } elseif (!empty($clientName) && empty($data->bookingInfo[0]->userPeople)) {
                         unset($bookings[$index]);
-                    }
-
-                    if (!empty($data->bookingInfo) && !$data->bookingInfo->isEmpty()) {
+                    } elseif (!empty($data->bookingInfo) && !$data->bookingInfo->isEmpty()) {
                         $data->bookingInfo->map(function($bookingInfo, $key) use(&$return, &$increments) {
                             if (!empty($bookingInfo->userPeople)) {
                                 unset($bookingInfo->userPeople);
