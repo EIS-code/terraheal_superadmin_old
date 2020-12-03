@@ -36,14 +36,19 @@ class TherapistController extends BaseController
         return $this->therapist->update($therapistId, $this->getRequest);
     }
 
-    public function getPastBooking($therapistId)
+    public function getTodayBooking()
     {
-        return $this->therapist->getWherePastFuture($therapistId, true, true);
+        return $this->therapist->getWherePastFuture($this->getRequest, false, true, true);
     }
 
-    public function getFutureBooking($therapistId)
+    public function getPastBooking()
     {
-        return $this->therapist->getWherePastFuture($therapistId, false, true);
+        return $this->therapist->getWherePastFuture($this->getRequest, true, true);
+    }
+
+    public function getFutureBooking()
+    {
+        return $this->therapist->getWherePastFuture($this->getRequest, false, true);
     }
 
     public function search()

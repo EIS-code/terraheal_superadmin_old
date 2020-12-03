@@ -170,8 +170,9 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             Route::post('/update/{therapistId}', 'TherapistController@update')->name('freelancerTherapistUpdate');
 
             Route::group(['prefix' => 'booking'], function () {
-                Route::get('/list/past/{therapistId}', 'TherapistController@getPastBooking')->name('freelancerTherapistGetPastBooking');
-                Route::get('/list/future/{therapistId}', 'TherapistController@getFutureBooking')->name('freelancerTherapistGetFutureBooking');
+                Route::post('/list/today', 'TherapistController@getTodayBooking')->name('freelancerTherapistGetTodayBooking');
+                Route::post('/list/past', 'TherapistController@getPastBooking')->name('freelancerTherapistGetPastBooking');
+                Route::post('/list/future', 'TherapistController@getFutureBooking')->name('freelancerTherapistGetFutureBooking');
             });
 
             Route::group(['prefix' => 'massage', 'namespace' => 'Massage'], function () {

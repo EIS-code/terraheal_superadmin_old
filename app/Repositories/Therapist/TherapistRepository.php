@@ -153,20 +153,89 @@ class TherapistRepository extends BaseRepository
         return $therapists;
     }
 
-    public function getWherePastFuture(int $therapistId, $isPast = true, $isApi = false)
+    public function getWherePastFuture($request, $isPast = true, $isApi = false, $isToday = false)
     {
         $now = Carbon::now();
 
-        $bookings = $this->booking
-                         ->with(['bookingInfo' => function($query) use($therapistId, $now, $isPast) {
-                                $query->where('massage_date', ($isPast === true ? '<' : '>='), $now)
-                                      ->where('therapist_id', $therapistId);
-                         }])
-                         ->get();
+        if (empty($request['therapist_id'])) {
+            return response()->json([
+                'code' => 401,
+                'msg'  => 'Therapist ID not found !'
+            ]);
+        }
+
+        $therapistId = (int)$request['therapist_id'];
+
+        $massageDate = false;
+        if (!empty($request['massage_date'])) {
+            $massageDate = strlen($request['massage_date']) > 10 ? ($request['massage_date'] / 1000) : $request['massage_date'];
+            $massageDate = Carbon::createFromTimestamp($massageDate)->toDate();
+        }
+
+        $clientName = NULL;
+        if (!empty($request['client_name'])) {
+            $clientName = $request['client_name'];
+        }
+
+        if ($isToday) {
+            $bookings = $this->booking
+                             ->with(['bookingInfo' => function($query) use($therapistId, $now, $massageDate, $clientName) {
+                                    $query->whereDate('massage_date', '=', $now)
+                                          ->where('therapist_id', $therapistId);
+
+                                    if (!empty($massageDate)) {
+                                        $query->whereDate('massage_date', $massageDate);
+                                    }
+
+                                    if (!empty($clientName)) {
+                                        $query->with(['userPeople' => function($user) use($clientName) {
+                                            $user->where('name', 'LIKE', "%{$clientName}%");
+                                        }]);
+                                    }
+                             }]);
+        } else {
+            $bookings = $this->booking
+                             ->with(['bookingInfo' => function($query) use($therapistId, $now, $isPast, $massageDate, $clientName) {
+                                    $query->whereDate('massage_date', ($isPast === true ? '<' : '>='), $now)
+                                          ->where('therapist_id', $therapistId);
+
+                                    if (!empty($massageDate)) {
+                                        $query->whereDate('massage_date', $massageDate);
+                                    }
+
+                                    if (!empty($clientName)) {
+                                        $query->with(['userPeople' => function($user) use($clientName) {
+                                            $user->where('name', 'LIKE', "%{$clientName}%");
+                                        }]);
+                                    }
+                             }]);
+        }
+
+        if (isset($request['booking_type']) && ($request['booking_type'] == 0 || $request['booking_type'] == 1)) {
+            $bookingType = $request['booking_type'];
+
+            $bookings->where('booking_type', $bookingType);
+        }
+
+        if (!empty($request['session_id'])) {
+            $sessionId = $request['session_id'];
+
+            $bookings->where('session_id', $sessionId);
+        }
+
+        $bookings = $bookings->get();
 
         if ($isApi === true) {
-            $messagePrefix = (($isPast) ? 'Past' : 'Future');
+            $messagePrefix = $isToday ? 'Today' : (($isPast) ? 'Past' : 'Future');
             if (!empty($bookings)) {
+                $bookings->map(function($data, $index) use($bookings, $clientName) {
+                    if (empty($data->bookingInfo) || $data->bookingInfo->isEmpty()) {
+                        unset($bookings[$index]);
+                    } elseif (!empty($clientName) && empty($data->bookingInfo[0]->userPeople)) {
+                        unset($bookings[$index]);
+                    }
+                });
+
                 $message = $messagePrefix . ' booking found successfully !';
             } else {
                 $message = $messagePrefix . ' booking not found !';
