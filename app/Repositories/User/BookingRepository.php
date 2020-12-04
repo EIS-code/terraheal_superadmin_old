@@ -563,10 +563,11 @@ class BookingRepository extends BaseRepository
                                 DB::RAW(
                                     $this->userPeople::getTableName() . '.name as client_name, '. 
                                     $this->bookingInfo::getTableName() . '.id as booking_info_id, '. 
-                                    $this->sessionType::getTableName() . '.type as session_type, CONCAT(' . 
-                                    $this->massage::getTableName() . '.name, " ", ' . $this->massageTimingModel::getTableName() . '.time, " ", "Mins") as service_name, UNIX_TIMESTAMP(' . 
+                                    $this->sessionType::getTableName() . '.type as session_type, ' . 
+                                    $this->massage::getTableName() . '.name as service_name, UNIX_TIMESTAMP(' . 
                                     $this->bookingInfo::getTableName() . '.massage_date) * 1000 as massage_date, UNIX_TIMESTAMP(' . 
-                                    $this->bookingInfo::getTableName() . '.massage_time) * 1000 as massage_time, ' . 
+                                    $this->bookingInfo::getTableName() . '.massage_time) * 1000 as massage_start_time, UNIX_TIMESTAMP(' . 
+                                    'DATE_ADD(' . $this->bookingInfo::getTableName() . '.massage_time, INTERVAL ' . $this->massageTimingModel::getTableName() . '.time MINUTE)) * 1000 as massage_end_time, ' . 
                                     'gender.name as gender_preference, ' . 
                                     'pressure.name as pressure_preference, ' . 
                                     $this->booking::getTableName() . '.special_notes as notes, ' . 
