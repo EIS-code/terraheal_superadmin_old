@@ -17,8 +17,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes(['register' => false]);
-
 Route::get('/paypal', 'ShopPaymentDetailsController@payWithPaypal');
 
 Route::group(['prefix' => 'web'], function () {
@@ -29,6 +27,8 @@ Route::group(['prefix' => 'web'], function () {
 });
 
 Route::group(['prefix' => 'superadmin', 'namespace' => 'Superadmin', 'middleware' => 'web'], function () {
+    Auth::routes(['register' => false]);
+
     Route::get('/', 'SuperadminController@index')->name('superadmin.dashboard');
 
     Route::resources(['centers' => 'CenterController']);
