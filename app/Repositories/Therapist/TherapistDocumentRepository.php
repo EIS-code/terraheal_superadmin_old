@@ -50,17 +50,17 @@ class TherapistDocumentRepository extends BaseRepository
 
             if (empty($therapistId)) {
                 $this->errorMsg[] = "Please provide valid therapist id.";
-                return $this;
+                // return $this;
             }
 
             $getTherapist = $this->therapist->getWhereFirst('id', $therapistId);
             if (empty($getTherapist)) {
                 $this->errorMsg[] = "Therapist couldn't found with given therapist id.";
-                return $this;
+                // return $this;
             }
 
             if (empty($data['type'])) {
-                $this->errorMsg[] = "Please provide document type. 1: Address Proof, 2: Identity Proof, 3: Insurance";
+                $this->errorMsg[] = "Please provide document type." . implode(", ", $this->therapistDocument->documentTypes);
             }
 
             if (empty($data['file']) || !($request->hasFile('file'))) {
@@ -103,7 +103,7 @@ class TherapistDocumentRepository extends BaseRepository
         if (!$this->isErrorFree()) {
             return response()->json([
                 'code' => 401,
-                'msg'  => $this->errorMsg
+                'msg'  => reset($this->errorMsg)
             ]);
         }
 

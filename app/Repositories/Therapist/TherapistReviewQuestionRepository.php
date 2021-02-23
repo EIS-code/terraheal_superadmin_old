@@ -19,9 +19,19 @@ class TherapistReviewQuestionRepository extends BaseRepository
     public function create(array $data)
     {}
 
-    public function all()
+    public function all($isApi = false)
     {
-        return $this->therapistReviewQuestion->all();
+        $results = $this->therapistReviewQuestion->all();
+
+        if ($isApi) {
+            return response()->json([
+                'code' => 200,
+                'msg'  => 'Therapist review questions found successfully !',
+                'data' => $results
+            ]);
+        }
+
+        return $results;
     }
 
     public function getWhere($column, $value)

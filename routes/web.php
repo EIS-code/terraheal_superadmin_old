@@ -17,6 +17,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Auth::routes(['register' => false]);
+
 Route::get('/paypal', 'ShopPaymentDetailsController@payWithPaypal');
 
 Route::group(['prefix' => 'web'], function () {
@@ -27,14 +29,15 @@ Route::group(['prefix' => 'web'], function () {
 });
 
 Route::group(['prefix' => 'superadmin', 'namespace' => 'Superadmin', 'middleware' => 'web'], function () {
-    Auth::routes(['register' => false, 'reset' => false]);
-
     Route::get('/', 'SuperadminController@index')->name('superadmin.dashboard');
 
     Route::resources(['centers' => 'CenterController']);
+    Route::get('centers/{shopId}/info', 'CenterController@getInfo')->name('centers.get.info');
     Route::post('centers/location/create', 'CenterController@locationCreate')->name('centers.location.create');
     Route::post('centers/timing/create', 'CenterController@locationCreate')->name('centers.timing.create');
     Route::post('centers/company/create', 'CenterController@companyCreate')->name('centers.company.create');
+    Route::post('centers/owner/create', 'CenterController@ownerCreate')->name('centers.owner.create');
+    Route::post('centers/document/create', 'CenterController@documentCreate')->name('centers.document.create');
 
     Route::resources(['clients' => 'ClientController']);
 

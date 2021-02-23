@@ -85,6 +85,33 @@ class CenterController extends BaseController
         return $this->redirectResponse('superadmin/centers/create', $create);
     }
 
+    public function ownerCreate()
+    {
+        $request = $this->httpRequest;
+
+        $create = $this->shopRepo->ownerCreate($request->all())->getData();
+
+        return $this->redirectResponse('superadmin/centers/create', $create);
+    }
+
+    public function documentCreate()
+    {
+        $request = $this->httpRequest;
+
+        $create = $this->shopRepo->documentCreate($request->all())->getData();
+
+        return $this->redirectResponse('superadmin/centers/create', $create);
+    }
+
+    public function getInfo(int $shopId)
+    {
+        $getInfo = $this->shopRepo->getInfo($shopId)->getData();
+
+        $data = !empty($getInfo->data) ? $getInfo->data : [];
+
+        return view('superadmin.center-edit', compact('data'));
+    }
+
     public function redirectResponse($url, $jsonObject)
     {
         if ($jsonObject->code == $this->errorCode) {

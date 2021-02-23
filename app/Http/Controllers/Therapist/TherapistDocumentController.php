@@ -20,8 +20,9 @@ class TherapistDocumentController extends BaseController
         }
     }
 
-    public function create($therapistId)
+    public function create()
     {
+        $therapistId = $this->httpRequest->get('therapist_id', false);
         // return $this->response($this->therapistDocument->create($therapistId, $this->httpRequest));
         return $this->therapistDocument->create($therapistId, $this->httpRequest);
     }

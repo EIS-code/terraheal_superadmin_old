@@ -32,8 +32,10 @@ class TherapistController extends BaseController
         return $this->therapist->signIn($this->getRequest);
     }
 
-    public function update($therapistId)
+    public function update()
     {
+        $therapistId = $this->httpRequest->get('therapist_id');
+
         return $this->therapist->update($therapistId, $this->getRequest);
     }
 

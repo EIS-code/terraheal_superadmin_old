@@ -9,7 +9,7 @@
     <div class="center-inner">
         @if (!empty($shops) && !$shops->isEmpty())
             @foreach ($shops as $shop)
-                <div class="center-col" onclick="location.href='#;">
+                <div class="center-col" onclick="location.href='{{ route("centers.get.info", $shop->id) }}'">
                     <div class="center-title">{{ $shop->name }}</div>
                     <div class="center-text">{{ $shop->address }}</div>
                     <div class="service-hour"> <span class="sh-sec service"><span class="ct">{{ $shop->totalServices }}+</span>{{ __('Services') }}</span> <span class="sh-sec hours"><i class="far fa-clock"></i>{{ __('Hours') }}</span> </div>

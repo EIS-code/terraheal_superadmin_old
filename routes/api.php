@@ -191,6 +191,7 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             Route::get('/search', 'TherapistController@search')->name('freelancerTherapistSearch');
 
             Route::group(['prefix' => 'review'], function () {
+                Route::get('/get', 'TherapistReviewController@getReviews')->name('freelancerTherapistGetReviews');
                 Route::post('/create', 'TherapistReviewController@create')->name('freelancerTherapistReviewCreate');
             });
         });
@@ -198,7 +199,7 @@ Route::group(['middleware' => ['web.auth.api']], function () {
         Route::post('/get', 'TherapistController@getDetails')->name('therapistGetDetails');
         Route::post('/signup', 'TherapistController@signup')->name('therapistSignUp');
         Route::post('/signin', 'TherapistController@signIn')->name('therapistSignIn');
-        Route::post('/update/{therapistId}', 'TherapistController@update')->name('therapistUpdate');
+        Route::post('/update', 'TherapistController@update')->name('therapistUpdate');
         Route::group(['prefix' => 'booking'], function () {
             Route::post('/', 'TherapistController@getBooking')->name('therapistGetTodayBooking');
             Route::post('/list/today', 'TherapistController@getTodayBooking')->name('therapistGetTodayBooking');
@@ -225,12 +226,17 @@ Route::group(['middleware' => ['web.auth.api']], function () {
             Route::post('/otp/mobile/{therapistId}', 'TherapistController@compareOtpSms')->name('therapistCompareOtpSms');
         });
 
-        Route::group(['prefix' => 'documents/{therapistId}'], function () {
+        Route::group(['prefix' => 'documents'], function () {
             Route::post('/', 'TherapistDocumentController@create')->name('therapistDocumentCreate');
         });
 
         Route::group(['prefix' => 'profile'], function () {
             Route::post('update/{therapistId}', 'TherapistController@updateProfile')->name('therapistProfileUpdate');
+        });
+
+        Route::group(['prefix' => 'review'], function () {
+            Route::get('/get', 'TherapistReviewController@getReviews')->name('therapistGetReviews');
+            Route::post('/create', 'TherapistReviewController@create')->name('therapistReviewCreate');
         });
     });
 

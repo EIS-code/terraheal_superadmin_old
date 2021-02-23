@@ -512,51 +512,55 @@
             </div>
             <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="grp-field">
-                            <label>{{ __('Name') }} : </label>
-                            <div class="grp-right">
-                                <input type="text" name="name" placeholder="{{ __('Rohit') }}"/>
+                <form method="POST" action="{{ route('centers.owner.create') }}" class="w100">
+                    @csrf
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="grp-field">
+                                <label>{{ __('Name') }} : </label>
+                                <div class="grp-right">
+                                    <input type="text" name="name" placeholder="{{ __('Rohit') }}" value="{{ old('name') }}" />
+                                </div>
+                            </div>
+                            <div class="grp-field">
+                                <label>{{ __('Email') }} : </label>
+                                <div class="grp-right">
+                                    <input type="email" name="owner_email" placeholder="{{ __('youremail@14.com') }}" value="{{ old('owner_email') }}" />
+                                </div>
+                            </div>
+                            <div class="grp-field txtarea">
+                                <label>{{ __('Financial situation') }} : </label>
+                                <div class="grp-right">
+                                    <textarea name="financial_situation">{{ old('financial_situation') }}</textarea>
+                                </div>
                             </div>
                         </div>
-                        <div class="grp-field">
-                            <label>{{ __('Email') }} : </label>
-                            <div class="grp-right">
-                                <input type="email" name="email" placeholder="{{ __('youremail@14.com') }}"/>
+                        <div class="col-md-6">
+                            <div class="grp-field">
+                                <label>{{ __('Surname') }} : </label>
+                                <div class="grp-right">
+                                    <input type="text" name="surname" placeholder="yadav" value="{{ old('surname') }}" />
+                                </div>
+                            </div>
+                            <div class="grp-field">
+                                <label>{{ __('Telephone') }} : </label>
+                                <div class="grp-right">
+                                    <input type="text" name="owner_mobile_number" placeholder="{{ __('+351 2545458745') }}" value="{{ old('owner_mobile_number') }}" />
+                                </div>
+                            </div>
+                            <div class="grp-field">
+                                <label>{{ __('Alternative Tel') }} : </label>
+                                <div class="grp-right">
+                                    <input type="text" name="owner_mobile_number_alternative" placeholder="{{ __('+351 2548745414') }}" value="{{ old('owner_mobile_number_alternative') }}" />
+                                </div>
                             </div>
                         </div>
-                        <div class="grp-field txtarea">
-                            <label>{{ __('Financial situation') }} : </label>
-                            <div class="grp-right">
-                                <textarea name="financial"></textarea>
-                            </div>
+                        <div class="last-colmn">
+                            <button type="submit" class="btn-custom save">{{ __('Save') }}</button>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="grp-field">
-                            <label>{{ __('Surname') }} : </label>
-                            <div class="grp-right">
-                                <input type="text" name="Surname" placeholder="yadav"/>
-                            </div>
-                        </div>
-                        <div class="grp-field">
-                            <label>{{ __('Telephone') }} : </label>
-                            <div class="grp-right">
-                                <input type="text" name="tel" placeholder="{{ __('+351 2545458745') }}"/>
-                            </div>
-                        </div>
-                        <div class="grp-field">
-                            <label>{{ __('Alternative Tel') }} : </label>
-                            <div class="grp-right">
-                                <input type="text" name="a-tel" placeholder="{{ __('+351 2548745414') }}"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
         <div class="center-row d-flex justify-content-between">
@@ -659,54 +663,58 @@
             </div>
             <div class="center-right"> <a href="javascript:void(0);" class="add-d btn-custom">{{ __('Add') }}</a> </div>
             <div class="center-bottom-sec">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="grp-field">
-                            <label>{{ __('Franchise Contact') }} : </label>
-                            <div class="grp-right">
-                                <div class="file">
-                                    <label class="file-label">
-                                    <input class="file-input" type="file" name="resume">
-                                    <span class="file-cta">
-                                    <span class="file-label">{{ __('Add New Documents') }}</span>
-                                    </span>
-                                    </label>
+                <form method="POST" action="{{ route('centers.document.create') }}" enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="grp-field">
+                                <label>{{ __('Franchise Contact') }} : </label>
+                                <div class="grp-right">
+                                    <div class="file">
+                                        <label class="file-label">
+                                        <input class="file-input" type="file" name="franchise_contact">
+                                        <span class="file-cta">
+                                        <span class="file-label">{{ __('Add New Documents') }}</span>
+                                        </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grp-field">
+                                <label>{{ __('Registration') }} : </label>
+                                <div class="grp-right">
+                                    <div class="file">
+                                        <label class="file-label">
+                                        <input class="file-input" type="file" name="registration">
+                                        <span class="file-cta">
+                                        <span class="file-label">{{ __('Add New Documents') }}</span>
+                                        </span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="grp-field">
-                            <label>{{ __('Registration') }} : </label>
-                            <div class="grp-right">
-                                <div class="file">
-                                    <label class="file-label">
-                                    <input class="file-input" type="file" name="resume">
-                                    <span class="file-cta">
-                                    <span class="file-label">{{ __('Add New Documents') }}</span>
-                                    </span>
-                                    </label>
+                        <div class="col-md-6">
+                            <div class="grp-field">
+                                <label>{{ __('ID/Passport') }} : </label>
+                                <div class="grp-right">
+                                    <div class="file">
+                                        <label class="file-label">
+                                        <input class="file-input" type="file" name="id_passport">
+                                        <span class="file-cta">
+                                        <span class="file-label">{{ __('Add New Documents') }}</span>
+                                        </span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="grp-field">
-                            <label>{{ __('ID/Passport') }} : </label>
-                            <div class="grp-right">
-                                <div class="file">
-                                    <label class="file-label">
-                                    <input class="file-input" type="file" name="resume">
-                                    <span class="file-cta">
-                                    <span class="file-label">{{ __('Add New Documents') }}</span>
-                                    </span>
-                                    </label>
-                                </div>
-                            </div>
+                        <div class="last-colmn">
+                            <button type="submit" class="btn-custom save">{{ __('Save') }}</button>
                         </div>
                     </div>
-                    <div class="last-colmn">
-                        <a href="javascript:void(0);" class="btn-custom save">{{ __('Save') }}</a>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
         <div class="center-row d-flex justify-content-between">

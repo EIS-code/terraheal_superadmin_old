@@ -8,6 +8,7 @@ use App\ShopFeaturedImage;
 use App\ShopGallary;
 use App\ShopHour;
 use App\ShopCompany;
+use App\ShopDocument;
 use App\Massage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\UploadedFile;
@@ -15,7 +16,7 @@ use DB;
 
 class ShopRepository extends BaseRepository
 {
-    protected $shop, $shopFeaturedImage, $shopGallary, $shopHour, $shopCompany, $massage;
+    protected $shop, $shopFeaturedImage, $shopGallary, $shopHour, $shopCompany, $shopDocument, $massage;
 
     public function __construct()
     {
@@ -25,6 +26,7 @@ class ShopRepository extends BaseRepository
         $this->shopGallary       = new ShopGallary();
         $this->shopHour          = new ShopHour();
         $this->shopCompany       = new ShopCompany();
+        $this->shopDocument      = new ShopDocument();
         $this->massage           = new Massage();
     }
 
@@ -172,7 +174,7 @@ class ShopRepository extends BaseRepository
 
     public function companyCreate(array $data)
     {
-        $shop = [];
+        $shopCompany = [];
         DB::beginTransaction();
 
         try {
@@ -201,6 +203,189 @@ class ShopRepository extends BaseRepository
             'code' => 200,
             'msg'  => 'Shop company created successfully !',
             'data' => $shopCompany
+        ]);
+    }
+
+    public function ownerCreate(array $data)
+    {
+        $shop = [];
+        DB::beginTransaction();
+
+        try {
+            $shopId = \Session()->get('shopId');
+            $shop   = $this->shop;
+
+            $record = $this->getWhereFirst('id', $shopId);
+
+            if (empty($record)) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Shop not found!'
+                ]);
+            }
+
+            $data['shop_id'] = $shopId;
+
+            $validator = $this->shop->validatorOwner($data);
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => $validator->errors()->first()
+                ]);
+            }
+
+            $shop = $shop->where('id', $shopId)->update([
+                'name' => $data['name'],
+                'surname' => $data['surname'],
+                'owner_email' => $data['owner_email'],
+                'financial_situation' => $data['financial_situation'],
+                'owner_mobile_number' => $data['owner_mobile_number'],
+                'owner_mobile_number_alternative' => $data['owner_mobile_number_alternative']
+            ]);
+
+        } catch(Exception $e) {
+            DB::rollBack();
+            // throw $e;
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'Shop owner created successfully !',
+            'data' => $this->getWhereFirst('id', $shopId)
+        ]);
+    }
+
+    public function documentCreate(array $data)
+    {
+        $shop = [];
+        DB::beginTransaction();
+
+        try {
+            $shopId = \Session()->get('shopId');
+            $shop   = $this->shop;
+
+            $record = $this->getWhereFirst('id', $shopId);
+
+            if (empty($record)) {
+                return response()->json([
+                    'code' => 401,
+                    'msg'  => 'Shop not found!'
+                ]);
+            }
+
+            $data['shop_id'] = $shopId;
+
+            $isCreated = false;
+
+            if (!empty($data['franchise_contact'])) {
+                $franchiseContact = $data['franchise_contact'];
+                if ($franchiseContact instanceof UploadedFile) {
+                    $pathInfos = pathinfo($franchiseContact->getClientOriginalName());
+
+                    if (!empty($pathInfos['extension'])) {
+                        $fileName  = (empty($pathInfos['filename']) ? time() : $pathInfos['filename']) . '_' . time() . '.' . $pathInfos['extension'];
+                        $storeFile = $franchiseContact->storeAs($this->shopDocument->storageFolderNameFranchise, $fileName, $this->shopDocument->fileSystem);
+
+                        if ($storeFile) {
+                            $this->shopDocument->create(['franchise_contact' => $fileName, 'shop_id' => $shopId]);
+
+                            $isCreated = true;
+                        }
+                    }
+                }
+            }
+
+            if (!empty($data['id_passport'])) {
+                $idPassport = $data['id_passport'];
+                if ($idPassport instanceof UploadedFile) {
+                    $pathInfos = pathinfo($idPassport->getClientOriginalName());
+
+                    if (!empty($pathInfos['extension'])) {
+                        $fileName  = (empty($pathInfos['filename']) ? time() : $pathInfos['filename']) . '_' . time() . '.' . $pathInfos['extension'];
+                        $storeFile = $idPassport->storeAs($this->shopDocument->storageFolderNameIdPassport, $fileName, $this->shopDocument->fileSystem);
+
+                        if ($storeFile) {
+                            $this->shopDocument->create(['id_passport' => $fileName, 'shop_id' => $shopId]);
+
+                            $isCreated = true;
+                        }
+                    }
+                }
+            }
+
+            if (!empty($data['registration'])) {
+                $registration = $data['registration'];
+                if ($registration instanceof UploadedFile) {
+                    $pathInfos = pathinfo($registration->getClientOriginalName());
+
+                    if (!empty($pathInfos['extension'])) {
+                        $fileName  = (empty($pathInfos['filename']) ? time() : $pathInfos['filename']) . '_' . time() . '.' . $pathInfos['extension'];
+                        $storeFile = $registration->storeAs($this->shopDocument->storageFolderNameRegistration, $fileName, $this->shopDocument->fileSystem);
+
+                        if ($storeFile) {
+                            $this->shopDocument->create(['registration' => $fileName, 'shop_id' => $shopId]);
+
+                            $isCreated = true;
+                        }
+                    }
+                }
+            }
+
+        } catch(Exception $e) {
+            DB::rollBack();
+            // throw $e;
+        }
+
+        DB::commit();
+
+        if ($isCreated) {
+            return response()->json([
+                'code' => 200,
+                'msg'  => 'Shop document created successfully !',
+                'data' => $this->getWhereFirst('id', $shopId)
+            ]);
+        }
+
+        return response()->json([
+            'code' => 401,
+            'msg'  => 'Shop document not created ! Please try again.',
+            'data' => $this->getWhereFirst('id', $shopId)
+        ]);
+    }
+
+    public function getInfo(int $shopId)
+    {
+        $shop = $this->shop->find($shopId);
+
+        $data = [
+            'massages' => 0,
+            'totalBookingsImc' => 0,
+            'totalBookingsHv' => 0
+        ];
+
+        if (!empty($shop)) {
+            $data['massages'] = $shop->massages->count();
+
+            $bookings = $shop->bookingsImc;
+            if (!empty($bookings) && !$bookings->isEmpty()) {
+                foreach ($bookings as $booking) {
+                    $data['totalBookingsImc'] += $booking->bookingInfo->count();
+                }
+            }
+            $bookings = $shop->bookingsHv;
+            if (!empty($bookings) && !$bookings->isEmpty()) {
+                foreach ($bookings as $booking) {
+                    $data['totalBookingsHv'] += $booking->bookingInfo->count();
+                }
+            }
+        }
+
+        return response()->json([
+            'code' => 200,
+            'msg'  => 'Shop info found successfully !',
+            'data' => $data
         ]);
     }
 

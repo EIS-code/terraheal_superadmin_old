@@ -16,6 +16,7 @@ class ShopsTable extends Migration
         Schema::create('shops', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->string('surname')->nullable();
             $table->string('address')->nullable();
             $table->string('address2')->nullable();
             $table->text('description')->nullable();
@@ -25,6 +26,7 @@ class ShopsTable extends Migration
             $table->string('owner_name')->nullable();
             $table->string('tel_number', 50)->nullable();
             $table->string('owner_mobile_number', 50)->nullable();
+            $table->string('owner_mobile_number_alternative', 50)->nullable();
             $table->string('owner_email')->nullable()->unique();
             $table->string('email')->unique();
             $table->string('time_zone')->nullable();
@@ -36,6 +38,7 @@ class ShopsTable extends Migration
             $table->string('manager_user_name');
             $table->string('shop_password');
             $table->string('manager_password');
+            $table->text('financial_situation')->nullable();
             $table->bigInteger('city_id')->unsigned()->nullable();
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             $table->bigInteger('province_id')->unsigned()->nullable();
