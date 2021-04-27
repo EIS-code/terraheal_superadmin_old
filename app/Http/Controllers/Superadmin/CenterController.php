@@ -109,7 +109,7 @@ class CenterController extends BaseController
 
         $data = !empty($getInfo->data) ? $getInfo->data : [];
 
-        return view('superadmin.center-edit', compact('data'));
+        return view('superadmin.center-edit', compact('data', 'shopId'));
     }
 
     public function redirectResponse($url, $jsonObject)
@@ -127,5 +127,10 @@ class CenterController extends BaseController
         } else {
             return redirect($url)->with('error', $this->defaultMessage)->withInput();
         }
+    }
+
+    public function editInfo(Requesst $request)
+    {
+        dd("Get it!");
     }
 }

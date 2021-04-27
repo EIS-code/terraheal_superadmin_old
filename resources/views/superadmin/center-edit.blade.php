@@ -6,7 +6,7 @@
     <div class="center-top d-flex justify-content-between">
         <div class="title">Terra Heal Massage Center</div>
         <div class="top-right">
-            <div class="add-center edit"> <a href="edit-center.php">Edit Details</a> </div>
+            <div class="add-center edit"> <a href="{{ route('centers.edit.info', $shopId) }}">Edit Details</a> </div>
         </div>
     </div>
     <div class="welcome-section massage-details">

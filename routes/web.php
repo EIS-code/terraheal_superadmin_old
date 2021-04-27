@@ -33,6 +33,7 @@ Route::group(['prefix' => 'superadmin', 'namespace' => 'Superadmin', 'middleware
 
     Route::resources(['centers' => 'CenterController']);
     Route::get('centers/{shopId}/info', 'CenterController@getInfo')->name('centers.get.info');
+    Route::get('centers/{shopId}/edit', 'CenterController@editInfo')->name('centers.edit.info');
     Route::post('centers/location/create', 'CenterController@locationCreate')->name('centers.location.create');
     Route::post('centers/timing/create', 'CenterController@locationCreate')->name('centers.timing.create');
     Route::post('centers/company/create', 'CenterController@companyCreate')->name('centers.company.create');
